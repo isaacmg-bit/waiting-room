@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { Home } from './components/home/home';
 import { Calendar } from './components/calendar/calendar';
-import { Graph } from './components/graph/graph';
+import { Charts } from './components/charts/charts';
 import { Map } from './components/map/map';
 
 export const routes: Routes = [
@@ -19,8 +19,8 @@ export const routes: Routes = [
     component: Calendar,
   },
   {
-    path: 'graph',
-    component: Graph,
+    path: 'charts',
+    component: Charts,
   },
   {
     path: 'map',
