@@ -1,21 +1,50 @@
 import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ApiService } from '../../services/apiservice';
+import { FormsModule } from '@angular/forms';
 import { User } from '../../models/User';
-import { environment } from '../../../environments/environment';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { UserService } from '../../services/user-service';
+
 @Component({
   selector: 'app-users',
-  imports: [RouterModule],
+  imports: [RouterModule, FormsModule],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
 export class Users {
-  private readonly api = inject(ApiService);
+  readonly userService = inject(UserService);
 
-  users = toSignal(this.api.get<User[]>(this.getUsersUrl()), { initialValue: [] });
+  newUser: Partial<User> = {};
+  isEditMode = false;
+  editingUserId: string | null = null;
 
-  private getUsersUrl() {
-    return `${environment.apiUrl}/users/`;
+  loadUserForEdit(user: User) {
+    this.isEditMode = true;
+    this.editingUserId = user._id;
+    this.newUser = { ...user };
+  }
+
+  cancelEdit() {
+    this.resetForm();
+  }
+
+  onSubmit() {
+    if (this.isEditMode && this.editingUserId) {
+      this.userService.editUser(this.editingUserId, this.newUser as User);
+    } else {
+      this.userService.addUser(this.newUser as User);
+    }
+    this.resetForm();
+  }
+
+  onDelete(_id: string) {
+    if (confirm('¿Seguro que quieres eliminar este usuario?')) {
+      this.userService.deleteUser(_id);
+    }
+  }
+
+  private resetForm() {
+    this.newUser = {};
+    this.isEditMode = false;
+    this.editingUserId = null;
   }
 }
