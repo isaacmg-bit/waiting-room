@@ -40,23 +40,27 @@
         </thead>
 
         <tbody class="divide-y divide-slate-800">
-          <tr class="hover:bg-slate-900/50 transition">
-            <td class="px-4 py-3 text-slate-400">Id placeholder</td>
-            <td class="px-4 py-3">Name placeholder</td>
-            <td class="px-4 py-3">Last name placeholder</td>
-            <td class="px-4 py-3 text-slate-400">Email placeholder</td>
-            <td class="px-4 py-3 text-slate-400">Location placeholder</td>
-            <td class="px-4 py-3 flex gap-2">
-              <button
-                class="px-3 py-1 rounded bg-amber-500/90 hover:bg-amber-500 text-xs font-medium text-black"
-              >
-                Edit
-              </button>
-              <button class="px-3 py-1 rounded bg-red-600/90 hover:bg-red-600 text-xs font-medium">
-                Delete
-              </button>
-            </td>
-          </tr>
+          @for (user of this.users(); track user._id) {
+            <tr class="hover:bg-slate-900/50 transition">
+              <td class="px-4 py-3 text-slate-400">{{ user._id }}</td>
+              <td class="px-4 py-3">{{ user.name.split(' ')[0] }}</td>
+              <td class="px-4 py-3">{{ user.name.split(' ').slice(-1)[0] }}</td>
+              <td class="px-4 py-3 text-slate-400">{{ user.email }}</td>
+              <td class="px-4 py-3 text-slate-400">{{ user.location }}</td>
+              <td class="px-4 py-3 flex gap-2">
+                <button
+                  class="px-3 py-1 rounded bg-amber-500/90 hover:bg-amber-500 text-xs font-medium text-black"
+                >
+                  Edit
+                </button>
+                <button
+                  class="px-3 py-1 rounded bg-red-600/90 hover:bg-red-600 text-xs font-medium"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
