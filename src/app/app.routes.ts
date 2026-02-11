@@ -3,6 +3,7 @@ import { Home } from './components/home/home';
 import { Calendar } from './components/calendar/calendar';
 import { Charts } from './components/charts/charts';
 import { Map } from './components/map/map';
+import { Users } from './components/users/users';
 
 export const routes: Routes = [
   {
@@ -25,5 +26,9 @@ export const routes: Routes = [
   {
     path: 'map',
     component: Map,
+  },
+  {
+    path: 'users',
+    component: Users,
   },
 ];

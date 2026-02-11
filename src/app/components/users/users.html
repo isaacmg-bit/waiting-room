@@ -1,1 +1,64 @@
-<p>users works!</p>
+<div class="min-h-screen bg-slate-950 text-slate-100">
+  <div class="max-w-7xl mx-auto px-6 py-8">
+    <h1 class="text-3xl font-bold mb-2">Users</h1>
+    <p class="text-slate-400">User CRUD</p>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 mb-4 flex justify-between items-center">
+    <button
+      class="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500 transition text-sm font-medium"
+    >
+      Add User
+    </button>
+
+    <a
+      routerLink="/home"
+      class="px-4 py-2 rounded-md bg-orange-500 hover:bg-orange-400 transition text-sm font-medium"
+    >
+      Home
+    </a>
+
+    <button
+      class="px-4 py-2 rounded-md bg-slate-800 hover:bg-slate-700 transition text-sm text-slate-300"
+    >
+      Download CSV
+    </button>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 pb-12">
+    <div class="overflow-x-auto rounded-lg border border-slate-800">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-900 text-slate-400">
+          <tr>
+            <th class="px-4 py-3 text-left">ID</th>
+            <th class="px-4 py-3 text-left">First</th>
+            <th class="px-4 py-3 text-left">Last</th>
+            <th class="px-4 py-3 text-left">Email</th>
+            <th class="px-4 py-3 text-left">Location</th>
+            <th class="px-4 py-3 text-left">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-slate-800">
+          <tr class="hover:bg-slate-900/50 transition">
+            <td class="px-4 py-3 text-slate-400">Id placeholder</td>
+            <td class="px-4 py-3">Name placeholder</td>
+            <td class="px-4 py-3">Last name placeholder</td>
+            <td class="px-4 py-3 text-slate-400">Email placeholder</td>
+            <td class="px-4 py-3 text-slate-400">Location placeholder</td>
+            <td class="px-4 py-3 flex gap-2">
+              <button
+                class="px-3 py-1 rounded bg-amber-500/90 hover:bg-amber-500 text-xs font-medium text-black"
+              >
+                Edit
+              </button>
+              <button class="px-3 py-1 rounded bg-red-600/90 hover:bg-red-600 text-xs font-medium">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
