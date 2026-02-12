@@ -34,7 +34,7 @@ export class Map implements AfterViewInit {
         this.locationService.addLocation({
           lat: selectedLat,
           lng: selectedLng,
-          name: 'Pepe',
+          name: 'Pepelandia',
           userId: 'Pepe',
         });
       });
@@ -42,6 +42,12 @@ export class Map implements AfterViewInit {
       setTimeout(() => {
         map.invalidateSize();
       }, 0);
+
+      for (const savedMarkers of this.locationService.LocationsSignal()) {
+        const savedLat = savedMarkers.lat;
+        const savedLng = savedMarkers.lng;
+        L.marker([savedLat, savedLng]).addTo(map);
+      }
     });
   }
 }
