@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, inject, signal } from '@angular/core';
 import { LocationService } from '../../services/location-service';
-import { UserLocation } from '../../models/UserLocation';
+import { effect } from '@angular/core';
 import * as L from 'leaflet';
 
 @Component({
@@ -17,44 +17,61 @@ export class Map implements AfterViewInit {
   userIdInput = signal<string>('');
   nameInput = signal<string>('');
 
-  ngAfterViewInit() {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const iconDefault = L.icon({
-        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-      });
+  private map: L.Map | null = null;
+  private savedMarkersLayer = L.layerGroup();
 
-      L.Marker.prototype.options.icon = iconDefault;
+  iconDefault = L.icon({
+    iconUrl: '/assets/icons/savedlocationicon.png',
+    shadowUrl: '/assets/icons/shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+  });
 
-      const myLat = position.coords.latitude;
-      const myLng = position.coords.longitude;
+  iconUser = L.icon({
+    iconUrl: '/assets/icons/iconuser.png',
+    shadowUrl: '/assets/icons/shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+  });
 
-      const map = L.map('map', { center: [myLat, myLng], zoom: 13 });
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-      L.marker([myLat, myLng]).addTo(map);
-      map.on('click', (selectedPosition) => {
-        this.locationModalActive.set(true);
-        const selectedLat = selectedPosition.latlng.lat;
-        const selectedLng = selectedPosition.latlng.lng;
-        this.clickCoordinates.set({ lat: selectedLat, lng: selectedLng });
-      });
+  constructor() {
+    effect(() => {
+      const locations = this.locationService.locationsSignal();
+      if (!this.map) return;
 
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 0);
-
-      for (const savedMarkers of this.locationService.LocationsSignal()) {
-        const savedLat = savedMarkers.lat;
-        const savedLng = savedMarkers.lng;
-        L.marker([savedLat, savedLng]).addTo(map);
+      this.savedMarkersLayer.clearLayers();
+      for (const savedMarker of locations) {
+        L.marker([savedMarker.lat, savedMarker.lng], { icon: this.iconDefault }).addTo(
+          this.savedMarkersLayer,
+        );
       }
     });
   }
+
+  ngAfterViewInit() {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const myLat = position.coords.latitude;
+      const myLng = position.coords.longitude;
+
+      this.map = L.map('map', { center: [myLat, myLng], zoom: 13 });
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+      L.marker([myLat, myLng], { icon: this.iconUser }).addTo(this.map);
+      this.savedMarkersLayer.addTo(this.map);
+
+      this.map.on('click', (selectedPosition) => {
+        this.locationModalActive.set(true);
+        this.clickCoordinates.set({
+          lat: selectedPosition.latlng.lat,
+          lng: selectedPosition.latlng.lng,
+        });
+      });
+
+      setTimeout(() => this.map!.invalidateSize(), 0);
+    });
+  }
+
   saveLocation() {
     const coords = this.clickCoordinates();
-
     if (!coords) return;
 
     this.locationService.addLocation({
@@ -65,7 +82,6 @@ export class Map implements AfterViewInit {
     });
 
     this.closeModal();
-
     this.userIdInput.set('');
     this.nameInput.set('');
   }

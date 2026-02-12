@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 export class LocationService {
   private readonly api = inject(ApiService);
 
-  LocationsSignal = signal<UserLocation[]>([]);
+  locationsSignal = signal<UserLocation[]>([]);
   loadingSignal = signal<boolean>(false);
 
   constructor() {
@@ -20,7 +20,7 @@ export class LocationService {
     this.loadingSignal.set(true);
     this.api.get<UserLocation[]>(this.getLocationsUrl()).subscribe({
       next: (Locations) => {
-        this.LocationsSignal.set(Locations);
+        this.locationsSignal.set(Locations);
         this.loadingSignal.set(false);
       },
       error: (err) => {
@@ -33,7 +33,7 @@ export class LocationService {
   addLocation(Location: UserLocation) {
     this.api.post<UserLocation>(this.getLocationsUrl(), Location).subscribe({
       next: (createdLocation) => {
-        this.LocationsSignal.update((Locations) => [...Locations, createdLocation]);
+        this.locationsSignal.update((Locations) => [...Locations, createdLocation]);
       },
       error: (err) => console.error('Error adding Location:', err),
     });
@@ -43,7 +43,7 @@ export class LocationService {
     const url = `${this.getLocationsUrl()}${userId}`;
     this.api.delete<UserLocation>(url).subscribe({
       next: () => {
-        this.LocationsSignal.update((Locations) => Locations.filter((u) => u.userId !== userId));
+        this.locationsSignal.update((Locations) => Locations.filter((u) => u.userId !== userId));
       },
       error: (err) => console.error('Error deleting Location:', err),
     });
@@ -53,7 +53,7 @@ export class LocationService {
     const url = `${this.getLocationsUrl()}${userId}`;
     this.api.patch<UserLocation>(url, body).subscribe({
       next: (updatedLocation) => {
-        this.LocationsSignal.update((Locations) =>
+        this.locationsSignal.update((Locations) =>
           Locations.map((u) => (u.userId === userId ? updatedLocation : u)),
         );
       },
