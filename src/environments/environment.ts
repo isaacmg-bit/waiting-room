@@ -3,4 +3,5 @@ export const environment = {
   apiToken: '',
   apiUrl: 'http://localhost:3000',
   apiUserUrl: '/users/',
+  apiLocationUrl: '/map/',
 };
