@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Location } from '../models/Location';
+import { UserLocation } from '../models/UserLocation';
 import { ApiService } from './apiservice';
 import { environment } from '../../environments/environment';
 
@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 export class LocationService {
   private readonly api = inject(ApiService);
 
-  LocationsSignal = signal<Location[]>([]);
+  LocationsSignal = signal<UserLocation[]>([]);
   loadingSignal = signal<boolean>(false);
 
   constructor() {
@@ -18,7 +18,7 @@ export class LocationService {
 
   loadLocations() {
     this.loadingSignal.set(true);
-    this.api.get<Location[]>(this.getLocationsUrl()).subscribe({
+    this.api.get<UserLocation[]>(this.getLocationsUrl()).subscribe({
       next: (Locations) => {
         this.LocationsSignal.set(Locations);
         this.loadingSignal.set(false);
@@ -30,8 +30,8 @@ export class LocationService {
     });
   }
 
-  addLocation(Location: Location) {
-    this.api.post<Location>(this.getLocationsUrl(), Location).subscribe({
+  addLocation(Location: UserLocation) {
+    this.api.post<UserLocation>(this.getLocationsUrl(), Location).subscribe({
       next: (createdLocation) => {
         this.LocationsSignal.update((Locations) => [...Locations, createdLocation]);
       },
@@ -41,7 +41,7 @@ export class LocationService {
 
   deleteLocation(userId: string) {
     const url = `${this.getLocationsUrl()}${userId}`;
-    this.api.delete<Location>(url).subscribe({
+    this.api.delete<UserLocation>(url).subscribe({
       next: () => {
         this.LocationsSignal.update((Locations) => Locations.filter((u) => u.userId !== userId));
       },
@@ -49,9 +49,9 @@ export class LocationService {
     });
   }
 
-  editLocation(userId: string, body: Partial<Location>) {
+  editLocation(userId: string, body: Partial<UserLocation>) {
     const url = `${this.getLocationsUrl()}${userId}`;
-    this.api.patch<Location>(url, body).subscribe({
+    this.api.patch<UserLocation>(url, body).subscribe({
       next: (updatedLocation) => {
         this.LocationsSignal.update((Locations) =>
           Locations.map((u) => (u.userId === userId ? updatedLocation : u)),

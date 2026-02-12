@@ -1,5 +1,6 @@
-import { Component, AfterViewInit, inject } from '@angular/core';
+import { Component, AfterViewInit, inject, signal } from '@angular/core';
 import { LocationService } from '../../services/location-service';
+import { UserLocation } from '../../models/UserLocation';
 import * as L from 'leaflet';
 
 @Component({
@@ -10,6 +11,11 @@ import * as L from 'leaflet';
 })
 export class Map implements AfterViewInit {
   locationService = inject(LocationService);
+
+  locationModalActive = signal<boolean>(false);
+  clickCoordinates = signal<{ lat: number; lng: number } | null>(null);
+  userIdInput = signal<string>('');
+  nameInput = signal<string>('');
 
   ngAfterViewInit() {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -29,14 +35,10 @@ export class Map implements AfterViewInit {
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
       L.marker([myLat, myLng]).addTo(map);
       map.on('click', (selectedPosition) => {
+        this.locationModalActive.set(true);
         const selectedLat = selectedPosition.latlng.lat;
         const selectedLng = selectedPosition.latlng.lng;
-        this.locationService.addLocation({
-          lat: selectedLat,
-          lng: selectedLng,
-          name: 'Pepelandia',
-          userId: 'Pepe',
-        });
+        this.clickCoordinates.set({ lat: selectedLat, lng: selectedLng });
       });
 
       setTimeout(() => {
@@ -49,5 +51,26 @@ export class Map implements AfterViewInit {
         L.marker([savedLat, savedLng]).addTo(map);
       }
     });
+  }
+  saveLocation() {
+    const coords = this.clickCoordinates();
+
+    if (!coords) return;
+
+    this.locationService.addLocation({
+      lat: coords.lat,
+      lng: coords.lng,
+      name: this.nameInput(),
+      userId: this.userIdInput(),
+    });
+
+    this.closeModal();
+
+    this.userIdInput.set('');
+    this.nameInput.set('');
+  }
+
+  closeModal() {
+    this.locationModalActive.set(false);
   }
 }

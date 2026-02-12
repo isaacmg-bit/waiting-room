@@ -4,10 +4,58 @@
   </div>
 
   <div class="max-w-7xl mx-auto px-6 pb-12">
-    <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-lg overflow-hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-lg">
       <div class="p-6">
         <div id="map" class="w-full h-125 rounded-lg border border-slate-800"></div>
       </div>
     </div>
+
+    @if (locationModalActive()) {
+      <div
+        class="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-6 mt-6 mx-auto"
+      >
+        <h2 class="text-lg font-semibold mb-4">Add Location</h2>
+
+        <form class="flex flex-col gap-4">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1"> User ID </label>
+            <input
+              type="text"
+              placeholder="Enter user ID"
+              (input)="userIdInput.set($event.target.value)"
+              class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-400 mb-1"> Name </label>
+            <input
+              type="text"
+              placeholder="Enter name"
+              (input)="nameInput.set($event.target.value)"
+              class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            />
+          </div>
+
+          <div class="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              class="px-4 py-2 text-xs rounded-md bg-slate-800 hover:bg-slate-700 transition"
+              (click)="closeModal()"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              class="px-4 py-2 text-xs rounded-md bg-emerald-600 hover:bg-emerald-500 transition font-medium"
+              (click)="saveLocation()"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    }
   </div>
 </div>
