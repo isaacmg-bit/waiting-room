@@ -1,4 +1,5 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, inject } from '@angular/core';
+import { LocationService } from '../../services/location-service';
 import * as L from 'leaflet';
 
 @Component({
@@ -8,6 +9,8 @@ import * as L from 'leaflet';
   styleUrl: './map.css',
 })
 export class Map implements AfterViewInit {
+  locationService = inject(LocationService);
+
   ngAfterViewInit() {
     navigator.geolocation.getCurrentPosition((position) => {
       const iconDefault = L.icon({
@@ -25,6 +28,17 @@ export class Map implements AfterViewInit {
       const map = L.map('map', { center: [myLat, myLng], zoom: 13 });
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
       L.marker([myLat, myLng]).addTo(map);
+      map.on('click', (selectedPosition) => {
+        const selectedLat = selectedPosition.latlng.lat;
+        const selectedLng = selectedPosition.latlng.lng;
+        this.locationService.addLocation({
+          lat: selectedLat,
+          lng: selectedLng,
+          name: 'Pepe',
+          userId: 'Pepe',
+        });
+      });
+
       setTimeout(() => {
         map.invalidateSize();
       }, 0);
