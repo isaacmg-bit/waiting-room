@@ -4,4 +4,5 @@ export const environment = {
   apiUrl: 'http://localhost:3000',
   apiUserUrl: '/users/',
   apiLocationUrl: '/locations/',
+  apiEventUrl: '/events/',
 };

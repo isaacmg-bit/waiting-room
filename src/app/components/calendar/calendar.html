@@ -6,7 +6,7 @@
   <div class="max-w-5xl mx-auto px-6 pb-12">
     <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-lg">
       <div class="p-6">
-        <full-calendar [options]="calendarOptions"></full-calendar>
+        <full-calendar #calendar [options]="calendarOptions"></full-calendar>
       </div>
     </div>
 
@@ -59,6 +59,70 @@
                 (click)="saveEvent()"
               >
                 Save
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+    @if (editCalendarModalActive()) {
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        <div class="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-6">
+          <h2 class="text-lg font-semibold mb-4">Edit Event</h2>
+
+          <form class="flex flex-col gap-4">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1"> Event name </label>
+              <input
+                type="text"
+                placeholder="Your mom's birthday"
+                [value]="eventTitle()"
+                (input)="eventTitle.set($any($event.target).value)"
+                class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+              />
+            </div>
+
+            <label for="color-select" class="block text-xs text-slate-400 mb-1">Event color</label>
+
+            <select
+              name="colors"
+              id="color-select"
+              [value]="eventColor()"
+              (change)="eventColor.set($any($event.target).value)"
+              class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            >
+              <option value="">--Please choose an option--</option>
+              <option value="red">Red</option>
+              <option value="blue">Blue</option>
+              <option value="green">Green</option>
+              <option value="yellow">Yellow</option>
+              <option value="cyan">Cyan</option>
+              <option value="pink">Pink</option>
+              <option value="purple">Purple</option>
+            </select>
+
+            <div class="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                class="px-4 py-2 text-xs rounded-md bg-slate-800 hover:bg-slate-700 transition"
+                (click)="closeEditModal()"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                class="px-4 py-2 text-xs rounded-md bg-emerald-600 hover:bg-emerald-500 transition font-medium"
+                (click)="editEvent()"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                class="px-4 py-2 text-xs rounded-md bg-emerald-600 hover:bg-emerald-500 transition font-medium"
+                (click)="deleteEvent()"
+              >
+                Delete
               </button>
             </div>
           </form>
