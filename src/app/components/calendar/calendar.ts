@@ -23,6 +23,7 @@ export class Calendar {
   eventTitle = signal<string>('');
   eventColor = signal<string>('');
   selectedEvent = signal<any | null>(null);
+
   private calendarApi: any = null;
 
   calendarOptions: CalendarOptions = {
@@ -65,12 +66,12 @@ export class Calendar {
   saveEvent() {
     if (!this.eventTitle() || !this.eventColor()) return;
 
-    const newEvent = {
+    const newEventBody = {
       title: this.eventTitle(),
       date: this.selectedDate(),
       color: this.eventColor(),
     };
-    this.calendarService.addEvent(newEvent);
+    this.calendarService.addEvent(newEventBody);
     this.closeModal();
   }
 
@@ -81,13 +82,13 @@ export class Calendar {
 
     const _id = event.id;
 
-    const body = {
+    const editedEventBody = {
       title: this.eventTitle(),
       date: this.selectedDate(),
       color: this.eventColor(),
     };
 
-    this.calendarService.editEvent(_id, body);
+    this.calendarService.editEvent(_id, editedEventBody);
     this.closeEditModal();
   }
 
@@ -102,6 +103,7 @@ export class Calendar {
   closeModal() {
     this.calendarModalActive.set(false);
   }
+  
   closeEditModal() {
     this.editCalendarModalActive.set(false);
   }
