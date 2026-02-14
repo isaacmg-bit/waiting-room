@@ -18,21 +18,21 @@
 
         <form class="flex flex-col gap-4">
           <div>
-            <label class="block text-xs text-slate-400 mb-1"> User ID </label>
-            <input
-              type="text"
-              placeholder="Enter user ID"
-              (input)="userIdInput.set($event.target.value)"
-              class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
-            />
-          </div>
-
-          <div>
             <label class="block text-xs text-slate-400 mb-1"> Name </label>
             <input
               type="text"
               placeholder="Enter name"
               (input)="nameInput.set($event.target.value)"
+              class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-400 mb-1"> Description </label>
+            <input
+              type="text"
+              placeholder="My mom's house..."
+              (input)="descriptionInput.set($event.target.value)"
               class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
             />
           </div>

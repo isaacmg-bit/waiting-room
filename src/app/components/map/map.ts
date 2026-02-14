@@ -14,7 +14,7 @@ export class Map implements AfterViewInit {
 
   locationModalActive = signal<boolean>(false);
   clickCoordinates = signal<{ lat: number; lng: number } | null>(null);
-  userIdInput = signal<string>('');
+  descriptionInput = signal<string>('');
   nameInput = signal<string>('');
 
   private map: L.Map | null = null;
@@ -54,6 +54,10 @@ export class Map implements AfterViewInit {
       const myLng = position.coords.longitude;
 
       this.map = L.map('map', { center: [myLat, myLng], zoom: 13 });
+      this.locationService.locationsSignal().forEach((loc) => {
+        L.marker([loc.lat, loc.lng], { icon: this.iconDefault }).addTo(this.savedMarkersLayer);
+      });
+
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
       L.marker([myLat, myLng], { icon: this.iconUser }).addTo(this.map);
       this.savedMarkersLayer.addTo(this.map);
@@ -78,11 +82,11 @@ export class Map implements AfterViewInit {
       lat: coords.lat,
       lng: coords.lng,
       name: this.nameInput(),
-      userId: this.userIdInput(),
+      description: this.descriptionInput(),
     });
 
     this.closeModal();
-    this.userIdInput.set('');
+    this.descriptionInput.set('');
     this.nameInput.set('');
   }
 
