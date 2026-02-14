@@ -1,4 +1,4 @@
-import { Component, signal, inject, ViewChild, effect } from '@angular/core';
+import { Component, signal, inject, ViewChild, effect, AfterViewInit } from '@angular/core';
 import { FullCalendarModule, FullCalendarComponent } from '@fullcalendar/angular';
 import { CalendarOptions } from '@fullcalendar/core/index.js';
 import { CalendarService } from '../../services/calendar-service';
@@ -12,7 +12,7 @@ import { Events } from 'leaflet';
   templateUrl: './calendar.html',
   styleUrl: './calendar.css',
 })
-export class Calendar {
+export class Calendar implements AfterViewInit {
   @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
 
   calendarService = inject(CalendarService);

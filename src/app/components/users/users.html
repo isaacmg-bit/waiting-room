@@ -8,14 +8,6 @@
     <div class="">
       <form (ngSubmit)="onSubmit()" class="flex gap-2 items-end">
         <input
-          [(ngModel)]="newUser._id"
-          name="_id"
-          placeholder="ID"
-          class="rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium"
-          [disabled]="isEditMode"
-          required
-        />
-        <input
           [(ngModel)]="newUser.name"
           name="name"
           placeholder="Name"
