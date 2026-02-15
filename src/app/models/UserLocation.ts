@@ -4,4 +4,5 @@ export interface UserLocation {
   lng: number;
   name: string;
   description: string;
+  category: string;
 }
