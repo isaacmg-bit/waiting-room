@@ -17,17 +17,19 @@ export class Users {
   isEditMode = false;
   editingUserId: string | null = null;
 
-  loadUserForEdit(user: User) {
+  loadUserForEdit(user: User): void {
     this.isEditMode = true;
     this.editingUserId = user._id;
     this.newUser = { ...user };
   }
 
-  cancelEdit() {
+  cancelEdit(): void {
     this.resetForm();
   }
 
-  onSubmit() {
+  onSubmit(): void {
+    if (!this.newUser.name || !this.newUser.email) return;
+
     if (this.isEditMode && this.editingUserId) {
       this.userService.editUser(this.editingUserId, this.newUser as User);
     } else {
@@ -36,13 +38,13 @@ export class Users {
     this.resetForm();
   }
 
-  onDelete(_id: string) {
-    if (confirm('¿Seguro que quieres eliminar este usuario?')) {
+  onDelete(_id: string): void {
+    if (confirm('You sure you wanna delete the user?')) {
       this.userService.deleteUser(_id);
     }
   }
 
-  private resetForm() {
+  private resetForm(): void {
     this.newUser = {};
     this.isEditMode = false;
     this.editingUserId = null;

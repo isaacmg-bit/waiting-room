@@ -16,11 +16,11 @@ export class LocationService {
     this.loadLocations();
   }
 
-  loadLocations() {
+  loadLocations(): void {
     this.loadingSignal.set(true);
     this.api.get<UserLocation[]>(this.getLocationsUrl()).subscribe({
-      next: (Locations) => {
-        this.locationsSignal.set(Locations);
+      next: (locations) => {
+        this.locationsSignal.set(locations);
         this.loadingSignal.set(false);
       },
       error: (err) => {
@@ -30,38 +30,38 @@ export class LocationService {
     });
   }
 
-  addLocation(Location: UserLocation) {
-    this.api.post<UserLocation>(this.getLocationsUrl(), Location).subscribe({
+  addLocation(location: UserLocation): void {
+    this.api.post<UserLocation>(this.getLocationsUrl(), location).subscribe({
       next: (createdLocation) => {
-        this.locationsSignal.update((Locations) => [...Locations, createdLocation]);
+        this.locationsSignal.update((locations) => [...locations, createdLocation]);
       },
       error: (err) => console.error('Error adding Location:', err),
     });
   }
 
-  deleteLocation(_id: string) {
+  deleteLocation(_id: string): void {
     const url = `${this.getLocationsUrl()}${_id}`;
     this.api.delete<UserLocation>(url).subscribe({
       next: () => {
-        this.locationsSignal.update((Locations) => Locations.filter((u) => u._id !== _id));
+        this.locationsSignal.update((locations) => locations.filter((u) => u._id !== _id));
       },
       error: (err) => console.error('Error deleting Location:', err),
     });
   }
 
-  editLocation(_id: string, body: Partial<UserLocation>) {
+  editLocation(_id: string, body: Partial<UserLocation>): void {
     const url = `${this.getLocationsUrl()}${_id}`;
     this.api.patch<UserLocation>(url, body).subscribe({
       next: (updatedLocation) => {
-        this.locationsSignal.update((Locations) =>
-          Locations.map((u) => (u._id === _id ? updatedLocation : u)),
+        this.locationsSignal.update((locations) =>
+          locations.map((u) => (u._id === _id ? updatedLocation : u)),
         );
       },
       error: (err) => console.error('Error updating Location:', err),
     });
   }
 
-  private getLocationsUrl() {
+  private getLocationsUrl(): string {
     return `${environment.apiUrl}${environment.apiLocationUrl}`;
   }
 }

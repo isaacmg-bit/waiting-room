@@ -1,4 +1,12 @@
-import { Component, ViewChild, AfterViewInit, ElementRef, inject, effect } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  AfterViewInit,
+  ElementRef,
+  inject,
+  effect,
+  signal,
+} from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { CalendarService } from '../../services/calendar-service';
 
@@ -15,6 +23,7 @@ export class Charts implements AfterViewInit {
 
   private calendarService = inject(CalendarService);
 
+  private chartsReady = signal<boolean>(false);
   private barChartInstance?: Chart<'bar'>;
   private lineChartInstance?: Chart<'line'>;
 
@@ -63,7 +72,9 @@ export class Charts implements AfterViewInit {
 
   constructor() {
     effect(() => {
-      if (!this.barChartInstance) return;
+      const events = this.calendarService.eventsSignal();
+      if (!this.chartsReady()) return;
+
       this.updateCharts();
     });
   }
@@ -71,7 +82,7 @@ export class Charts implements AfterViewInit {
   ngAfterViewInit(): void {
     this.barChartInstance = new Chart(this.barChart.nativeElement, this.chartConfigBar);
     this.lineChartInstance = new Chart(this.lineChart.nativeElement, this.chartConfigLine);
-    this.updateCharts();
+    this.chartsReady.set(true);
   }
 
   private updateCharts(): void {

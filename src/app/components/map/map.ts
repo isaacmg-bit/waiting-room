@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, inject, signal } from '@angular/core';
+import { Component, AfterViewInit, inject, signal, effect } from '@angular/core';
 import { LocationService } from '../../services/location-service';
 import * as L from 'leaflet';
 
@@ -9,8 +9,9 @@ import * as L from 'leaflet';
   styleUrl: './map.css',
 })
 export class Map implements AfterViewInit {
-  locationService = inject(LocationService);
+  private locationService = inject(LocationService);
 
+  private mapReady = signal<boolean>(false);
   private clickCoordinates = signal<{ lat: number; lng: number } | null>(null);
   locationModalActive = signal<boolean>(false);
   descriptionInput = signal<string>('');
@@ -35,7 +36,25 @@ export class Map implements AfterViewInit {
     iconAnchor: [12, 41],
   });
 
-  ngAfterViewInit() {
+  constructor() {
+    effect(() => {
+      if (!this.mapReady()) return;
+
+      const locations = this.locationService.locationsSignal();
+      const filters = this.activeFilters();
+
+      this.savedMarkersLayer.clearLayers();
+      locations
+        .filter((loc) => filters.includes(loc.category))
+        .forEach((loc) => {
+          L.marker([loc.lat, loc.lng], { icon: this.iconSavedMarker }).addTo(
+            this.savedMarkersLayer,
+          );
+        });
+    });
+  }
+
+  ngAfterViewInit(): void {
     navigator.geolocation.getCurrentPosition((position) => {
       const myLat = position.coords.latitude;
       const myLng = position.coords.longitude;
@@ -44,7 +63,8 @@ export class Map implements AfterViewInit {
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
       L.marker([myLat, myLng], { icon: this.iconUser }).addTo(this.map);
       this.savedMarkersLayer.addTo(this.map);
-      this.applyFilters();
+
+      this.mapReady.set(true);
 
       this.map.on('click', (selectedPosition) => {
         this.locationModalActive.set(true);
@@ -58,29 +78,17 @@ export class Map implements AfterViewInit {
     });
   }
 
-  applyFilters() {
-    if (!this.map) return;
-    this.savedMarkersLayer.clearLayers();
-    const filtered = this.locationService
-      .locationsSignal()
-      .filter((loc) => this.activeFilters().includes(loc.category));
-    filtered.forEach((loc) => {
-      L.marker([loc.lat, loc.lng], { icon: this.iconSavedMarker }).addTo(this.savedMarkersLayer);
-    });
-  }
-
-  toggleFilter(category: string) {
+  toggleFilter(category: string): void {
     if (this.activeFilters().includes(category)) {
       this.activeFilters.update((filters) => filters.filter((f) => f !== category));
     } else {
       this.activeFilters.update((filters) => [...filters, category]);
     }
-    this.applyFilters();
   }
 
-  saveLocation() {
+  saveLocation(): void {
     const coords = this.clickCoordinates();
-    if (!coords) return;
+    if (!coords || !this.nameInput() || !this.categoryInput()) return;
     this.locationService.addLocation({
       lat: coords.lat,
       lng: coords.lng,
@@ -92,5 +100,18 @@ export class Map implements AfterViewInit {
     this.descriptionInput.set('');
     this.nameInput.set('');
     this.categoryInput.set('');
+    this.clickCoordinates.set(null);
+  }
+
+  onNameInput(event: Event): void {
+    this.nameInput.set((event.target as HTMLInputElement).value);
+  }
+
+  onDescriptionInput(event: Event): void {
+    this.descriptionInput.set((event.target as HTMLInputElement).value);
+  }
+
+  onCategoryChange(event: Event): void {
+    this.categoryInput.set((event.target as HTMLSelectElement).value);
   }
 }

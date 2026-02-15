@@ -1,92 +1,86 @@
-<div class="min-h-screen bg-slate-950 text-slate-100">
+<main class="min-h-screen bg-slate-950 text-slate-100">
   <div class="max-w-7xl mx-auto px-6 py-8">
     <h1 class="text-3xl font-bold mb-2">Users</h1>
   </div>
 
   <div class="max-w-7xl mx-auto px-6 mb-4 flex items-end">
-    <div class="">
-      <form (ngSubmit)="onSubmit()" class="flex gap-2 items-end">
+    <form (ngSubmit)="onSubmit()" class="flex gap-2 items-end" aria-label="User form">
+      <div>
+        <label for="user-name" class="sr-only">Name</label>
         <input
+          id="user-name"
           [(ngModel)]="newUser.name"
           name="name"
           placeholder="Name"
-          class="rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium"
+          class="rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
           required
         />
+      </div>
+      <div>
+        <label for="user-email" class="sr-only">Email</label>
         <input
+          id="user-email"
           [(ngModel)]="newUser.email"
           name="email"
+          type="email"
           placeholder="Email"
-          class="rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium"
+          class="rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
           required
         />
+      </div>
+      <div>
+        <label for="user-location" class="sr-only">Location</label>
         <input
+          id="user-location"
           [(ngModel)]="newUser.location"
           name="location"
           placeholder="Location"
-          class="rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium"
+          class="rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
           required
         />
-        <button
-          type="submit"
-          class="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500 transition text-sm font-medium"
-        >
-          {{ isEditMode ? 'Edit user' : 'Add User' }}
-        </button>
-        @if (isEditMode) {
-          <button
-            type="button"
-            (click)="cancelEdit()"
-            class="px-4 py-2 rounded-md bg-slate-700 hover:bg-slate-600 transition text-sm font-medium"
-          >
-            Cancel
-          </button>
-        }
-      </form>
-    </div>
-    <div class="flex ml-auto gap-2">
-      <a
-        routerLink="/home"
-        class="px-4 py-2 rounded-md bg-orange-500 hover:bg-orange-400 transition text-sm font-medium"
-      >
-        Home
-      </a>
-
+      </div>
       <button
-        class="px-4 py-2 rounded-md bg-slate-800 hover:bg-slate-700 transition text-sm text-slate-300"
+        type="submit"
+        class="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
       >
-        Download CSV
+        {{ isEditMode ? 'Edit user' : 'Add User' }}
       </button>
-    </div>
+      @if (isEditMode) {
+        <button
+          type="button"
+          (click)="cancelEdit()"
+          class="px-4 py-2 rounded-md bg-slate-700 hover:bg-slate-600 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+        >
+          Cancel
+        </button>
+      }
+    </form>
   </div>
 
   <div class="max-w-7xl mx-auto px-6 pb-12">
     @if (userService.loadingSignal()) {
-      <div class="text-center py-12 text-slate-400">
+      <div class="text-center py-12 text-slate-400" aria-live="polite" aria-busy="true">
         <div class="animate-pulse">Loading users...</div>
       </div>
     }
 
     @if (!userService.loadingSignal() && userService.usersSignal().length === 0) {
-      <div class="text-center py-12 text-slate-400">
-        <p class="text-lg mb-2">No users found</p>
-      </div>
+      <p class="text-center py-12 text-slate-400 text-lg" aria-live="polite">No users found</p>
     }
 
     @if (!userService.loadingSignal() && userService.usersSignal().length > 0) {
       <div class="overflow-x-auto rounded-lg border border-slate-800">
-        <table class="w-full text-sm">
+        <table class="w-full text-sm" aria-label="Users table">
           <thead class="bg-slate-900 text-slate-400">
             <tr>
-              <th class="px-4 py-3 text-left">ID</th>
-              <th class="px-4 py-3 text-left">First</th>
-              <th class="px-4 py-3 text-left">Last</th>
-              <th class="px-4 py-3 text-left">Email</th>
-              <th class="px-4 py-3 text-left">Location</th>
-              <th class="px-4 py-3 text-left">Actions</th>
+              <th scope="col" class="px-4 py-3 text-left">ID</th>
+              <th scope="col" class="px-4 py-3 text-left">First</th>
+              <th scope="col" class="px-4 py-3 text-left">Last</th>
+              <th scope="col" class="px-4 py-3 text-left">Email</th>
+              <th scope="col" class="px-4 py-3 text-left">Location</th>
+              <th scope="col" class="px-4 py-3 text-left">Actions</th>
             </tr>
           </thead>
-
           <tbody class="divide-y divide-slate-800">
             @for (user of userService.usersSignal(); track user._id) {
               <tr class="hover:bg-slate-900/50 transition">
@@ -99,13 +93,15 @@
                 <td class="px-4 py-3 text-slate-400">{{ user.location }}</td>
                 <td class="px-4 py-3 flex gap-2">
                   <button
-                    class="px-3 py-1 rounded bg-amber-500/90 hover:bg-amber-500 text-xs font-medium text-black"
+                    class="px-3 py-1 rounded bg-amber-500/90 hover:bg-amber-500 text-xs font-medium text-black focus:outline-none focus:ring-2 focus:ring-amber-400"
+                    [aria-label]="'Edit user ' + user.name"
                     (click)="loadUserForEdit(user)"
                   >
                     Edit
                   </button>
                   <button
-                    class="px-3 py-1 rounded bg-red-600/90 hover:bg-red-600 text-xs font-medium"
+                    class="px-3 py-1 rounded bg-red-600/90 hover:bg-red-600 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-red-400"
+                    [aria-label]="'Delete user ' + user.name"
                     (click)="onDelete(user._id)"
                   >
                     Delete
@@ -118,4 +114,4 @@
       </div>
     }
   </div>
-</div>
+</main>

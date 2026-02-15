@@ -16,11 +16,11 @@ export class CalendarService {
     this.loadEvents();
   }
 
-  loadEvents() {
+  loadEvents(): void {
     this.loadingSignal.set(true);
     this.api.get<UserEvent[]>(this.getEventsUrl()).subscribe({
-      next: (Events) => {
-        this.eventsSignal.set(Events);
+      next: (events) => {
+        this.eventsSignal.set(events);
         this.loadingSignal.set(false);
       },
       error: (err) => {
@@ -30,36 +30,36 @@ export class CalendarService {
     });
   }
 
-  addEvent(Event: UserEvent) {
-    this.api.post<UserEvent>(this.getEventsUrl(), Event).subscribe({
+  addEvent(event: UserEvent): void {
+    this.api.post<UserEvent>(this.getEventsUrl(), event).subscribe({
       next: (createdEvent) => {
-        this.eventsSignal.update((Events) => [...Events, createdEvent]);
+        this.eventsSignal.update((events) => [...events, createdEvent]);
       },
       error: (err) => console.error('Error adding event:', err),
     });
   }
 
-  deleteEvent(_id: string) {
+  deleteEvent(_id: string): void {
     const url = `${this.getEventsUrl()}${_id}`;
     this.api.delete<UserEvent>(url).subscribe({
       next: () => {
-        this.eventsSignal.update((Events) => Events.filter((u) => u._id !== _id));
+        this.eventsSignal.update((events) => events.filter((u) => u._id !== _id));
       },
       error: (err) => console.error('Error deleting event:', err),
     });
   }
 
-  editEvent(_id: string, body: Partial<UserEvent>) {
+  editEvent(_id: string, body: Partial<UserEvent>): void {
     const url = `${this.getEventsUrl()}${_id}`;
     this.api.patch<UserEvent>(url, body).subscribe({
       next: (updatedEvent) => {
-        this.eventsSignal.update((Events) => Events.map((u) => (u._id === _id ? updatedEvent : u)));
+        this.eventsSignal.update((events) => events.map((u) => (u._id === _id ? updatedEvent : u)));
       },
       error: (err) => console.error('Error updating event:', err),
     });
   }
 
-  getEventsUrl() {
+  private getEventsUrl(): string {
     return `${environment.apiUrl}${environment.apiEventUrl}`;
   }
 }

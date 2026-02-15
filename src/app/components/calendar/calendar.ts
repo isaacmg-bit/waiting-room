@@ -4,6 +4,7 @@ import { CalendarOptions } from '@fullcalendar/core/index.js';
 import { CalendarService } from '../../services/calendar-service';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { UserEvent } from '../../models/UserEvent';
 
 @Component({
   selector: 'app-calendar',
@@ -21,9 +22,9 @@ export class Calendar implements AfterViewInit {
   selectedDate = signal<string>('');
   eventTitle = signal<string>('');
   eventColor = signal<string>('');
-  selectedEvent = signal<any | null>(null);
+  selectedEvent = signal<any>(null);
 
-  private calendarApi: any = null;
+  private calendarApi = signal<any>(null);
 
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
@@ -36,7 +37,7 @@ export class Calendar implements AfterViewInit {
   constructor() {
     effect(() => {
       const events = this.calendarService.eventsSignal();
-      const api = this.calendarApi;
+      const api = this.calendarApi();
 
       if (!api) return;
 
@@ -45,19 +46,16 @@ export class Calendar implements AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
-    this.calendarApi = this.calendarComponent.getApi();
-    this.calendarService.eventsSignal().forEach((event) => {
-      this.calendarApi!.addEvent(event);
-    });
+  ngAfterViewInit(): void {
+    this.calendarApi.set(this.calendarComponent.getApi());
   }
 
-  handleDateClick(arg: any) {
+  handleDateClick(arg: any): void {
     this.calendarModalActive.set(true);
     this.selectedDate.set(arg.dateStr);
   }
 
-  handleEventClick(arg: any) {
+  handleEventClick(arg: any): void {
     const event = arg.event;
 
     this.editCalendarModalActive.set(true);
@@ -68,24 +66,24 @@ export class Calendar implements AfterViewInit {
     this.selectedDate.set(event.startStr);
   }
 
-  saveEvent() {
-    if (!this.eventTitle() || !this.eventColor()) return;
+  saveEvent(): void {
+    if (!this.eventTitle() || !this.eventColor() || !this.selectedDate()) return;
 
     this.calendarService.addEvent(this.buildEventBody());
     this.closeModal();
   }
 
-  editEvent() {
+  editEvent(): void {
     const event = this.selectedEvent();
 
-    if (!this.eventTitle() || !this.eventColor()) return;
+    if (!this.eventTitle() || !this.eventColor() || !this.selectedDate()) return;
     if (!event) return;
 
     this.calendarService.editEvent(event.id, this.buildEventBody());
     this.closeEditModal();
   }
 
-  deleteEvent() {
+  deleteEvent(): void {
     const event = this.selectedEvent();
     if (!event) return;
 
@@ -93,17 +91,17 @@ export class Calendar implements AfterViewInit {
     this.closeEditModal();
   }
 
-  closeModal() {
+  closeModal(): void {
     this.calendarModalActive.set(false);
     this.cleanSignals();
   }
 
-  closeEditModal() {
+  closeEditModal(): void {
     this.editCalendarModalActive.set(false);
     this.cleanSignals();
   }
 
-  private buildEventBody() {
+  private buildEventBody(): UserEvent {
     return {
       title: this.eventTitle(),
       date: this.selectedDate(),
@@ -111,12 +109,14 @@ export class Calendar implements AfterViewInit {
     };
   }
 
-  private cleanSignals() {
+  private cleanSignals(): void {
     this.eventTitle.set('');
     this.eventColor.set('');
+    this.selectedDate.set('');
+    this.selectedEvent.set(null);
   }
 
-  onColorChange(event: Event) {
+  onColorChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
     this.eventColor.set(value);
   }

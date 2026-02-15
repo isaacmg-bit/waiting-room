@@ -16,7 +16,7 @@ export class UserService {
     this.loadUsers();
   }
 
-  loadUsers() {
+  loadUsers(): void {
     this.loadingSignal.set(true);
     this.api.get<User[]>(this.getUsersUrl()).subscribe({
       next: (users) => {
@@ -30,7 +30,7 @@ export class UserService {
     });
   }
 
-  addUser(user: User) {
+  addUser(user: User): void {
     this.api.post<User>(this.getUsersUrl(), user).subscribe({
       next: (createdUser) => {
         this.usersSignal.update((users) => [...users, createdUser]);
@@ -39,7 +39,7 @@ export class UserService {
     });
   }
 
-  deleteUser(_id: string) {
+  deleteUser(_id: string): void {
     const url = `${this.getUsersUrl()}${_id}`;
     this.api.delete<User>(url).subscribe({
       next: () => {
@@ -49,7 +49,7 @@ export class UserService {
     });
   }
 
-  editUser(_id: string, body: Partial<User>) {
+  editUser(_id: string, body: Partial<User>): void {
     const url = `${this.getUsersUrl()}${_id}`;
     this.api.patch<User>(url, body).subscribe({
       next: (updatedUser) => {
@@ -59,7 +59,7 @@ export class UserService {
     });
   }
 
-  private getUsersUrl() {
+  private getUsersUrl(): string {
     return `${environment.apiUrl}${environment.apiUserUrl}`;
   }
 }
