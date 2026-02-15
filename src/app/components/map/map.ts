@@ -11,8 +11,8 @@ import * as L from 'leaflet';
 export class Map implements AfterViewInit {
   locationService = inject(LocationService);
 
+  private clickCoordinates = signal<{ lat: number; lng: number } | null>(null);
   locationModalActive = signal<boolean>(false);
-  clickCoordinates = signal<{ lat: number; lng: number } | null>(null);
   descriptionInput = signal<string>('');
   nameInput = signal<string>('');
   categoryInput = signal<string>('');
@@ -21,14 +21,14 @@ export class Map implements AfterViewInit {
   private map: L.Map | null = null;
   private savedMarkersLayer = L.layerGroup();
 
-  iconDefault = L.icon({
+  private iconSavedMarker = L.icon({
     iconUrl: '/assets/icons/savedlocationicon.png',
     shadowUrl: '/assets/icons/shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
   });
 
-  iconUser = L.icon({
+  private iconUser = L.icon({
     iconUrl: '/assets/icons/iconuser.png',
     shadowUrl: '/assets/icons/shadow.png',
     iconSize: [25, 41],
@@ -65,7 +65,7 @@ export class Map implements AfterViewInit {
       .locationsSignal()
       .filter((loc) => this.activeFilters().includes(loc.category));
     filtered.forEach((loc) => {
-      L.marker([loc.lat, loc.lng], { icon: this.iconDefault }).addTo(this.savedMarkersLayer);
+      L.marker([loc.lat, loc.lng], { icon: this.iconSavedMarker }).addTo(this.savedMarkersLayer);
     });
   }
 
@@ -88,12 +88,9 @@ export class Map implements AfterViewInit {
       description: this.descriptionInput(),
       category: this.categoryInput(),
     });
-    this.closeModal();
+    this.locationModalActive.set(false);
     this.descriptionInput.set('');
     this.nameInput.set('');
-  }
-
-  closeModal() {
-    this.locationModalActive.set(false);
+    this.categoryInput.set('');
   }
 }
