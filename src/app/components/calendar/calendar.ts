@@ -47,6 +47,9 @@ export class Calendar implements AfterViewInit {
 
   ngAfterViewInit() {
     this.calendarApi = this.calendarComponent.getApi();
+    this.calendarService.eventsSignal().forEach((event) => {
+      this.calendarApi!.addEvent(event);
+    });
   }
 
   handleDateClick(arg: any) {
@@ -116,5 +119,9 @@ export class Calendar implements AfterViewInit {
   onColorChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;
     this.eventColor.set(value);
+  }
+
+  onTitleInput(event: Event): void {
+    this.eventTitle.set((event.target as HTMLInputElement).value);
   }
 }

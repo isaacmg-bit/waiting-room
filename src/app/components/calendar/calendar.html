@@ -11,48 +11,57 @@
     </div>
 
     @if (calendarModalActive()) {
-      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+      <div
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="add-event-title"
+      >
         <div class="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-6">
-          <h2 class="text-lg font-semibold mb-4">Add Event</h2>
+          <h2 id="add-event-title" class="text-lg font-semibold mb-4">Add Event</h2>
 
           <form class="flex flex-col gap-4">
             <div>
-              <label class="block text-xs text-slate-400 mb-1"> Event name </label>
+              <label for="event-name" class="block text-xs text-slate-400 mb-1">Event name</label>
               <input
+                id="event-name"
                 type="text"
                 placeholder="Balm show @ Palau St. Jordi"
-                (input)="eventTitle.set($event.target.value)"
+                (input)="eventTitle.set($any($event.target).value)"
                 class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
               />
             </div>
 
-            <label for="color-select" class="block text-xs text-slate-400 mb-1">Event color</label>
-
-            <select
-              name="colors"
-              id="color-select"
-              class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
-              (change)="onColorChange($event)"
-            >
-              <option value="">--Please choose an option--</option>
-              <option value="red">Red</option>
-              <option value="blue">Blue</option>
-              <option value="green">Green</option>
-              <option value="yellow">Yellow</option>
-              <option value="cyan">Cyan</option>
-              <option value="pink">Pink</option>
-              <option value="purple">Purple</option>
-            </select>
+            <div>
+              <label for="color-select-add" class="block text-xs text-slate-400 mb-1"
+                >Event color</label
+              >
+              <select
+                id="color-select-add"
+                name="colors"
+                class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                (change)="onColorChange($event)"
+              >
+                <option value="">--Please choose an option--</option>
+                <option value="red">Red</option>
+                <option value="blue">Blue</option>
+                <option value="green">Green</option>
+                <option value="yellow">Yellow</option>
+                <option value="cyan">Cyan</option>
+                <option value="pink">Pink</option>
+                <option value="purple">Purple</option>
+              </select>
+            </div>
 
             <div class="flex justify-end gap-2 pt-2">
               <button
                 type="button"
+                aria-label="Close dialog"
                 class="px-4 py-2 text-xs rounded-md bg-slate-800 hover:bg-slate-700 transition"
                 (click)="closeModal()"
               >
                 Cancel
               </button>
-
               <button
                 type="button"
                 class="px-4 py-2 text-xs rounded-md bg-emerald-600 hover:bg-emerald-500 transition font-medium"
@@ -65,51 +74,63 @@
         </div>
       </div>
     }
+
     @if (editCalendarModalActive()) {
-      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+      <div
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="edit-event-title"
+      >
         <div class="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-6">
-          <h2 class="text-lg font-semibold mb-4">Edit Event</h2>
+          <h2 id="edit-event-title" class="text-lg font-semibold mb-4">Edit Event</h2>
 
           <form class="flex flex-col gap-4">
             <div>
-              <label class="block text-xs text-slate-400 mb-1"> Event name </label>
+              <label for="edit-event-name" class="block text-xs text-slate-400 mb-1"
+                >Event name</label
+              >
               <input
+                id="edit-event-name"
                 type="text"
                 placeholder="Your mom's birthday"
                 [value]="eventTitle()"
-                (input)="eventTitle.set($any($event.target).value)"
+                (input)="onTitleInput($event)"
                 class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
               />
             </div>
 
-            <label for="color-select" class="block text-xs text-slate-400 mb-1">Event color</label>
-
-            <select
-              name="colors"
-              id="color-select"
-              [value]="eventColor()"
-              (change)="onColorChange($event)"
-              class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
-            >
-              <option value="">--Please choose an option--</option>
-              <option value="red">Red</option>
-              <option value="blue">Blue</option>
-              <option value="green">Green</option>
-              <option value="yellow">Yellow</option>
-              <option value="cyan">Cyan</option>
-              <option value="pink">Pink</option>
-              <option value="purple">Purple</option>
-            </select>
+            <div>
+              <label for="color-select-edit" class="block text-xs text-slate-400 mb-1"
+                >Event color</label
+              >
+              <select
+                id="color-select-edit"
+                name="colors"
+                [value]="eventColor()"
+                (change)="onColorChange($event)"
+                class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+              >
+                <option value="">--Please choose an option--</option>
+                <option value="red">Red</option>
+                <option value="blue">Blue</option>
+                <option value="green">Green</option>
+                <option value="yellow">Yellow</option>
+                <option value="cyan">Cyan</option>
+                <option value="pink">Pink</option>
+                <option value="purple">Purple</option>
+              </select>
+            </div>
 
             <div class="flex justify-end gap-2 pt-2">
               <button
                 type="button"
+                aria-label="Close dialog"
                 class="px-4 py-2 text-xs rounded-md bg-slate-800 hover:bg-slate-700 transition"
                 (click)="closeEditModal()"
               >
                 Cancel
               </button>
-
               <button
                 type="button"
                 class="px-4 py-2 text-xs rounded-md bg-emerald-600 hover:bg-emerald-500 transition font-medium"
@@ -119,7 +140,7 @@
               </button>
               <button
                 type="button"
-                class="px-4 py-2 text-xs rounded-md bg-emerald-600 hover:bg-emerald-500 transition font-medium"
+                class="px-4 py-2 text-xs rounded-md bg-red-600 hover:bg-red-500 transition font-medium"
                 (click)="deleteEvent()"
               >
                 Delete

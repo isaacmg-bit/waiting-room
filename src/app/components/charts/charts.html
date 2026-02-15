@@ -7,23 +7,35 @@
     <div class="grid gap-6 md:grid-cols-2">
       <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-lg overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center">
-          <h2 class="text-sm font-semibold tracking-wide text-slate-300">Bar Chart</h2>
-          <span class="text-xs text-slate-500"> Overview </span>
+          <h2 id="bar-chart-title" class="text-sm font-semibold tracking-wide text-slate-300">
+            Bar Chart
+          </h2>
+          <span class="text-xs text-slate-500">Overview</span>
         </div>
-
         <div class="p-6">
-          <canvas #barChart class="w-full h-100"></canvas>
+          <canvas
+            #barChart
+            role="img"
+            aria-labelledby="bar-chart-title"
+            class="w-full h-100"
+          ></canvas>
         </div>
       </div>
 
       <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-lg overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center">
-          <h2 class="text-sm font-semibold tracking-wide text-slate-300">Line Chart</h2>
-          <span class="text-xs text-slate-500"> Trends </span>
+          <h2 id="line-chart-title" class="text-sm font-semibold tracking-wide text-slate-300">
+            Line Chart
+          </h2>
+          <span class="text-xs text-slate-500">Trends</span>
         </div>
-
         <div class="p-6">
-          <canvas #lineChart class="w-full h-100"></canvas>
+          <canvas
+            #lineChart
+            role="img"
+            aria-labelledby="line-chart-title"
+            class="w-full h-100"
+          ></canvas>
         </div>
       </div>
     </div>
