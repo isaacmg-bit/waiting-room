@@ -20,7 +20,7 @@
               <label class="block text-xs text-slate-400 mb-1"> Event name </label>
               <input
                 type="text"
-                placeholder="Your mom's birthday"
+                placeholder="Balm show @ Palau St. Jordi"
                 (input)="eventTitle.set($event.target.value)"
                 class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
               />
@@ -32,7 +32,7 @@
               name="colors"
               id="color-select"
               class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
-              (change)="eventColor.set($any($event.target).value)"
+              (change)="onColorChange($event)"
             >
               <option value="">--Please choose an option--</option>
               <option value="red">Red</option>
@@ -88,7 +88,7 @@
               name="colors"
               id="color-select"
               [value]="eventColor()"
-              (change)="eventColor.set($any($event.target).value)"
+              (change)="onColorChange($event)"
               class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
             >
               <option value="">--Please choose an option--</option>
