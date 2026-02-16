@@ -49,12 +49,17 @@ export class LocationService {
     });
   }
 
-  editLocation(_id: string, body: Partial<UserLocation>): void {
-    const url = `${this.getLocationsUrl()}${_id}`;
+  editLocation(body: Partial<UserLocation>): void {
+    if (!body._id) {
+      console.error('No _id provided for edit');
+      return;
+    }
+
+    const url = `${this.getLocationsUrl()}${body._id}`;
     this.api.patch<UserLocation>(url, body).subscribe({
       next: (updatedLocation) => {
         this.locationsSignal.update((locations) =>
-          locations.map((u) => (u._id === _id ? updatedLocation : u)),
+          locations.map((loc) => (loc._id === updatedLocation._id ? updatedLocation : loc)),
         );
       },
       error: (err) => console.error('Error updating Location:', err),

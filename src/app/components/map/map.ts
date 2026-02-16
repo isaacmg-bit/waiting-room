@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, inject, signal, effect } from '@angular/core';
 import { LocationService } from '../../services/location-service';
 import * as L from 'leaflet';
+import { UserLocation } from '../../models/UserLocation';
 
 @Component({
   selector: 'app-map',
@@ -14,9 +15,11 @@ export class Map implements AfterViewInit {
   private mapReady = signal<boolean>(false);
   private clickCoordinates = signal<{ lat: number; lng: number } | null>(null);
   locationModalActive = signal<boolean>(false);
+  editLocationModalActive = signal<boolean>(false);
   descriptionInput = signal<string>('');
   nameInput = signal<string>('');
   categoryInput = signal<string>('');
+  selectedLocation = signal<UserLocation | null>(null);
   activeFilters = signal<string[]>(['show', 'rehearsalspace']);
 
   private map: L.Map | null = null;
@@ -47,9 +50,41 @@ export class Map implements AfterViewInit {
       locations
         .filter((loc) => filters.includes(loc.category))
         .forEach((loc) => {
-          L.marker([loc.lat, loc.lng], { icon: this.iconSavedMarker }).addTo(
-            this.savedMarkersLayer,
+          const marker = L.marker([loc.lat, loc.lng], {
+            icon: this.iconSavedMarker,
+          });
+
+          marker.bindTooltip(
+            `
+      <div style="font-size: 12px">
+        <strong>${loc.name}</strong><br/>
+        ${loc.description ?? ''}<br/>
+        ${loc.category}
+      </div>
+    `,
+            {
+              direction: 'top',
+              offset: [0, -10],
+              opacity: 0.9,
+            },
           );
+          marker.on('click', (e) => {
+            L.DomEvent.stopPropagation(e);
+
+            this.selectedLocation.set(loc);
+            this.editLocationModalActive.set(true);
+
+            this.nameInput.set(loc.name);
+            this.descriptionInput.set(loc.description);
+            this.categoryInput.set(loc.category);
+
+            this.clickCoordinates.set({
+              lat: loc.lat,
+              lng: loc.lng,
+            });
+          });
+
+          marker.addTo(this.savedMarkersLayer);
         });
     });
   }
@@ -66,11 +101,13 @@ export class Map implements AfterViewInit {
 
       this.mapReady.set(true);
 
-      this.map.on('click', (selectedPosition) => {
+      this.map.on('click', (selectedCoords) => {
+        this.selectedLocation.set(null);
+
         this.locationModalActive.set(true);
         this.clickCoordinates.set({
-          lat: selectedPosition.latlng.lat,
-          lng: selectedPosition.latlng.lng,
+          lat: selectedCoords.latlng.lat,
+          lng: selectedCoords.latlng.lng,
         });
       });
 
@@ -96,11 +133,25 @@ export class Map implements AfterViewInit {
       description: this.descriptionInput(),
       category: this.categoryInput(),
     });
-    this.locationModalActive.set(false);
-    this.descriptionInput.set('');
-    this.nameInput.set('');
-    this.categoryInput.set('');
-    this.clickCoordinates.set(null);
+    this.clearForm();
+  }
+
+  editSavedLocation(): void {
+    const location = this.selectedLocation();
+    if (!location) return;
+
+    const coords = this.clickCoordinates();
+
+    this.locationService.editLocation({
+      _id: location._id,
+      lat: coords?.lat ?? location.lat,
+      lng: coords?.lng ?? location.lng,
+      name: this.nameInput(),
+      description: this.descriptionInput(),
+      category: this.categoryInput(),
+    });
+
+    this.clearForm();
   }
 
   onNameInput(event: Event): void {
@@ -113,5 +164,15 @@ export class Map implements AfterViewInit {
 
   onCategoryChange(event: Event): void {
     this.categoryInput.set((event.target as HTMLSelectElement).value);
+  }
+
+  private clearForm(): void {
+    this.locationModalActive.set(false);
+    this.editLocationModalActive.set(false);
+    this.descriptionInput.set('');
+    this.nameInput.set('');
+    this.categoryInput.set('');
+    this.clickCoordinates.set(null);
+    this.selectedLocation.set(null);
   }
 }
