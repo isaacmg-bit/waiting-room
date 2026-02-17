@@ -4,56 +4,72 @@
   </div>
 
   <div class="max-w-7xl mx-auto px-6 mb-4 flex items-end">
-    <form (ngSubmit)="onSubmit()" class="flex gap-2 items-end" aria-label="User form">
-      <div>
-        <label for="user-name" class="sr-only">Name</label>
-        <input
-          id="user-name"
-          [(ngModel)]="newUser.name"
-          name="name"
-          placeholder="Name"
-          class="rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          required
-        />
+    <form
+      [formGroup]="userForm"
+      (ngSubmit)="onSubmit()"
+      class="flex flex-col gap-4 w-full max-w-2xl"
+      aria-label="User form"
+    >
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label for="user-name" class="block text-sm font-medium mb-2">Name</label>
+          <input
+            id="user-name"
+            formControlName="name"
+            placeholder="Full name"
+            class="w-full rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          />
+          @if (userForm.get('name')?.touched && nameError) {
+            <p class="text-red-400 text-xs mt-1">{{ nameError }}</p>
+          }
+        </div>
+
+        <div>
+          <label for="user-email" class="block text-sm font-medium mb-2">Email</label>
+          <input
+            id="user-email"
+            formControlName="email"
+            type="email"
+            placeholder="user@example.com"
+            class="w-full rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          />
+          @if (userForm.get('email')?.touched && emailError) {
+            <p class="text-red-400 text-xs mt-1">{{ emailError }}</p>
+          }
+        </div>
+
+        <div>
+          <label for="user-location" class="block text-sm font-medium mb-2">Location</label>
+          <input
+            id="user-location"
+            formControlName="location"
+            placeholder="City, Country"
+            class="w-full rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          />
+          @if (userForm.get('location')?.touched && locationError) {
+            <p class="text-red-400 text-xs mt-1">{{ locationError }}</p>
+          }
+        </div>
       </div>
-      <div>
-        <label for="user-email" class="sr-only">Email</label>
-        <input
-          id="user-email"
-          [(ngModel)]="newUser.email"
-          name="email"
-          type="email"
-          placeholder="Email"
-          class="rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          required
-        />
-      </div>
-      <div>
-        <label for="user-location" class="sr-only">Location</label>
-        <input
-          id="user-location"
-          [(ngModel)]="newUser.location"
-          name="location"
-          placeholder="Location"
-          class="rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          required
-        />
-      </div>
-      <button
-        type="submit"
-        class="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
-      >
-        {{ isEditMode ? 'Edit user' : 'Add User' }}
-      </button>
-      @if (isEditMode) {
+
+      <div class="flex gap-2">
         <button
-          type="button"
-          (click)="cancelEdit()"
-          class="px-4 py-2 rounded-md bg-slate-700 hover:bg-slate-600 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          type="submit"
+          [disabled]="userForm.invalid"
+          class="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-600/50 disabled:cursor-not-allowed transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
         >
-          Cancel
+          {{ isEditMode ? 'Edit user' : 'Add User' }}
         </button>
-      }
+        @if (isEditMode) {
+          <button
+            type="button"
+            (click)="cancelEdit()"
+            class="px-4 py-2 rounded-md bg-slate-700 hover:bg-slate-600 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          >
+            Cancel
+          </button>
+        }
+      </div>
     </form>
   </div>
 

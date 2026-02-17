@@ -1,26 +1,44 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user-service';
 
 @Component({
   selector: 'app-users',
-  imports: [RouterModule, FormsModule],
+  standalone: true,
+  imports: [RouterModule, ReactiveFormsModule],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
-export class Users {
+export class Users implements OnInit {
   readonly userService = inject(UserService);
+  private readonly fb = inject(FormBuilder);
 
-  newUser: Partial<User> = {};
+  userForm!: FormGroup;
   isEditMode = false;
   editingUserId: string | null = null;
+
+  ngOnInit(): void {
+    this.initializeForm();
+  }
+
+  private initializeForm(): void {
+    this.userForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      location: ['', [Validators.required, Validators.minLength(2)]],
+    });
+  }
 
   loadUserForEdit(user: User): void {
     this.isEditMode = true;
     this.editingUserId = user._id;
-    this.newUser = { ...user };
+    this.userForm.patchValue({
+      name: user.name,
+      email: user.email,
+      location: user.location,
+    });
   }
 
   cancelEdit(): void {
@@ -28,13 +46,16 @@ export class Users {
   }
 
   onSubmit(): void {
-    if (!this.newUser.name || !this.newUser.email) return;
+    if (this.userForm.invalid) return;
+
+    const userData = this.userForm.getRawValue() as User;
 
     if (this.isEditMode && this.editingUserId) {
-      this.userService.editUser(this.editingUserId, this.newUser as User);
+      this.userService.editUser(this.editingUserId, userData);
     } else {
-      this.userService.addUser(this.newUser as User);
+      this.userService.addUser(userData);
     }
+
     this.resetForm();
   }
 
@@ -45,8 +66,29 @@ export class Users {
   }
 
   private resetForm(): void {
-    this.newUser = {};
+    this.userForm.reset();
     this.isEditMode = false;
     this.editingUserId = null;
+  }
+
+  get nameError(): string {
+    const control = this.userForm.get('name');
+    if (control?.hasError('required')) return 'Name is required';
+    if (control?.hasError('minlength')) return 'Name must be at least 2 characters';
+    return '';
+  }
+
+  get emailError(): string {
+    const control = this.userForm.get('email');
+    if (control?.hasError('required')) return 'Email is required';
+    if (control?.hasError('email')) return 'Invalid email format';
+    return '';
+  }
+
+  get locationError(): string {
+    const control = this.userForm.get('location');
+    if (control?.hasError('required')) return 'Location is required';
+    if (control?.hasError('minlength')) return 'Location must be at least 2 characters';
+    return '';
   }
 }

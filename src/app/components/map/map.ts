@@ -25,6 +25,11 @@ export class Map implements AfterViewInit {
   private map: L.Map | null = null;
   private savedMarkersLayer = L.layerGroup();
 
+  categoryLabels: Record<string, string> = {
+    rehearsalspace: 'Rehearsal Space',
+    show: 'Show',
+  };
+
   private iconSavedMarker = L.icon({
     iconUrl: '/assets/icons/savedlocationicon.png',
     shadowUrl: '/assets/icons/shadow.png',
@@ -59,7 +64,7 @@ export class Map implements AfterViewInit {
       <div style="font-size: 12px">
         <strong>${loc.name}</strong><br/>
         ${loc.description ?? ''}<br/>
-        ${loc.category}
+     ${this.categoryLabels[loc.category] || loc.category}
       </div>
     `,
             {
