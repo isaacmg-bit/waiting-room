@@ -58,7 +58,7 @@
                 type="button"
                 aria-label="Close dialog"
                 class="px-4 py-2 text-xs rounded-md bg-slate-800 hover:bg-slate-700 transition"
-                (click)="closeModal()"
+                (click)="this.calendarModalActive.set(false)"
               >
                 Cancel
               </button>
@@ -127,7 +127,7 @@
                 type="button"
                 aria-label="Close dialog"
                 class="px-4 py-2 text-xs rounded-md bg-slate-800 hover:bg-slate-700 transition"
-                (click)="closeEditModal()"
+                (click)="this.editCalendarModalActive.set(false)"
               >
                 Cancel
               </button>
