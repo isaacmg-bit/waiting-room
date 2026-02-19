@@ -70,7 +70,7 @@ export class Calendar implements AfterViewInit {
     if (!this.eventTitle() || !this.eventColor() || !this.selectedDate()) return;
 
     this.calendarService.addEvent(this.buildEventBody());
-    this.closeModal();
+    this.clearForm();
   }
 
   editEvent(): void {
@@ -80,7 +80,7 @@ export class Calendar implements AfterViewInit {
     if (!event) return;
 
     this.calendarService.editEvent(event.id, this.buildEventBody());
-    this.closeEditModal();
+    this.clearForm();
   }
 
   deleteEvent(): void {
@@ -88,17 +88,7 @@ export class Calendar implements AfterViewInit {
     if (!event) return;
 
     this.calendarService.deleteEvent(event.id);
-    this.closeEditModal();
-  }
-
-  closeModal(): void {
-    this.calendarModalActive.set(false);
-    this.cleanSignals();
-  }
-
-  closeEditModal(): void {
-    this.editCalendarModalActive.set(false);
-    this.cleanSignals();
+    this.clearForm();
   }
 
   private buildEventBody(): UserEvent {
@@ -109,13 +99,6 @@ export class Calendar implements AfterViewInit {
     };
   }
 
-  private cleanSignals(): void {
-    this.eventTitle.set('');
-    this.eventColor.set('');
-    this.selectedDate.set('');
-    this.selectedEvent.set(null);
-  }
-
   onColorChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
     this.eventColor.set(value);
@@ -123,5 +106,14 @@ export class Calendar implements AfterViewInit {
 
   onTitleInput(event: Event): void {
     this.eventTitle.set((event.target as HTMLInputElement).value);
+  }
+
+  private clearForm(): void {
+    this.calendarModalActive.set(false);
+    this.editCalendarModalActive.set(false);
+    this.eventTitle.set('');
+    this.eventColor.set('');
+    this.selectedDate.set('');
+    this.selectedEvent.set(null);
   }
 }

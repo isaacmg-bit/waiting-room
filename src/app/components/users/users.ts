@@ -60,7 +60,7 @@ export class Users implements OnInit {
   }
 
   onDelete(_id: string): void {
-    if (confirm('You sure you wanna delete the user?')) {
+    if (confirm('Are you sure you wanna delete the user?')) {
       this.userService.deleteUser(_id);
     }
   }

@@ -159,6 +159,14 @@ export class Map implements AfterViewInit {
     this.clearForm();
   }
 
+  deleteLocation(): void {
+    const event = this.selectedLocation();
+    if (!event) return;
+
+    this.locationService.deleteLocation(event._id!);
+    this.clearForm();
+  }
+
   onNameInput(event: Event): void {
     this.nameInput.set((event.target as HTMLInputElement).value);
   }
