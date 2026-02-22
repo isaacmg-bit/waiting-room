@@ -1,4 +1,4 @@
-# Waiting Room - Musicians Platform Base
+# Waiting Room - Base
 
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 ![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
@@ -12,7 +12,7 @@
 ![FullCalendar](https://img.shields.io/badge/FullCalendar-6-4285F4)
 ![License: CC BY-NC](https://img.shields.io/badge/license-CC--BY--NC-orange)
 
-**Base platform for musicians built with Angular and NestJS, featuring event management, interactive maps, and user administration — foundation for a musicians' marketplace.**
+**Base platform for my musician marketplace built with Angular and NestJS, featuring event management, interactive maps, and user administration**
 
 ---
 
