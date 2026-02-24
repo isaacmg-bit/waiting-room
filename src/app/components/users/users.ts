@@ -33,7 +33,7 @@ export class Users implements OnInit {
 
   loadUserForEdit(user: User): void {
     this.isEditMode = true;
-    this.editingUserId = user._id;
+    this.editingUserId = user.id;
     this.userForm.patchValue({
       name: user.name,
       email: user.email,
@@ -59,9 +59,9 @@ export class Users implements OnInit {
     this.resetForm();
   }
 
-  onDelete(_id: string): void {
+  onDelete(id: string): void {
     if (confirm('Are you sure you wanna delete the user?')) {
-      this.userService.deleteUser(_id);
+      this.userService.deleteUser(id);
     }
   }
 

@@ -39,21 +39,21 @@ export class UserService {
     });
   }
 
-  deleteUser(_id: string): void {
-    const url = `${this.getUsersUrl()}${_id}`;
+  deleteUser(id: string): void {
+    const url = `${this.getUsersUrl()}${id}`;
     this.api.delete<User>(url).subscribe({
       next: () => {
-        this.usersSignal.update((users) => users.filter((u) => u._id !== _id));
+        this.usersSignal.update((users) => users.filter((u) => u.id !== id));
       },
       error: (err) => console.error('Error deleting user:', err),
     });
   }
 
-  editUser(_id: string, body: Partial<User>): void {
-    const url = `${this.getUsersUrl()}${_id}`;
+  editUser(id: string, body: Partial<User>): void {
+    const url = `${this.getUsersUrl()}${id}`;
     this.api.patch<User>(url, body).subscribe({
       next: (updatedUser) => {
-        this.usersSignal.update((users) => users.map((u) => (u._id === _id ? updatedUser : u)));
+        this.usersSignal.update((users) => users.map((u) => (u.id === id ? updatedUser : u)));
       },
       error: (err) => console.error('Error updating user:', err),
     });

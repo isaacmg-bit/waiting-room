@@ -148,7 +148,7 @@ export class Map implements AfterViewInit {
     const coords = this.clickCoordinates();
 
     this.locationService.editLocation({
-      _id: location._id,
+      id: location.id,
       lat: coords?.lat ?? location.lat,
       lng: coords?.lng ?? location.lng,
       name: this.nameInput(),
@@ -163,7 +163,7 @@ export class Map implements AfterViewInit {
     const event = this.selectedLocation();
     if (!event) return;
 
-    this.locationService.deleteLocation(event._id!);
+    this.locationService.deleteLocation(event.id!);
     this.clearForm();
   }
 

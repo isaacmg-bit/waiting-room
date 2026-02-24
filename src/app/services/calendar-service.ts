@@ -32,28 +32,30 @@ export class CalendarService {
 
   addEvent(event: UserEvent): void {
     this.api.post<UserEvent>(this.getEventsUrl(), event).subscribe({
-      next: (createdEvent) => {
-        this.eventsSignal.update((events) => [...events, createdEvent]);
+      next: () => {
+        this.loadEvents();
       },
       error: (err) => console.error('Error adding event:', err),
     });
   }
 
-  deleteEvent(_id: string): void {
-    const url = `${this.getEventsUrl()}${_id}`;
-    this.api.delete<UserEvent>(url).subscribe({
+  deleteEvent(id: string): void {
+    const url = `${this.getEventsUrl()}${id}`;
+
+    this.api.delete(url).subscribe({
       next: () => {
-        this.eventsSignal.update((events) => events.filter((u) => u._id !== _id));
+        this.loadEvents();
       },
       error: (err) => console.error('Error deleting event:', err),
     });
   }
 
-  editEvent(_id: string, body: Partial<UserEvent>): void {
-    const url = `${this.getEventsUrl()}${_id}`;
+  editEvent(id: string, body: Partial<UserEvent>): void {
+    const url = `${this.getEventsUrl()}${id}`;
+
     this.api.patch<UserEvent>(url, body).subscribe({
-      next: (updatedEvent) => {
-        this.eventsSignal.update((events) => events.map((u) => (u._id === _id ? updatedEvent : u)));
+      next: () => {
+        this.loadEvents();
       },
       error: (err) => console.error('Error updating event:', err),
     });

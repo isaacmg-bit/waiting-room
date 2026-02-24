@@ -29,7 +29,7 @@ describe('UserService', () => {
 
   describe('loadUsers', () => {
     it('should set usersSignal with the returned users', () => {
-      const users = [{ _id: '1', name: 'Lleison', email: 'lleisonbeker@mail.com', location: 'Estates' }];
+      const users = [{ id: '1', name: 'Lleison', email: 'lleisonbeker@mail.com', location: 'Estates' }];
       mockApi.get.mockReturnValue(of(users));
 
       service.loadUsers();
@@ -57,19 +57,19 @@ describe('UserService', () => {
 
   describe('addUser', () => {
     it('should append the created user to usersSignal', () => {
-      const existing = { _id: '1', name: 'Lleison', email: 'lleisonbeker@mail.com', location: 'Estates' };
-      const created = { _id: '2', name: 'Estif', email: 'estivei@mail.com', location: 'Milwoki' };
+      const existing = { id: '1', name: 'Lleison', email: 'lleisonbeker@mail.com', location: 'Estates' };
+      const created = { id: '2', name: 'Estif', email: 'estivei@mail.com', location: 'Milwoki' };
       service.usersSignal.set([existing]);
       mockApi.post.mockReturnValue(of(created));
 
-      service.addUser({ _id: '2', name: 'Estif', email: 'estivei@mail.com', location: 'Milwoki' });
+      service.addUser({ id: '2', name: 'Estif', email: 'estivei@mail.com', location: 'Milwoki' });
 
       expect(service.usersSignal()).toEqual([existing, created]);
     });
 
     it('should call the api with the correct url and body', () => {
       mockApi.post.mockReturnValue(of({}));
-      const body = { _id: '2', name: 'Estif', email: 'estivei@mail.com', location: 'Milwoki' };
+      const body = { id: '2', name: 'Estif', email: 'estivei@mail.com', location: 'Milwoki' };
 
       service.addUser(body);
 
@@ -80,15 +80,15 @@ describe('UserService', () => {
   describe('deleteUser', () => {
     it('should remove the deleted user from usersSignal', () => {
       service.usersSignal.set([
-        { _id: '1', name: 'Lleison', email: 'lleisonbeker@mail.com', location: 'Estates' },
-        { _id: '2', name: 'Estif', email: 'estivei@mail.com', location: 'Milwoki' },
+        { id: '1', name: 'Lleison', email: 'lleisonbeker@mail.com', location: 'Estates' },
+        { id: '2', name: 'Estif', email: 'estivei@mail.com', location: 'Milwoki' },
       ]);
       mockApi.delete.mockReturnValue(of(null));
 
       service.deleteUser('2');
 
       expect(service.usersSignal()).toEqual([
-        { _id: '1', name: 'Lleison', email: 'lleisonbeker@mail.com', location: 'Estates' },
+        { id: '1', name: 'Lleison', email: 'lleisonbeker@mail.com', location: 'Estates' },
       ]);
     });
 
@@ -101,9 +101,9 @@ describe('UserService', () => {
 
   describe('editUser', () => {
     it('should replace the updated user in usersSignal', () => {
-      const original = { _id: '1', name: 'Lleison', email: 'lleisonbeker@mail.com', location: 'Estates' };
+      const original = { id: '1', name: 'Lleison', email: 'lleisonbeker@mail.com', location: 'Estates' };
       const updated = {
-        _id: '1',
+        id: '1',
         name: 'Lleison Updated',
         email: 'lleisonbeker@mail.com',
         location: 'Sevilla',
@@ -127,11 +127,11 @@ describe('UserService', () => {
 
     it('should not modify other users when editing one', () => {
       service.usersSignal.set([
-        { _id: '1', name: 'Lleison', email: 'lleisonbeker@mail.com', location: 'Estates' },
-        { _id: '2', name: 'Estif', email: 'estivei@mail.com', location: 'Milwoki' },
+        { id: '1', name: 'Lleison', email: 'lleisonbeker@mail.com', location: 'Estates' },
+        { id: '2', name: 'Estif', email: 'estivei@mail.com', location: 'Milwoki' },
       ]);
       const updated = {
-        _id: '1',
+        id: '1',
         name: 'Lleison Updated',
         email: 'lleisonbeker@mail.com',
         location: 'Estates',
@@ -141,7 +141,7 @@ describe('UserService', () => {
       service.editUser('1', { name: 'Lleison Updated' });
 
       expect(service.usersSignal()[1]).toEqual({
-        _id: '2',
+        id: '2',
         name: 'Estif',
         email: 'estivei@mail.com',
         location: 'Milwoki',

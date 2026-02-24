@@ -42,7 +42,7 @@ export class Calendar implements AfterViewInit {
       if (!api) return;
 
       api.removeAllEvents();
-      events.forEach((event) => api.addEvent({ ...event, id: event._id }));
+      events.forEach((event) => api.addEvent({ ...event, id: event.id }));
     });
   }
 

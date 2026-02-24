@@ -30,7 +30,7 @@ describe('LocationService', () => {
   describe('loadLocations', () => {
     it('should set locationsSignal with the returned locations', () => {
       const locations = [
-        { _id: '1', name: 'Venue', lat: 40.4, lng: -3.7, description: '', category: 'show' },
+        { id: '1', name: 'Venue', lat: 40.4, lng: -3.7, description: '', category: 'show' },
       ];
       mockApi.get.mockReturnValue(of(locations));
 
@@ -55,7 +55,7 @@ describe('LocationService', () => {
   describe('addLocation', () => {
     it('should append the created location to locationsSignal', () => {
       const existing = {
-        _id: '1',
+        id: '1',
         name: 'Old',
         lat: 40.0,
         lng: -3.0,
@@ -63,7 +63,7 @@ describe('LocationService', () => {
         category: 'show',
       };
       const created = {
-        _id: '2',
+        id: '2',
         name: 'New',
         lat: 41.0,
         lng: -4.0,
@@ -97,15 +97,15 @@ describe('LocationService', () => {
   describe('deleteLocation', () => {
     it('should remove the deleted location from locationsSignal', () => {
       service.locationsSignal.set([
-        { _id: '1', name: 'Keep', lat: 40.0, lng: -3.0, description: '', category: 'show' },
-        { _id: '2', name: 'Delete me', lat: 41.0, lng: -4.0, description: '', category: 'show' },
+        { id: '1', name: 'Keep', lat: 40.0, lng: -3.0, description: '', category: 'show' },
+        { id: '2', name: 'Delete me', lat: 41.0, lng: -4.0, description: '', category: 'show' },
       ]);
       mockApi.delete.mockReturnValue(of(null));
 
       service.deleteLocation('2');
 
       expect(service.locationsSignal()).toEqual([
-        { _id: '1', name: 'Keep', lat: 40.0, lng: -3.0, description: '', category: 'show' },
+        { id: '1', name: 'Keep', lat: 40.0, lng: -3.0, description: '', category: 'show' },
       ]);
     });
 
@@ -119,7 +119,7 @@ describe('LocationService', () => {
   describe('editLocation', () => {
     it('should replace the updated location in locationsSignal', () => {
       const original = {
-        _id: '1',
+        id: '1',
         name: 'Old',
         lat: 40.0,
         lng: -3.0,
@@ -127,7 +127,7 @@ describe('LocationService', () => {
         category: 'show',
       };
       const updated = {
-        _id: '1',
+        id: '1',
         name: 'Updated',
         lat: 40.0,
         lng: -3.0,
@@ -137,14 +137,14 @@ describe('LocationService', () => {
       service.locationsSignal.set([original]);
       mockApi.patch.mockReturnValue(of(updated));
 
-      service.editLocation({ _id: '1', name: 'Updated', description: 'New desc' });
+      service.editLocation({ id: '1', name: 'Updated', description: 'New desc' });
 
       expect(service.locationsSignal()).toEqual([updated]);
     });
 
     it('should call the api with the correct url and body', () => {
       mockApi.patch.mockReturnValue(of({}));
-      const body = { _id: 'abc123', name: 'Updated' };
+      const body = { id: 'abc123', name: 'Updated' };
 
       service.editLocation(body);
 
@@ -153,9 +153,9 @@ describe('LocationService', () => {
 
     it('should not modify other locations when editing one', () => {
       service.locationsSignal.set([
-        { _id: '1', name: 'First', lat: 40.0, lng: -3.0, description: '', category: 'show' },
+        { id: '1', name: 'First', lat: 40.0, lng: -3.0, description: '', category: 'show' },
         {
-          _id: '2',
+          id: '2',
           name: 'Second',
           lat: 41.0,
           lng: -4.0,
@@ -164,7 +164,7 @@ describe('LocationService', () => {
         },
       ]);
       const updated = {
-        _id: '1',
+        id: '1',
         name: 'Updated',
         lat: 40.0,
         lng: -3.0,
@@ -173,10 +173,10 @@ describe('LocationService', () => {
       };
       mockApi.patch.mockReturnValue(of(updated));
 
-      service.editLocation({ _id: '1', name: 'Updated' });
+      service.editLocation({ id: '1', name: 'Updated' });
 
       expect(service.locationsSignal()[1]).toEqual({
-        _id: '2',
+        id: '2',
         name: 'Second',
         lat: 41.0,
         lng: -4.0,
@@ -185,7 +185,7 @@ describe('LocationService', () => {
       });
     });
 
-    it('should not call the api if _id is missing', () => {
+    it('should not call the api if id is missing', () => {
       service.editLocation({ name: 'No id' });
       expect(mockApi.patch).not.toHaveBeenCalled();
     });
