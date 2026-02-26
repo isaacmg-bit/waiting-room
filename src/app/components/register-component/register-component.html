@@ -1,0 +1,10 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <input type="text" placeholder="Name" formControlName="name" />
+  <input type="email" placeholder="Email" formControlName="email" />
+  <input type="password" placeholder="Password" formControlName="password" />
+  <input type="text" placeholder="Location" formControlName="location" />
+
+  <button type="submit" [disabled]="loading">
+    {{ loading ? 'Creating...' : 'Register' }}
+  </button>
+</form>

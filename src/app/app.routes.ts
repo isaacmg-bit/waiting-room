@@ -4,6 +4,7 @@ import { Calendar } from './components/calendar/calendar';
 import { Charts } from './components/charts/charts';
 import { Map } from './components/map/map';
 import { Users } from './components/users/users';
+import { RegisterComponent } from './components/register-component/register-component';
 
 export const routes: Routes = [
   {
@@ -26,6 +27,10 @@ export const routes: Routes = [
   {
     path: 'map',
     component: Map,
+  },
+  {
+    path: 'register',
+    component: RegisterComponent,
   },
   {
     path: 'users',
