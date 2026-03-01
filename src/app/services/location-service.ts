@@ -39,27 +39,27 @@ export class LocationService {
     });
   }
 
-  deleteLocation(_id: string): void {
-    const url = `${this.getLocationsUrl()}${_id}`;
+  deleteLocation(id: string): void {
+    const url = `${this.getLocationsUrl()}${id}`;
     this.api.delete<UserLocation>(url).subscribe({
       next: () => {
-        this.locationsSignal.update((locations) => locations.filter((u) => u._id !== _id));
+        this.locationsSignal.update((locations) => locations.filter((u) => u.id !== id));
       },
       error: (err) => console.error('Error deleting Location:', err),
     });
   }
 
   editLocation(body: Partial<UserLocation>): void {
-    if (!body._id) {
-      console.error('No _id provided for edit');
+    if (!body.id) {
+      console.error('No id provided for edit');
       return;
     }
 
-    const url = `${this.getLocationsUrl()}${body._id}`;
+    const url = `${this.getLocationsUrl()}${body.id}`;
     this.api.patch<UserLocation>(url, body).subscribe({
       next: (updatedLocation) => {
         this.locationsSignal.update((locations) =>
-          locations.map((loc) => (loc._id === updatedLocation._id ? updatedLocation : loc)),
+          locations.map((loc) => (loc.id === updatedLocation.id ? updatedLocation : loc)),
         );
       },
       error: (err) => console.error('Error updating Location:', err),

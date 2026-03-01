@@ -39,21 +39,21 @@ export class CalendarService {
     });
   }
 
-  deleteEvent(_id: string): void {
-    const url = `${this.getEventsUrl()}${_id}`;
+  deleteEvent(id: string): void {
+    const url = `${this.getEventsUrl()}${id}`;
     this.api.delete<UserEvent>(url).subscribe({
       next: () => {
-        this.eventsSignal.update((events) => events.filter((u) => u._id !== _id));
+        this.eventsSignal.update((events) => events.filter((u) => u.id !== id));
       },
       error: (err) => console.error('Error deleting event:', err),
     });
   }
 
-  editEvent(_id: string, body: Partial<UserEvent>): void {
-    const url = `${this.getEventsUrl()}${_id}`;
+  editEvent(id: string, body: Partial<UserEvent>): void {
+    const url = `${this.getEventsUrl()}${id}`;
     this.api.patch<UserEvent>(url, body).subscribe({
       next: (updatedEvent) => {
-        this.eventsSignal.update((events) => events.map((u) => (u._id === _id ? updatedEvent : u)));
+        this.eventsSignal.update((events) => events.map((u) => (u.id === id ? updatedEvent : u)));
       },
       error: (err) => console.error('Error updating event:', err),
     });
