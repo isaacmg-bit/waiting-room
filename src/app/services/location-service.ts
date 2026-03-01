@@ -10,63 +10,61 @@ export class LocationService {
   private readonly api = inject(ApiService);
 
   locationsSignal = signal<UserLocation[]>([]);
-  loadingSignal = signal<boolean>(false);
+  loadingSignal = signal(false);
 
   constructor() {
     this.loadLocations();
   }
 
-  loadLocations(): void {
+  loadLocations() {
     this.loadingSignal.set(true);
+
     this.api.get<UserLocation[]>(this.getLocationsUrl()).subscribe({
       next: (locations) => {
         this.locationsSignal.set(locations);
         this.loadingSignal.set(false);
       },
       error: (err) => {
-        console.error('Error loading Locations:', err);
+        console.error(err);
         this.loadingSignal.set(false);
       },
     });
   }
 
-  addLocation(location: UserLocation): void {
+  addLocation(location: UserLocation) {
     this.api.post<UserLocation>(this.getLocationsUrl(), location).subscribe({
-      next: (createdLocation) => {
-        this.locationsSignal.update((locations) => [...locations, createdLocation]);
+      next: (created) => {
+        this.locationsSignal.update((list) => [...list, created]);
       },
-      error: (err) => console.error('Error adding Location:', err),
+      error: (err) => console.error(err),
     });
   }
 
-  deleteLocation(id: string): void {
-    const url = `${this.getLocationsUrl()}${id}`;
-    this.api.delete<UserLocation>(url).subscribe({
-      next: () => {
-        this.locationsSignal.update((locations) => locations.filter((u) => u.id !== id));
-      },
-      error: (err) => console.error('Error deleting Location:', err),
-    });
-  }
+  editLocation(location: Partial<UserLocation> & { id: string }) {
+    const url = `${this.getLocationsUrl()}${location.id}`;
 
-  editLocation(body: Partial<UserLocation>): void {
-    if (!body.id) {
-      console.error('No id provided for edit');
-      return;
-    }
-
-    const url = `${this.getLocationsUrl()}${body.id}`;
-    this.api.patch<UserLocation>(url, body).subscribe({
-      next: (updatedLocation) => {
-        this.locationsSignal.update((locations) =>
-          locations.map((loc) => (loc.id === updatedLocation.id ? updatedLocation : loc)),
+    this.api.patch<UserLocation>(url, location).subscribe({
+      next: (updated) => {
+        this.locationsSignal.update((list) =>
+          list.map((l) => (l.id === updated.id ? updated : l)),
         );
       },
-      error: (err) => console.error('Error updating Location:', err),
+      error: (err) => console.error(err),
     });
   }
 
-  private getLocationsUrl(): string {
+  deleteLocation(id: string) {
+    const url = `${this.getLocationsUrl()}${id}`;
+
+    this.api.delete(url).subscribe({
+      next: () => {
+        this.locationsSignal.update((list) => list.filter((l) => l.id !== id));
+      },
+      error: (err) => console.error(err),
+    });
+  }
+
+  private getLocationsUrl() {
     return `${environment.apiUrl}${environment.apiLocationUrl}`;
   }
 }
