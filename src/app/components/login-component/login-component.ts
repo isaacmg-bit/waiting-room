@@ -41,7 +41,7 @@ export class LoginComponent {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ user }),
+          body: JSON.stringify({ id: user.id, email: user.email }),
         });
       }
 
