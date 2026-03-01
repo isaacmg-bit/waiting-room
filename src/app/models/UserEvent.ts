@@ -1,5 +1,5 @@
 export interface UserEvent {
-  _id?: string;
+  id?: string;
   date: string;
   title: string;
   color: string;

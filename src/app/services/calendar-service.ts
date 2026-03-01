@@ -10,56 +10,56 @@ export class CalendarService {
   private readonly api = inject(ApiService);
 
   eventsSignal = signal<UserEvent[]>([]);
-  loadingSignal = signal<boolean>(false);
+  loadingSignal = signal(false);
 
   constructor() {
     this.loadEvents();
   }
 
-  loadEvents(): void {
+  private loadEvents() {
     this.loadingSignal.set(true);
+
     this.api.get<UserEvent[]>(this.getEventsUrl()).subscribe({
       next: (events) => {
         this.eventsSignal.set(events);
         this.loadingSignal.set(false);
       },
       error: (err) => {
-        console.error('Error loading events:', err);
+        console.error(err);
         this.loadingSignal.set(false);
       },
     });
   }
 
-  addEvent(event: UserEvent): void {
+  addEvent(event: UserEvent) {
     this.api.post<UserEvent>(this.getEventsUrl(), event).subscribe({
-      next: (createdEvent) => {
-        this.eventsSignal.update((events) => [...events, createdEvent]);
+      next: (created) => {
+        this.eventsSignal.update((list) => [...list, created]);
       },
-      error: (err) => console.error('Error adding event:', err),
     });
   }
 
-  deleteEvent(_id: string): void {
-    const url = `${this.getEventsUrl()}${_id}`;
-    this.api.delete<UserEvent>(url).subscribe({
+  deleteEvent(id: string) {
+    const url = `${this.getEventsUrl()}${id}`;
+
+    this.api.delete(url).subscribe({
       next: () => {
-        this.eventsSignal.update((events) => events.filter((u) => u._id !== _id));
+        this.eventsSignal.update((list) => list.filter((e) => e.id !== id));
       },
-      error: (err) => console.error('Error deleting event:', err),
     });
   }
 
-  editEvent(_id: string, body: Partial<UserEvent>): void {
-    const url = `${this.getEventsUrl()}${_id}`;
+  editEvent(id: string, body: Partial<UserEvent>) {
+    const url = `${this.getEventsUrl()}${id}`;
+
     this.api.patch<UserEvent>(url, body).subscribe({
-      next: (updatedEvent) => {
-        this.eventsSignal.update((events) => events.map((u) => (u._id === _id ? updatedEvent : u)));
+      next: (updated) => {
+        this.eventsSignal.update((list) => list.map((e) => (e.id === updated.id ? updated : e)));
       },
-      error: (err) => console.error('Error updating event:', err),
     });
   }
 
-  private getEventsUrl(): string {
+  private getEventsUrl() {
     return `${environment.apiUrl}${environment.apiEventUrl}`;
   }
 }

@@ -1,9 +1,9 @@
-import { Component, signal, inject, ViewChild, effect, AfterViewInit } from '@angular/core';
+import { Component, signal, inject, ViewChild, AfterViewInit } from '@angular/core';
 import { FullCalendarModule, FullCalendarComponent } from '@fullcalendar/angular';
-import { CalendarOptions } from '@fullcalendar/core/index.js';
-import { CalendarService } from '../../services/calendar-service';
+import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { CalendarService } from '../../services/calendar-service';
 import { UserEvent } from '../../models/UserEvent';
 
 @Component({
@@ -15,39 +15,36 @@ import { UserEvent } from '../../models/UserEvent';
 export class Calendar implements AfterViewInit {
   @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
 
-  calendarService = inject(CalendarService);
+  private calendarService = inject(CalendarService);
 
-  calendarModalActive = signal<boolean>(false);
-  editCalendarModalActive = signal<boolean>(false);
+  calendarModalActive = signal(false);
+  editCalendarModalActive = signal(false);
+
   selectedDate = signal<string>('');
   eventTitle = signal<string>('');
   eventColor = signal<string>('');
+
   selectedEvent = signal<any>(null);
 
-  private calendarApi = signal<any>(null);
+  private calendarApi!: any;
 
-  calendarOptions: CalendarOptions = {
-    initialView: 'dayGridMonth',
-    plugins: [dayGridPlugin, interactionPlugin],
-    dateClick: (arg) => this.handleDateClick(arg),
-    eventClick: (arg) => this.handleEventClick(arg),
-    events: [],
-  };
+  get calendarOptions(): CalendarOptions {
+    return {
+      initialView: 'dayGridMonth',
+      plugins: [dayGridPlugin, interactionPlugin],
 
-  constructor() {
-    effect(() => {
-      const events = this.calendarService.eventsSignal();
-      const api = this.calendarApi();
+      dateClick: (arg) => this.handleDateClick(arg),
+      eventClick: (arg) => this.handleEventClick(arg),
 
-      if (!api) return;
-
-      api.removeAllEvents();
-      events.forEach((event) => api.addEvent({ ...event, id: event._id }));
-    });
+      events: this.calendarService.eventsSignal().map((e) => ({
+        ...e,
+        id: e.id,
+      })),
+    };
   }
 
   ngAfterViewInit(): void {
-    this.calendarApi.set(this.calendarComponent.getApi());
+    this.calendarApi = this.calendarComponent.getApi();
   }
 
   handleDateClick(arg: any): void {
@@ -76,10 +73,10 @@ export class Calendar implements AfterViewInit {
   editEvent(): void {
     const event = this.selectedEvent();
 
-    if (!this.eventTitle() || !this.eventColor() || !this.selectedDate()) return;
     if (!event) return;
 
     this.calendarService.editEvent(event.id, this.buildEventBody());
+
     this.clearForm();
   }
 
@@ -100,8 +97,7 @@ export class Calendar implements AfterViewInit {
   }
 
   onColorChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value;
-    this.eventColor.set(value);
+    this.eventColor.set((event.target as HTMLSelectElement).value);
   }
 
   onTitleInput(event: Event): void {
