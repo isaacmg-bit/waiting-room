@@ -1,1 +1,27 @@
-<p>login-component works!</p>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
+
+  <h2>Login</h2>
+
+  <div>
+    <label>Email</label>
+    <input
+      type="email"
+      formControlName="email"
+      placeholder="Enter email"
+    />
+  </div>
+
+  <div>
+    <label>Password</label>
+    <input
+      type="password"
+      formControlName="password"
+      placeholder="Enter password"
+    />
+  </div>
+
+  <button type="submit" [disabled]="loading">
+    {{ loading ? 'Logging in...' : 'Login' }}
+  </button>
+
+</form>
