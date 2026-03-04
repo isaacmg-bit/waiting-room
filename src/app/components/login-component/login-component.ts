@@ -33,7 +33,7 @@ export class LoginComponent {
 
       if (error) throw error;
 
-      this.router.navigate(['/home']);
+      this.router.navigate(['/']);
     } catch (err) {
       console.error(err);
       alert('Login failed');
