@@ -6,6 +6,7 @@ import { Map } from './components/map/map';
 import { Users } from './components/users/users';
 import { RegisterComponent } from './components/register-component/register-component';
 import { LoginComponent } from './components/login-component/login-component';
+import { ResetPass } from './components/reset-pass/reset-pass';
 
 export const routes: Routes = [
   {
@@ -40,5 +41,9 @@ export const routes: Routes = [
   {
     path: 'users',
     component: Users,
+  },
+  {
+    path: 'reset-pass',
+    component: ResetPass,
   },
 ];

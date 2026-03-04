@@ -36,4 +36,10 @@ export class SupabaseService {
   signOut() {
     return this.supabase.auth.signOut();
   }
+
+  async resetPassword(email: string) {
+    return this.supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'http://localhost:4200/reset-pass',
+    });
+  }
 }

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { SupabaseService } from '../../services/supabase-service';
 
 @Component({
   selector: 'app-header',
@@ -7,4 +8,10 @@ import { RouterModule } from '@angular/router';
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
-export class Header {}
+export class Header {
+  private supabase = inject(SupabaseService);
+
+  async logout() {
+    await this.supabase.signOut();
+  }
+}

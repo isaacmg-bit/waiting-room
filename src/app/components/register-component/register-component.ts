@@ -30,12 +30,25 @@ export class RegisterComponent {
     try {
       this.loading = true;
 
-      const { error } = await this.supabase.signUp(email!, password!);
+      const { data, error } = await this.supabase.signUp(email!, password!);
 
       if (error) throw error;
 
-      alert('Check your email to verify your account');
+      if (data.user) {
+        await fetch('http://localhost:3000/users/profile-sync', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${data.session?.access_token}`,
+          },
+          body: JSON.stringify({
+            id: data.user.id,
+            email: data.user.email,
+          }),
+        });
+      }
 
+      alert('Check your email to verify your account');
       this.router.navigate(['/login']);
     } catch (err) {
       console.error(err);
