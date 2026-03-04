@@ -17,9 +17,12 @@ export class SupabaseService {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
   }
 
-  async getUser(): Promise<User | null> {
-    const { data } = await this.supabase.auth.getUser();
-    return data.user;
+  getClient() {
+    return this.supabase;
+  }
+
+  async getSession() {
+    return this.supabase.auth.getSession();
   }
 
   signUp(email: string, password: string) {

@@ -20,7 +20,6 @@ export class LoginComponent {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
-
   async onSubmit() {
     if (this.form.invalid) return;
 
@@ -29,21 +28,16 @@ export class LoginComponent {
     try {
       this.loading = true;
 
-      const { data, error } = await this.supabase.signIn(email!, password!);
+      const { error } = await this.supabase.signIn(email!, password!);
 
       if (error) throw error;
 
-      const user = data.user;
-
-      if (user) {
-        await fetch('http://localhost:3000/users/profile-sync', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ id: user.id, email: user.email }),
-        });
-      }
+      await fetch('http://localhost:3000/users/profile-sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
       this.router.navigate(['/']);
     } catch (err) {
