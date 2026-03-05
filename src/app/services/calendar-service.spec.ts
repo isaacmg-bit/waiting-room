@@ -29,7 +29,7 @@ describe('CalendarService', () => {
 
   describe('loadEvents', () => {
     it('should set eventsSignal with the returned events', () => {
-      const events = [{ _id: '1', title: 'Concert', date: '2025-06-01', color: 'red' }];
+      const events = [{ id: '1', title: 'Concert', date: '2025-06-01', color: 'red' }];
       mockApi.get.mockReturnValue(of(events));
 
       service.loadEvents();
@@ -52,8 +52,8 @@ describe('CalendarService', () => {
 
   describe('addEvent', () => {
     it('should append the created event to eventsSignal', () => {
-      const existing = { _id: '1', title: 'Existing', date: '2025-01-01', color: 'blue' };
-      const newEvent = { _id: '2', title: 'New', date: '2025-06-01', color: 'red' };
+      const existing = { id: '1', title: 'Existing', date: '2025-01-01', color: 'blue' };
+      const newEvent = { id: '2', title: 'New', date: '2025-06-01', color: 'red' };
       service.eventsSignal.set([existing]);
       mockApi.post.mockReturnValue(of(newEvent));
 
@@ -75,15 +75,15 @@ describe('CalendarService', () => {
   describe('deleteEvent', () => {
     it('should remove the deleted event from eventsSignal', () => {
       service.eventsSignal.set([
-        { _id: '1', title: 'Keep', date: '2025-01-01', color: 'blue' },
-        { _id: '2', title: 'Delete me', date: '2025-06-01', color: 'red' },
+        { id: '1', title: 'Keep', date: '2025-01-01', color: 'blue' },
+        { id: '2', title: 'Delete me', date: '2025-06-01', color: 'red' },
       ]);
       mockApi.delete.mockReturnValue(of(null));
 
       service.deleteEvent('2');
 
       expect(service.eventsSignal()).toEqual([
-        { _id: '1', title: 'Keep', date: '2025-01-01', color: 'blue' },
+        { id: '1', title: 'Keep', date: '2025-01-01', color: 'blue' },
       ]);
     });
 
@@ -96,8 +96,8 @@ describe('CalendarService', () => {
 
   describe('editEvent', () => {
     it('should replace the updated event in eventsSignal', () => {
-      const original = { _id: '1', title: 'Old', date: '2025-01-01', color: 'blue' };
-      const updated = { _id: '1', title: 'New', date: '2025-01-01', color: 'green' };
+      const original = { id: '1', title: 'Old', date: '2025-01-01', color: 'blue' };
+      const updated = { id: '1', title: 'New', date: '2025-01-01', color: 'green' };
       service.eventsSignal.set([original]);
       mockApi.patch.mockReturnValue(of(updated));
 
@@ -117,16 +117,16 @@ describe('CalendarService', () => {
 
     it('should not modify other events when editing one', () => {
       service.eventsSignal.set([
-        { _id: '1', title: 'First', date: '2025-01-01', color: 'blue' },
-        { _id: '2', title: 'Second', date: '2025-02-01', color: 'red' },
+        { id: '1', title: 'First', date: '2025-01-01', color: 'blue' },
+        { id: '2', title: 'Second', date: '2025-02-01', color: 'red' },
       ]);
-      const updated = { _id: '1', title: 'Updated', date: '2025-01-01', color: 'green' };
+      const updated = { id: '1', title: 'Updated', date: '2025-01-01', color: 'green' };
       mockApi.patch.mockReturnValue(of(updated));
 
       service.editEvent('1', { title: 'Updated', color: 'green' });
 
       expect(service.eventsSignal()[1]).toEqual({
-        _id: '2',
+        id: '2',
         title: 'Second',
         date: '2025-02-01',
         color: 'red',

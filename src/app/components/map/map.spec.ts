@@ -136,7 +136,7 @@ describe('Map Component', () => {
   describe('editSavedLocation', () => {
     it('should call editLocation with updated data', () => {
       component.selectedLocation.set({
-        _id: 'loc1',
+        id: 'loc1',
         lat: 40.4,
         lng: -3.7,
         name: 'Old',
@@ -151,7 +151,7 @@ describe('Map Component', () => {
       component.editSavedLocation();
 
       expect(mockLocationService.editLocation).toHaveBeenCalledWith({
-        _id: 'loc1',
+        id: 'loc1',
         lat: 41.0,
         lng: -4.0,
         name: 'New name',
@@ -162,7 +162,7 @@ describe('Map Component', () => {
 
     it('should fall back to the original coordinates if clickCoordinates is null', () => {
       component.selectedLocation.set({
-        _id: 'loc1',
+        id: 'loc1',
         lat: 40.4,
         lng: -3.7,
         name: 'Old',
@@ -193,7 +193,7 @@ describe('Map Component', () => {
   describe('deleteLocation', () => {
     it('should call deleteLocation with the correct id', () => {
       component.selectedLocation.set({
-        _id: 'loc1',
+        id: 'loc1',
         lat: 0,
         lng: 0,
         name: '',
@@ -208,7 +208,7 @@ describe('Map Component', () => {
 
     it('should clear the form after deleting', () => {
       component.selectedLocation.set({
-        _id: 'loc1',
+        id: 'loc1',
         lat: 0,
         lng: 0,
         name: '',

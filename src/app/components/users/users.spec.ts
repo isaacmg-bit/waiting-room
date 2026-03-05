@@ -46,7 +46,7 @@ describe('Users Component', () => {
 
   describe('loadUserForEdit', () => {
     it('should enter edit mode and populate the form', () => {
-      const user = { _id: 'u1', name: 'Lleison', email: 'lleisonbeker@mail.com', location: 'Estates' };
+      const user = { id: 'u1', name: 'Lleison', email: 'lleisonbeker@mail.com', location: 'Estates' };
       component.loadUserForEdit(user);
 
       expect(component.isEditMode).toBe(true);
@@ -60,7 +60,7 @@ describe('Users Component', () => {
   describe('cancelEdit', () => {
     it('should reset the form and exit edit mode', () => {
       component.loadUserForEdit({
-        _id: 'u1',
+        id: 'u1',
         name: 'Lleison',
         email: 'lleisonbeker@mail.com',
         location: 'Estates',
@@ -95,7 +95,7 @@ describe('Users Component', () => {
 
     it('should call editUser when form is valid and in edit mode', () => {
       component.loadUserForEdit({
-        _id: 'u1',
+        id: 'u1',
         name: 'Lleison',
         email: 'lleisonbeker@mail.com',
         location: 'Estates',
