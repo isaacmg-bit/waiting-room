@@ -7,6 +7,7 @@ import { Users } from './components/users/users';
 import { RegisterComponent } from './components/register-component/register-component';
 import { LoginComponent } from './components/login-component/login-component';
 import { ResetPass } from './components/reset-pass/reset-pass';
+import { PostLogin } from './components/post-login/post-login';
 
 export const routes: Routes = [
   {
@@ -45,5 +46,9 @@ export const routes: Routes = [
   {
     path: 'reset-pass',
     component: ResetPass,
+  },
+  {
+    path: 'post-login',
+    component: PostLogin,
   },
 ];
