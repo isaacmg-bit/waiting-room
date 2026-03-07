@@ -1,169 +1,127 @@
-<!doctype html>
-
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-      rel="stylesheet"
-    />
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              primary: '#8a2ce2',
-              'background-light': '#f7f6f8',
-              'background-dark': '#191121',
-            },
-            fontFamily: {
-              display: ['Spline Sans', 'sans-serif'],
-            },
-            borderRadius: { DEFAULT: '0.25rem', lg: '0.5rem', xl: '0.75rem', full: '9999px' },
-          },
-        },
-      };
-    </script>
-    <title>Complete Your Profile</title>
-  </head>
-  <body
-    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 transition-colors duration-300"
-  >
-    <div class="relative flex min-h-screen flex-col items-center justify-center p-4">
-      <!-- Decorative background elements -->
-      <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div
-          class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px]"
-        ></div>
-        <div
-          class="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px]"
-        ></div>
-      </div>
-      <div class="z-10 w-full max-w-lg">
-        <!-- Main Card -->
-        <div
-          class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-primary/10 dark:border-primary/20 rounded-xl shadow-2xl overflow-hidden"
-        >
-          <!-- Progress Bar -->
-          <div class="h-1.5 w-full bg-primary/10">
-            <div class="h-full bg-primary w-1/2"></div>
-          </div>
-          <div class="p-8 md:p-12">
-            <!-- Header -->
-            <header class="mb-10 text-center">
-              <div
-                class="inline-flex items-center justify-center size-16 rounded-full bg-primary/10 text-primary mb-6"
+<body
+  class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 transition-colors duration-300"
+>
+  <div class="relative flex min-h-screen flex-col items-center justify-center p-4">
+    <!-- Decorative background elements -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+      <div
+        class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px]"
+      ></div>
+      <div
+        class="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px]"
+      ></div>
+    </div>
+    <div class="z-10 w-full max-w-lg">
+      <!-- Main Card -->
+      <div
+        class="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-primary/10 dark:border-primary/20 rounded-xl shadow-2xl overflow-hidden"
+      >
+        <!-- Progress Bar -->
+        <div class="h-1.5 w-full bg-primary/10">
+          <div class="h-full bg-primary w-1/2"></div>
+        </div>
+        <div class="p-8 md:p-12">
+          <!-- Header -->
+          <header class="mb-10 text-center">
+            <div
+              class="inline-flex items-center justify-center size-16 rounded-full bg-primary/10 text-primary mb-6"
+            >
+              <span class="material-symbols-outlined text-4xl">account_circle</span>
+            </div>
+            <h1 class="text-3xl font-bold tracking-tight mb-3">Welcome to the Waiting Room!</h1>
+            <p class="text-slate-500 dark:text-slate-400 text-lg">
+              Let's personalize your experience with a few basic details.
+            </p>
+          </header>
+          <!-- Form Section -->
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">
+            <!-- Name Input -->
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
+                for="full-name"
               >
-                <span class="material-symbols-outlined text-4xl">account_circle</span>
-              </div>
-              <h1 class="text-3xl font-bold tracking-tight mb-3">Welcome to the Waiting Room!</h1>
-              <p class="text-slate-500 dark:text-slate-400 text-lg">
-                Let's personalize your experience with a few basic details.
-              </p>
-            </header>
-            <!-- Form Section -->
-            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">
-              <!-- Name Input -->
-              <div class="space-y-2">
-                <label
-                  class="block text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
-                  for="full-name"
+                What should we call you?
+              </label>
+              <div class="group relative">
+                <div
+                  class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors"
                 >
-                  What should we call you?
-                </label>
-                <div class="group relative">
-                  <div
-                    class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors"
-                  >
-                    <span class="material-symbols-outlined text-xl">person</span>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Enter your first and last name"
-                    formControlName="name"
-                    class="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
-                    id="full-name"
-                    placeholder="Full Name"
-                  />
+                  <span class="material-symbols-outlined text-xl">person</span>
                 </div>
-              </div>
-              <!-- Location Input -->
-              <div class="space-y-2">
-                <label
-                  class="block text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
-                  for="location"
-                >
-                  Where are you based?
-                </label>
-                <div class="group relative">
-                  <div
-                    class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors"
-                  >
-                    <span class="material-symbols-outlined text-xl">location_on</span>
-                  </div>
-                  <input
-                    class="w-full pl-12 pr-12 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
-                    id="location"
-                    placeholder="City, Country"
-                    type="Location"
-                    formControlName="location"
-                  />
-                  <button
-                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-primary hover:text-primary/80 transition-colors"
-                    type="button"
-                  >
-                    <span class="material-symbols-outlined text-xl">my_location</span>
-                  </button>
-                </div>
-                <p
-                  class="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1.5 mt-2"
-                >
-                  <span class="material-symbols-outlined text-sm">info</span>
-                  This helps us show you relevant local events.
-                </p>
-              </div>
-              <!-- Map Preview Placeholder -->
-              <div
-                class="relative w-full h-32 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800"
-              >
-                <img
-                  class="w-full h-full object-cover opacity-50 grayscale hover:grayscale-0 transition-all duration-500"
-                  data-alt="Abstract minimalist map graphic in purple hues"
-                  data-location="World"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDldFls7awD8NiAGG4YdjrZ_WlsDlAh_3am8vwF6XPQ-0xCzj5Qfn4HSefEjUj2ORCH_MTy98WyHYXaUuznY6kduPBN-DC1Z-1juUQdvCx72XHu4d_KvzYHOIi1V7F6QmF7w8pIZ6q9DTCIA4Meqx9i1CMPXuZl_wihGRRdSx6r-dQhx0zbyZ6iXK7kZUB06Nl-iNWbmsC-yPjgEf4PKbxJ2ZB93_PXboFDuLDHps0e0ec8hIdhsSql-1Lyv5WSs0VQmywppWmtw"
+                <input
+                  type="text"
+                  placeholder="Enter your first and last name"
+                  formControlName="name"
+                  class="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+                  id="full-name"
+                  placeholder="Full Name"
                 />
-                <div class="absolute inset-0 flex items-center justify-center">
-                  <span
-                    class="text-xs font-medium bg-white/80 dark:bg-slate-900/80 px-3 py-1 rounded-full backdrop-blur-sm border border-slate-200 dark:border-slate-700"
-                    >Location preview</span
-                  >
-                </div>
               </div>
-              <!-- Action Button -->
-              <div class="pt-4">
-                <button
-                  class="w-full py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg shadow-lg shadow-primary/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2"
-                  type="submit"
+            </div>
+            <!-- Location Input -->
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
+                for="location"
+              >
+                Where are you based?
+              </label>
+              <div class="group relative">
+                <div
+                  class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors"
                 >
-                  Complete Setup
-                  <span class="material-symbols-outlined">arrow_forward</span>
+                  <span class="material-symbols-outlined text-xl">location_on</span>
+                </div>
+                <input
+                  class="w-full pl-12 pr-12 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+                  id="location"
+                  placeholder="City, Country"
+                  type="Location"
+                  formControlName="location"
+                />
+                <button
+                  class="absolute inset-y-0 right-0 pr-4 flex items-center text-primary hover:text-primary/80 transition-colors"
+                  type="button"
+                >
+                  <span class="material-symbols-outlined text-xl">my_location</span>
                 </button>
               </div>
-            </form>
-          </div>
+              <p class="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1.5 mt-2">
+                <span class="material-symbols-outlined text-sm">info</span>
+                This helps us show you relevant local events.
+              </p>
+            </div>
+            <!-- Map Preview Placeholder -->
+            <div
+              class="relative w-full h-32 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800"
+            >
+              <img
+                class="w-full h-full object-cover opacity-50 grayscale hover:grayscale-0 transition-all duration-500"
+                data-alt="Abstract minimalist map graphic in purple hues"
+                data-location="World"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDldFls7awD8NiAGG4YdjrZ_WlsDlAh_3am8vwF6XPQ-0xCzj5Qfn4HSefEjUj2ORCH_MTy98WyHYXaUuznY6kduPBN-DC1Z-1juUQdvCx72XHu4d_KvzYHOIi1V7F6QmF7w8pIZ6q9DTCIA4Meqx9i1CMPXuZl_wihGRRdSx6r-dQhx0zbyZ6iXK7kZUB06Nl-iNWbmsC-yPjgEf4PKbxJ2ZB93_PXboFDuLDHps0e0ec8hIdhsSql-1Lyv5WSs0VQmywppWmtw"
+              />
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span
+                  class="text-xs font-medium bg-white/80 dark:bg-slate-900/80 px-3 py-1 rounded-full backdrop-blur-sm border border-slate-200 dark:border-slate-700"
+                  >Location preview</span
+                >
+              </div>
+            </div>
+            <!-- Action Button -->
+            <div class="pt-4">
+              <button
+                class="w-full py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg shadow-lg shadow-primary/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2"
+                type="submit"
+              >
+                Complete Setup
+                <span class="material-symbols-outlined">arrow_forward</span>
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
-  </body>
-</html>
+  </div>
+</body>
