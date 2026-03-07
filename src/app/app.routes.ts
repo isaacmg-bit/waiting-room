@@ -10,6 +10,7 @@ import { ResetPass } from './components/reset-pass/reset-pass';
 import { PostLogin } from './components/post-login/post-login';
 import { profileGuard } from './guards/profile-guard';
 import { authGuard } from './guards/auth-guard';
+import { EditProfile } from './components/edit-profile/edit-profile';
 
 export const routes: Routes = [
   {
@@ -58,5 +59,9 @@ export const routes: Routes = [
   {
     path: 'post-login',
     component: PostLogin,
+  },
+  {
+    path: 'edit-profile',
+    component: EditProfile,
   },
 ];

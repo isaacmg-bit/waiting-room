@@ -59,7 +59,16 @@ export class UserService {
     });
   }
 
+  getMe() {
+    const url = `${this.getMeUrl()}`;
+    return this.api.get<User>(url);
+  }
+
   private getUsersUrl(): string {
     return `${environment.apiUrl}${environment.apiUserUrl}`;
+  }
+
+  private getMeUrl(): string {
+    return `${environment.apiUrl}${environment.apiUserUrl}${environment.apiMeUrl}`;
   }
 }

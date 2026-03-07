@@ -1,0 +1,487 @@
+<!doctype html>
+
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Edit Profile | Waiting Room</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#8a2ce2',
+              'background-light': '#f7f6f8',
+              'background-dark': '#09090b', // slate-950 equivalent
+              'surface-dark': '#18181b', // slate-900 equivalent
+              'border-dark': '#27272a',
+            },
+            fontFamily: {
+              display: ['Spline Sans', 'sans-serif'],
+            },
+            borderRadius: {
+              DEFAULT: '0.5rem',
+              lg: '0.5rem',
+              xl: '0.75rem',
+              full: '9999px',
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: 'Spline Sans', sans-serif;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #27272a;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body class="bg-background-dark text-slate-100 font-display min-h-screen">
+    <!-- Top Navigation Bar -->
+
+    <main class="max-w-5xl mx-auto px-4 py-10">
+      <!-- Page Title -->
+      <div class="mb-10">
+        <h1 class="text-4xl font-black text-slate-100 mb-2 tracking-tight">Edit Profile</h1>
+        <p class="text-slate-400">
+          Complete your musician profile to get found by bands and collaborators.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 gap-8">
+        <!-- Section 1: Profile Media -->
+        <section class="bg-surface-dark border border-border-dark rounded-xl p-6">
+          <div class="flex items-center gap-2 mb-6">
+            <span class="material-symbols-outlined text-primary">photo_camera</span>
+            <h2 class="text-xl font-bold">Profile Media</h2>
+          </div>
+          <div class="flex flex-col md:flex-row gap-8 items-start">
+            <div class="relative group">
+              <div
+                class="size-40 rounded-xl overflow-hidden border-2 border-dashed border-border-dark group-hover:border-primary transition-colors"
+              >
+                <img
+                  class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                  data-alt="Primary musician profile photo"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_vLEQMwKpyMdYeTHqccIai7bWihm3RydZV3gA-auqO2phNJBS8mvRiBPoxBDNvmlFSCZtvH_ng2tYqNvW4zIaGp5pAn6BgRIqDJPEVXKYrIuF-IiAD_sAopj3pHinIgdD0fproOnQlUKj2GIxTM9XRsJEbxpsPRez559Zm6s8ReeRdf1bhDI1jmJhrDR9StWPUWntyy6ZuSNlWYBiCNIIuuHNDa2w88GWquibI8QD0DIvTtI52EMpNyOywYV6eF9u5CEnSb8N_w"
+                />
+              </div>
+              <button
+                class="absolute -bottom-3 -right-3 size-10 bg-primary text-white rounded-lg flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+              >
+                <span class="material-symbols-outlined text-sm">edit</span>
+              </button>
+            </div>
+            <div class="flex-1">
+              <p class="text-slate-200 font-semibold mb-2">Photo Gallery</p>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div
+                  class="aspect-square bg-background-dark border border-border-dark rounded-lg flex items-center justify-center cursor-pointer hover:border-primary transition-colors"
+                >
+                  <span class="material-symbols-outlined text-slate-600">add_a_photo</span>
+                </div>
+                <div
+                  class="aspect-square bg-background-dark border border-border-dark rounded-lg overflow-hidden group"
+                >
+                  <img
+                    class="w-full h-full object-cover"
+                    data-alt="Musician performing live on stage"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6cNDmDVLqMWHS_-FWd_Ljk-nvAQLiB-kUWxpjGTiRSogMOCSUGlx3E-2M78mqAlTl8PhI7Xb_fm9J8FUPhd6cTUvNwTvqXqSIgrffMnu5sbvA7age7EojtPoXt99pOzGBWN1DOSpIH1tDjhtIOYFkSC-xsqvJ3I-DhTJVtUxAQTzLQTi8vOpYirAIKjRO0TYI-hVhxazrL1lx2SC4vk8DUkYhjbJgzVazxYGuXLEpu9vnCMfObdHU_3JrY-XgHHQRtWvwo8gQoA"
+                  />
+                </div>
+                <div
+                  class="aspect-square bg-background-dark border border-border-dark rounded-lg overflow-hidden group"
+                >
+                  <img
+                    class="w-full h-full object-cover"
+                    data-alt="Microphone in professional studio setting"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDltIIw2ofQlHq2FRRC84UlAk3I98dKZNnh-FrdbxfMoz49t0TdAqDju_BD5L7DImGH_YNSqCHwCiclF8TRcvajHaOaMG5ThlqwyldIN9vwsPeNSQhLn7yrTZ5xWTxo6WYALYUVMTUw-FmuTEXVoflpWX783Q9AgWOXpPoMIkZueWc_BOyqVopAyRhyyDWAKBEPZZGZxv29Y-Y1rNoplZ8Kuh72iWeHBzv1R1qikaVBLiGfLUaLDGFb5K4TqCEbRFMss5TkhxTaLw"
+                  />
+                </div>
+                <div
+                  class="aspect-square bg-background-dark border border-border-dark rounded-lg overflow-hidden group"
+                >
+                  <img
+                    class="w-full h-full object-cover"
+                    data-alt="Close up of guitar strings"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX3IzbUA3YhxpJOQEKVTEDmIxqji70Y6WwsB68cRVXbJtkZVr4mIvEVJWpZOpPD2KRId-gQHF6M3BbwpN1KLJBqnINIvCT-ZxAamTMsEnGgQ3zHGdl25gbNbeAV_pmSHe-oU3H2om6vDn__bOWsld-_g0ccAQViHtfUb9tu7_LgvR5UepZCoVVfhZJEHwgCGsTBA7tY58wShs7SFoEYZ_DqGH9J11Q-k3TGlUoeSIeusFQ6aDC6bqomhEGyv60dv78TAsCjXmOYQ"
+                  />
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 mt-3">
+                Upload up to 8 photos. Drag and drop to reorder.
+              </p>
+            </div>
+          </div>
+        </section>
+        <!-- Section 2: Basic Info -->
+        <form [formGroup]="form">
+          <section class="bg-surface-dark border border-border-dark rounded-xl p-6">
+            <div class="flex items-center gap-2 mb-6">
+              <span class="material-symbols-outlined text-primary">person</span>
+              <h2 class="text-xl font-bold">Basic Information</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-slate-400">Full Name</label>
+                <input
+                  formControlName="name"
+                  class="w-full bg-background-dark border-border-dark rounded-lg focus:ring-primary focus:border-primary text-slate-200"
+                  type="text"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-slate-400">Email Address</label>
+                <input
+                  class="w-full bg-background-dark border-border-dark rounded-lg focus:ring-primary focus:border-primary text-slate-200"
+                  type="email"
+                  formControlName="email"
+                />
+              </div>
+              <div class="space-y-2 md:col-span-2">
+                <label class="text-sm font-medium text-slate-400">Location</label>
+                <div class="relative">
+                  <span
+                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+                    >location_on</span
+                  >
+                  <input
+                    class="w-full bg-background-dark border-border-dark rounded-lg pl-10 focus:ring-primary focus:border-primary text-slate-200"
+                    data-location="Nashville, TN"
+                    type="text"
+                    formControlName="location"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- Section 3: Instruments & Level -->
+          <section class="bg-surface-dark border border-border-dark rounded-xl p-6">
+            <div class="flex items-center gap-2 mb-6">
+              <span class="material-symbols-outlined text-primary">piano</span>
+              <h2 class="text-xl font-bold">Instruments</h2>
+            </div>
+            <div class="space-y-4">
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span
+                  class="px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full text-sm flex items-center gap-2"
+                >
+                  Electric Guitar
+                  <span class="material-symbols-outlined text-xs cursor-pointer">close</span>
+                </span>
+                <span
+                  class="px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full text-sm flex items-center gap-2"
+                >
+                  Synthesizer
+                  <span class="material-symbols-outlined text-xs cursor-pointer">close</span>
+                </span>
+                <button
+                  class="px-3 py-1 bg-background-dark text-slate-400 border border-border-dark border-dashed rounded-full text-sm hover:border-primary transition-colors flex items-center gap-1"
+                >
+                  <span class="material-symbols-outlined text-xs">add</span> Add Instrument
+                </button>
+              </div>
+              <div class="grid grid-cols-1 gap-4">
+                <div
+                  class="flex items-center justify-between p-4 bg-background-dark rounded-lg border border-border-dark"
+                >
+                  <span class="font-medium">Electric Guitar</span>
+                  <select
+                    class="bg-surface-dark border-border-dark rounded-lg text-sm text-slate-200 focus:ring-primary"
+                  >
+                    <option>Beginner</option>
+                    <option>Intermediate</option>
+                    <option selected="">Advanced</option>
+                    <option>Professional</option>
+                  </select>
+                </div>
+                <div
+                  class="flex items-center justify-between p-4 bg-background-dark rounded-lg border border-border-dark"
+                >
+                  <span class="font-medium">Synthesizer</span>
+                  <select
+                    class="bg-surface-dark border-border-dark rounded-lg text-sm text-slate-200 focus:ring-primary"
+                  >
+                    <option>Beginner</option>
+                    <option selected="">Intermediate</option>
+                    <option>Advanced</option>
+                    <option>Professional</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Music Theory Section -->
+            <div class="mt-8 pt-8 border-t border-border-dark">
+              <div class="flex items-center gap-3">
+                <input
+                  checked=""
+                  class="size-5 bg-background-dark border-border-dark rounded text-primary focus:ring-primary"
+                  id="theory"
+                  type="checkbox"
+                />
+                <label class="text-slate-200 font-medium cursor-pointer" for="theory"
+                  >Do you know music theory?</label
+                >
+              </div>
+              <div class="mt-4 pl-8">
+                <label class="text-sm font-medium text-slate-400 block mb-2">Theory Level</label>
+                <div class="flex gap-4">
+                  <label
+                    class="flex-1 text-center py-2 px-4 rounded-lg bg-primary/10 border border-primary text-primary text-sm cursor-pointer"
+                    >Basic</label
+                  >
+                  <label
+                    class="flex-1 text-center py-2 px-4 rounded-lg bg-background-dark border border-border-dark text-slate-400 text-sm cursor-pointer hover:border-primary transition-colors"
+                    >Composition</label
+                  >
+                  <label
+                    class="flex-1 text-center py-2 px-4 rounded-lg bg-background-dark border border-border-dark text-slate-400 text-sm cursor-pointer hover:border-primary transition-colors"
+                    >Advanced Orchestration</label
+                  >
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- Section 4: Genres & Influences -->
+          <section class="bg-surface-dark border border-border-dark rounded-xl p-6">
+            <div class="flex items-center gap-2 mb-6">
+              <span class="material-symbols-outlined text-primary">library_music</span>
+              <h2 class="text-xl font-bold">Musical DNA</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-4">
+                <label class="text-sm font-medium text-slate-400 block">Musical Genres</label>
+                <div
+                  class="w-full min-h-12 p-3 bg-background-dark border border-border-dark rounded-lg flex flex-wrap gap-2 items-center"
+                >
+                  <span
+                    class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
+                    >Emo
+                    <span class="material-symbols-outlined text-[10px]">close</span></span
+                  >
+                  <span
+                    class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
+                    >Flamenco
+                    <span class="material-symbols-outlined text-[10px]">close</span></span
+                  >
+                  <span
+                    class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
+                    >Punk
+                    <span class="material-symbols-outlined text-[10px]">close</span></span
+                  >
+                  <input
+                    class="bg-transparent border-none p-0 text-xs focus:ring-0 w-24"
+                    placeholder="Add genre..."
+                    type="text"
+                  />
+                </div>
+                <p class="text-xs text-slate-500">List genres you like.</p>
+              </div>
+              <div class="space-y-4">
+                <label class="text-sm font-medium text-slate-400 block">Influence Bands</label>
+                <div
+                  class="w-full min-h-12 p-3 bg-background-dark border border-border-dark rounded-lg flex flex-wrap gap-2 items-center"
+                >
+                  <span
+                    class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
+                    >Radiohead
+                    <span class="material-symbols-outlined text-[10px]">close</span></span
+                  >
+                  <span
+                    class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
+                    >Tame Impala
+                    <span class="material-symbols-outlined text-[10px]">close</span></span
+                  >
+                  <span
+                    class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
+                    >Daft Punk
+                    <span class="material-symbols-outlined text-[10px]">close</span></span
+                  >
+                  <input
+                    class="bg-transparent border-none p-0 text-xs focus:ring-0 w-24"
+                    placeholder="Add band..."
+                    type="text"
+                  />
+                </div>
+                <p class="text-xs text-slate-500">List bands that inspire your sound.</p>
+              </div>
+            </div>
+          </section>
+          <!-- Section 5: Gear & Space -->
+          <section class="bg-surface-dark border border-border-dark rounded-xl p-6">
+            <div class="flex items-center gap-2 mb-6">
+              <span class="material-symbols-outlined text-primary">speaker_group</span>
+              <h2 class="text-xl font-bold">Equipment &amp; Rehearsal Space</h2>
+            </div>
+            <div class="space-y-6">
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-slate-400">Your Equipment</label>
+                <textarea
+                  class="w-full bg-background-dark border-border-dark rounded-lg focus:ring-primary focus:border-primary text-slate-200"
+                  placeholder="List your guitars, pedals, amps, workstations..."
+                  rows="3"
+                >
+Fender Jazzmaster, Roland Juno-DS, Focusrite Scarlett 2i2, collection of boutique reverb pedals.</textarea
+                >
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-slate-400">Rehearsal Space Details</label>
+                <textarea
+                  class="w-full bg-background-dark border-border-dark rounded-lg focus:ring-primary focus:border-primary text-slate-200"
+                  placeholder="Do you have a studio? Is it available for practice?"
+                  rows="3"
+                >
+Private home studio available for small acoustic sessions or electronic production. Not suitable for full drum kits.</textarea
+                >
+              </div>
+            </div>
+          </section>
+          <!-- Section 6: Social Links -->
+          <section class="bg-surface-dark border border-border-dark rounded-xl p-6">
+            <div class="flex items-center gap-2 mb-6">
+              <span class="material-symbols-outlined text-primary">link</span>
+              <h2 class="text-xl font-bold">Social &amp; Portfolio Links</h2>
+            </div>
+            <div class="space-y-4">
+              <div class="flex gap-3">
+                <div class="w-32">
+                  <select
+                    class="w-full bg-background-dark border-border-dark rounded-lg text-sm text-slate-200"
+                  >
+                    <option>Instagram</option>
+                    <option>SoundCloud</option>
+                    <option>YouTube</option>
+                    <option>Spotify</option>
+                  </select>
+                </div>
+                <input
+                  class="flex-1 bg-background-dark border-border-dark rounded-lg text-sm text-slate-200"
+                  placeholder="https://instagram.com/alexmusic"
+                  type="text"
+                />
+                <button class="p-2 text-slate-500 hover:text-red-400">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </div>
+              <div class="flex gap-3">
+                <div class="w-32">
+                  <select
+                    class="w-full bg-background-dark border-border-dark rounded-lg text-sm text-slate-200"
+                  >
+                    <option>SoundCloud</option>
+                    <option>Instagram</option>
+                    <option>YouTube</option>
+                    <option>Spotify</option>
+                  </select>
+                </div>
+                <input
+                  class="flex-1 bg-background-dark border-border-dark rounded-lg text-sm text-slate-200"
+                  placeholder="https://soundcloud.com/rivers-records"
+                  type="text"
+                />
+                <button class="p-2 text-slate-500 hover:text-red-400">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </div>
+              <button
+                class="flex items-center gap-2 text-primary font-semibold text-sm hover:underline mt-2"
+              >
+                <span class="material-symbols-outlined text-base">add_circle</span> Add another link
+              </button>
+            </div>
+          </section>
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 justify-end pt-4 pb-20">
+            <button
+              class="px-8 py-3 rounded-lg border border-border-dark text-slate-300 font-bold hover:bg-white/5 transition-colors"
+            >
+              Discard Changes
+            </button>
+            <button
+              class="px-8 py-3 rounded-lg bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+            >
+              Save Profile Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-surface-dark border-t border-border-dark py-12 px-4 md:px-10">
+      <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div class="col-span-1 md:col-span-1">
+          <div class="flex items-center gap-2 text-primary mb-6">
+            <span class="material-symbols-outlined">graphic_eq</span>
+            <h2 class="text-slate-100 text-lg font-extrabold">Waiting Room</h2>
+          </div>
+          <p class="text-slate-500 text-sm">
+            The world's premier marketplace for finding band members, session musicians, and
+            rehearsal spaces.
+          </p>
+        </div>
+        <div>
+          <h3 class="text-slate-100 font-bold mb-4">Marketplace</h3>
+          <ul class="space-y-2 text-sm text-slate-500">
+            <li><a class="hover:text-primary transition-colors" href="#">Find Musicians</a></li>
+            <li><a class="hover:text-primary transition-colors" href="#">Search Bands</a></li>
+            <li><a class="hover:text-primary transition-colors" href="#">Studio Spaces</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-slate-100 font-bold mb-4">Support</h3>
+          <ul class="space-y-2 text-sm text-slate-500">
+            <li><a class="hover:text-primary transition-colors" href="#">Safety Center</a></li>
+            <li><a class="hover:text-primary transition-colors" href="#">Help &amp; FAQ</a></li>
+            <li><a class="hover:text-primary transition-colors" href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-slate-100 font-bold mb-4">Connect</h3>
+          <div class="flex gap-4">
+            <a
+              class="size-10 bg-background-dark border border-border-dark rounded-lg flex items-center justify-center text-slate-400 hover:text-primary transition-colors"
+              href="#"
+            >
+              <span class="material-symbols-outlined text-xl">brand_family</span>
+            </a>
+            <a
+              class="size-10 bg-background-dark border border-border-dark rounded-lg flex items-center justify-center text-slate-400 hover:text-primary transition-colors"
+              href="#"
+            >
+              <span class="material-symbols-outlined text-xl">alternate_email</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div
+        class="max-w-7xl mx-auto mt-12 pt-8 border-t border-border-dark text-center text-slate-600 text-xs"
+      >
+        © 2024 Waiting Room Musician Marketplace. All rights reserved.
+      </div>
+    </footer>
+  </body>
+</html>
