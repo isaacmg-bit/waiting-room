@@ -50,5 +50,8 @@ export class PostLogin {
 
     this.loading = false;
     this.router.navigate(['/']);
+
+    localStorage.setItem('profileMinimalCompleted', 'true');
+    this.router.navigate(['/']);
   }
 }

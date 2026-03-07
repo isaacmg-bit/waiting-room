@@ -13,8 +13,8 @@ export class Home {
 
   testBackend() {
     this.http.get('http://localhost:3000/users/me').subscribe({
-      next: (res) => console.log(res),
-      error: (err) => console.error(err),
+      next: (res) => console.log('User logueado:', res),
+      error: (err) => console.error('No logueado:', err),
     });
   }
 }

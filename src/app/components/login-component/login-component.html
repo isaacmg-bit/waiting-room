@@ -3,7 +3,6 @@
     <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-xl overflow-hidden">
       <div class="px-6 py-5 border-b border-slate-800">
         <h1 class="text-xl font-semibold text-slate-200">Login</h1>
-        <p class="text-sm text-slate-500">Welcome back</p>
       </div>
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-6 flex flex-col gap-4">
         <div>
@@ -33,7 +32,12 @@
         >
           {{ loading ? 'Logging in...' : 'Login' }}
         </button>
-        <button type="button" (click)="resetPassword()">Reset password</button>
+        <button type="button" class="cursor-pointer" (click)="resetPassword()">
+          Reset password
+        </button>
+        <button type="button" class="cursor-pointer" routerLink="/register">
+          Not an user? Click here to register
+        </button>
       </form>
     </div>
   </div>

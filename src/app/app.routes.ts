@@ -8,6 +8,8 @@ import { RegisterComponent } from './components/register-component/register-comp
 import { LoginComponent } from './components/login-component/login-component';
 import { ResetPass } from './components/reset-pass/reset-pass';
 import { PostLogin } from './components/post-login/post-login';
+import { profileGuard } from './guards/profile-guard';
+import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
   {
@@ -22,26 +24,32 @@ export const routes: Routes = [
   {
     path: 'calendar',
     component: Calendar,
+    canActivate: [profileGuard],
   },
   {
     path: 'charts',
     component: Charts,
+    canActivate: [profileGuard],
   },
   {
     path: 'map',
     component: Map,
-  },
-  {
-    path: 'register',
-    component: RegisterComponent,
-  },
-  {
-    path: 'login',
-    component: LoginComponent,
+    canActivate: [profileGuard],
   },
   {
     path: 'users',
     component: Users,
+    canActivate: [profileGuard],
+  },
+  {
+    path: 'register',
+    component: RegisterComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'reset-pass',
