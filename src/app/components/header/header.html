@@ -1,101 +1,102 @@
-
-
-  <header
-    class="sticky top-0 z-50 w-full border-b border-border-dark bg-background-dark/80 backdrop-blur-md px-4 md:px-10 py-3"
-  >
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-8">
-        <div class="flex items-center gap-3 text-primary">
-          <div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
-            <span class="material-symbols-outlined text-primary">graphic_eq</span>
-          </div>
-          <h2 class="text-slate-100 text-xl font-extrabold tracking-tight">Waiting Room</h2>
+<header
+  class="sticky top-0 z-50 w-full border-b border-border-dark bg-background-dark/80 backdrop-blur-md px-4 md:px-10 py-3"
+>
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <div class="flex items-center gap-8">
+      <div class="flex items-center gap-3 text-primary">
+        <div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
+          <span class="material-symbols-outlined text-primary">graphic_eq</span>
         </div>
-        <nav class="hidden md:flex items-center gap-6">
-          <a
-            routerLink="/"
-            routerLinkActive="text-white"
-            [routerLinkActiveOptions]="{ exact: true }"
-            class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
-          >
-            Home
-          </a>
-          <a
-            routerLink="/map"
-            routerLinkActive="text-white"
-            class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
-          >
-            Map
-          </a>
-          <a
-            routerLink="/calendar"
-            routerLinkActive="text-white"
-            class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
-          >
-            Calendar
-          </a>
-          <a
-            routerLink="/charts"
-            routerLinkActive="text-white"
-            class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
-          >
-            Charts
-          </a>
-          <a
-            routerLink="/users"
-            routerLinkActive="text-white"
-            class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
-          >
-            Users
-          </a>
-          <a
-            routerLink="/register"
-            routerLinkActive="text-white"
-            class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
-          >
-            Register
-          </a>
-          <a
-            routerLink="/login"
-            routerLinkActive="text-white"
-            class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
-          >
-            Login
-          </a>
-          <a
-            (click)="logout()"
-            routerLink="/login"
-            routerLinkActive="text-white"
-            class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
-          >
-            Logout
-          </a>
-        </nav>
+        <h2 class="text-slate-100 text-xl font-extrabold tracking-tight">Waiting Room</h2>
       </div>
-      <div class="flex items-center gap-4">
-        <div class="relative hidden sm:block">
-          <span
-            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-lg"
-            >search</span
-          >
-          <input
-            class="bg-surface-dark border-border-dark text-slate-200 text-sm rounded-lg pl-10 pr-4 py-2 w-64 focus:ring-primary focus:border-primary transition-all"
-            placeholder="Search musicians..."
-            type="text"
-          />
-        </div>
-        <button
-          class="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+      <nav class="hidden md:flex items-center gap-6">
+        <a
+          routerLink="/"
+          routerLinkActive="text-white"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
         >
-          <span class="material-symbols-outlined">notifications</span>
-        </button>
-        <div class="size-10 rounded-full border-2 border-primary overflow-hidden">
-          <img
-            class="w-full h-full object-cover"
-            data-alt="User profile avatar close up"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX20fNrvNnSAiB2O4vurWM0uIPb3Duaj_DZ8bLTbkbPmAFMhdUGmNNdzRBOiTvIiSEYZ_9_s1wZL-5k-Sdw4u52Iw6WELMyTVT74dmT7uuv8k_yNK52gIxjp5c43wjYuqUVCJ03gs3Py1rSeNDLFk8QZIjF5Dr7vpcyG4JV_Ax3Az7dHb1bsAoPiV4BVhaK390lIQ2GzovGGIUBZsh9nrtVH6Xdd1s1pCdVWCysMhjdsjsJF5nLYwq-PblscIDuEqPBzfLj0VkeQ"
-          />
-        </div>
+          Home
+        </a>
+        <a
+          routerLink="/map"
+          routerLinkActive="text-white"
+          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+        >
+          Map
+        </a>
+        <a
+          routerLink="/calendar"
+          routerLinkActive="text-white"
+          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+        >
+          Calendar
+        </a>
+        <a
+          routerLink="/charts"
+          routerLinkActive="text-white"
+          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+        >
+          Charts
+        </a>
+        <a
+          routerLink="/users"
+          routerLinkActive="text-white"
+          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+        >
+          Users
+        </a>
+        <a
+          routerLink="/register"
+          routerLinkActive="text-white"
+          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+        >
+          Register
+        </a>
+        <a
+          routerLink="/login"
+          routerLinkActive="text-white"
+          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+        >
+          Login
+        </a>
+        <a
+          (click)="logout()"
+          routerLink="/login"
+          routerLinkActive="text-white"
+          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+        >
+          Logout
+        </a>
+      </nav>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="relative hidden sm:block">
+        <span
+          class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-lg"
+          >search</span
+        >
+        <input
+          class="bg-surface-dark border-border-dark text-slate-200 text-sm rounded-lg pl-10 pr-4 py-2 w-64 focus:ring-primary focus:border-primary transition-all"
+          placeholder="Search musicians..."
+          type="text"
+        />
+      </div>
+      <button
+        class="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+      >
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+      <div class="size-10 rounded-full border-2 border-primary overflow-hidden">
+        <img
+          class="w-full h-full object-cover"
+          [src]="
+            'https://otfzbljpjqojoiojfvrq.supabase.co/storage/v1/object/public/profiles/' +
+            userId() +
+            '/profilepicture.jpg'
+          "
+        />
       </div>
     </div>
-  </header>
+  </div>
+</header>
