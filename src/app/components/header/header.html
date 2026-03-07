@@ -88,14 +88,19 @@
         <span class="material-symbols-outlined">notifications</span>
       </button>
       <div class="size-10 rounded-full border-2 border-primary overflow-hidden">
-        <img
-          class="w-full h-full object-cover"
-          [src]="
-            'https://otfzbljpjqojoiojfvrq.supabase.co/storage/v1/object/public/profiles/' +
-            userId() +
-            '/profilepicture.jpg'
-          "
-        />
+        <a
+          routerLink="/edit-profile"
+          class="size-10 rounded-full border-2 border-primary overflow-hidden block"
+        >
+          <img
+            class="w-full h-full object-cover"
+            [src]="
+              'https://otfzbljpjqojoiojfvrq.supabase.co/storage/v1/object/public/profiles/' +
+              userId() +
+              '/profilepicture.jpg'
+            "
+          />
+        </a>
       </div>
     </div>
   </div>
