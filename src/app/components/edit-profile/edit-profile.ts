@@ -16,7 +16,7 @@ export class EditProfile {
   private readonly fb = inject(FormBuilder);
   private uploadService = inject(UploadService);
 
-  profilePhotoUrl = signal<string | null>(null); //
+  profilePhotoUrl = signal<string | null>(null);
 
   ngOnInit() {
     this.userService.getMe().subscribe((user) => {
