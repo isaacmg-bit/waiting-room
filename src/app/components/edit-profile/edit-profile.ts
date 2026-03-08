@@ -4,11 +4,13 @@ import { FormBuilder } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UploadService } from '../../services/upload-service';
 import { firstValueFrom } from 'rxjs';
-import { UserGallery } from "../user-gallery/user-gallery";
+import { UserGallery } from '../user-gallery/user-gallery';
+import { UserLocation } from '../user-location/user-location';
+import { CityService } from '../../services/city-service';
 
 @Component({
   selector: 'app-edit-profile',
-  imports: [ReactiveFormsModule, UserGallery],
+  imports: [ReactiveFormsModule, UserGallery, UserLocation],
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.css',
 })
@@ -16,9 +18,16 @@ export class EditProfile {
   readonly userService = inject(UserService);
   private readonly fb = inject(FormBuilder);
   readonly uploadService = inject(UploadService);
+  readonly cityService = inject(CityService);
 
   profilePhotoUrl = signal<string | null>(null);
-
+  
+  form = this.fb.group({
+    name: [''],
+    email: [{ value: '', disabled: true }],
+    location: [''],
+  });
+  
   ngOnInit() {
     this.userService.getMe().subscribe((user) => {
       this.form.patchValue({
@@ -36,12 +45,6 @@ export class EditProfile {
       error: (err) => console.error('Error loading gallery photos:', err),
     });
   }
-
-  form = this.fb.group({
-    name: [''],
-    email: [{ value: '', disabled: true }],
-    location: [''],
-  });
 
   async onProfileSelected(event: Event) {
     const input = event.target as HTMLInputElement;

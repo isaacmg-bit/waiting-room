@@ -1,0 +1,22 @@
+[
+  { "city": "Madrid", "province": "Madrid", "lat": 40.4168, "lng": -3.7038 },
+  { "city": "Barcelona", "province": "Barcelona", "lat": 41.3874, "lng": 2.1686 },
+  { "city": "Valencia", "province": "Valencia", "lat": 39.4699, "lng": -0.3763 },
+  { "city": "Sevilla", "province": "Sevilla", "lat": 37.3891, "lng": -5.9845 },
+  { "city": "Zaragoza", "province": "Zaragoza", "lat": 41.6488, "lng": -0.8891 },
+  { "city": "Málaga", "province": "Málaga", "lat": 36.7213, "lng": -4.4214 },
+  { "city": "Murcia", "province": "Murcia", "lat": 37.9922, "lng": -1.1307 },
+  { "city": "Palma", "province": "Baleares", "lat": 39.5696, "lng": 2.6502 },
+  { "city": "Bilbao", "province": "Bizkaia", "lat": 43.263, "lng": -2.935 },
+  { "city": "Alicante", "province": "Alicante", "lat": 38.3452, "lng": -0.481 },
+  { "city": "Córdoba", "province": "Córdoba", "lat": 37.8847, "lng": -4.7795 },
+  { "city": "Valladolid", "province": "Valladolid", "lat": 41.6523, "lng": -4.7245 },
+  { "city": "Vigo", "province": "Pontevedra", "lat": 42.2312, "lng": -8.7226 },
+  { "city": "Gijón", "province": "Asturias", "lat": 43.5322, "lng": -5.6611 },
+  { "city": "Hospitalet de Llobregat", "province": "Barcelona", "lat": 41.3597, "lng": 2.1 },
+  { "city": "A Coruña", "province": "A Coruña", "lat": 43.3713, "lng": -8.3962 },
+  { "city": "Granada", "province": "Granada", "lat": 37.1773, "lng": -3.5986 },
+  { "city": "Elche", "province": "Alicante", "lat": 38.2699, "lng": -0.7126 },
+  { "city": "Oviedo", "province": "Asturias", "lat": 43.3619, "lng": -5.8494 },
+  { "city": "Badalona", "province": "Barcelona", "lat": 41.45, "lng": 2.247 }
+]

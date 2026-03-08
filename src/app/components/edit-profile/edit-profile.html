@@ -67,21 +67,9 @@
                 formControlName="email"
               />
             </div>
-            <div class="space-y-2 md:col-span-2">
-              <label class="text-sm font-medium text-slate-400">Location</label>
-              <div class="relative">
-                <span
-                  class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
-                  >location_on</span
-                >
-                <input
-                  class="w-full bg-background-dark border-border-dark rounded-lg pl-10 focus:ring-primary focus:border-primary text-slate-200"
-                  data-location="Nashville, TN"
-                  type="text"
-                  formControlName="location"
-                />
-              </div>
-            </div>
+            <form [formGroup]="form">
+              <app-user-location [control]="form.controls.location"></app-user-location>
+            </form>
           </div>
         </section>
         <!-- Section 3: Instruments & Level -->
