@@ -16,21 +16,19 @@ export class ResetPass implements OnInit {
 
   password = '';
 
-  async ngOnInit() {
-    this.route.fragment.subscribe(async (fragment) => {
-      if (!fragment) return;
+  ngOnInit() {
+    const fragment = this.route.snapshot.fragment;
+    if (!fragment) return;
 
-      const params = new URLSearchParams(fragment);
+    const params = new URLSearchParams(fragment);
+    const access_token = params.get('access_token');
+    const refresh_token = params.get('refresh_token');
 
-      const access_token = params.get('access_token');
-      const refresh_token = params.get('refresh_token');
+    if (!access_token) return;
 
-      if (!access_token) return;
-
-      await this.supabase.getClient().auth.setSession({
-        access_token,
-        refresh_token: refresh_token || '',
-      });
+    this.supabase.getClient().auth.setSession({
+      access_token,
+      refresh_token: refresh_token || '',
     });
   }
 
@@ -42,11 +40,10 @@ export class ResetPass implements OnInit {
     });
 
     if (error) {
-      alert('Error updating password');
+      alert(`Error updating password: ${error.message}`);
       return;
     }
-
     alert('Password updated');
-    this.router.navigate(['/login']);
+    this.router.navigate(['/login'], { replaceUrl: true });
   }
 }

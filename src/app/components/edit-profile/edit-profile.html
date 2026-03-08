@@ -20,7 +20,7 @@
             <div class="relative group">
               <div
                 class="size-40 rounded-xl overflow-hidden border-2 border-dashed border-border-dark group-hover:border-primary transition-colors cursor-pointer"
-                (click)="fileInput.click()"
+                (click)="profileFileInput.click()"
               >
                 <img
                   class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
@@ -32,53 +32,14 @@
               <!-- Hidden file input -->
               <input
                 type="file"
-                #fileInput
+                #profileFileInput
                 hidden
                 accept="image/*"
                 (change)="onProfileSelected($event)"
               />
             </div>
           </div>
-          <div class="flex-1">
-            <p class="text-slate-200 font-semibold mb-2">Photo Gallery</p>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div
-                class="aspect-square bg-background-dark border border-border-dark rounded-lg flex items-center justify-center cursor-pointer hover:border-primary transition-colors"
-              >
-                <span class="material-symbols-outlined text-slate-600">add_a_photo</span>
-              </div>
-              <div
-                class="aspect-square bg-background-dark border border-border-dark rounded-lg overflow-hidden group"
-              >
-                <img
-                  class="w-full h-full object-cover"
-                  data-alt="Musician performing live on stage"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6cNDmDVLqMWHS_-FWd_Ljk-nvAQLiB-kUWxpjGTiRSogMOCSUGlx3E-2M78mqAlTl8PhI7Xb_fm9J8FUPhd6cTUvNwTvqXqSIgrffMnu5sbvA7age7EojtPoXt99pOzGBWN1DOSpIH1tDjhtIOYFkSC-xsqvJ3I-DhTJVtUxAQTzLQTi8vOpYirAIKjRO0TYI-hVhxazrL1lx2SC4vk8DUkYhjbJgzVazxYGuXLEpu9vnCMfObdHU_3JrY-XgHHQRtWvwo8gQoA"
-                />
-              </div>
-              <div
-                class="aspect-square bg-background-dark border border-border-dark rounded-lg overflow-hidden group"
-              >
-                <img
-                  class="w-full h-full object-cover"
-                  data-alt="Microphone in professional studio setting"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDltIIw2ofQlHq2FRRC84UlAk3I98dKZNnh-FrdbxfMoz49t0TdAqDju_BD5L7DImGH_YNSqCHwCiclF8TRcvajHaOaMG5ThlqwyldIN9vwsPeNSQhLn7yrTZ5xWTxo6WYALYUVMTUw-FmuTEXVoflpWX783Q9AgWOXpPoMIkZueWc_BOyqVopAyRhyyDWAKBEPZZGZxv29Y-Y1rNoplZ8Kuh72iWeHBzv1R1qikaVBLiGfLUaLDGFb5K4TqCEbRFMss5TkhxTaLw"
-                />
-              </div>
-              <div
-                class="aspect-square bg-background-dark border border-border-dark rounded-lg overflow-hidden group"
-              >
-                <img
-                  class="w-full h-full object-cover"
-                  data-alt="Close up of guitar strings"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX3IzbUA3YhxpJOQEKVTEDmIxqji70Y6WwsB68cRVXbJtkZVr4mIvEVJWpZOpPD2KRId-gQHF6M3BbwpN1KLJBqnINIvCT-ZxAamTMsEnGgQ3zHGdl25gbNbeAV_pmSHe-oU3H2om6vDn__bOWsld-_g0ccAQViHtfUb9tu7_LgvR5UepZCoVVfhZJEHwgCGsTBA7tY58wShs7SFoEYZ_DqGH9J11Q-k3TGlUoeSIeusFQ6aDC6bqomhEGyv60dv78TAsCjXmOYQ"
-                />
-              </div>
-            </div>
-            <p class="text-xs text-slate-500 mt-3">
-              Upload up to 8 photos. Drag and drop to reorder.
-            </p>
-          </div>
+          <app-user-gallery></app-user-gallery>
         </div>
       </section>
       <!-- Section 2: Basic Info -->

@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SupabaseService } from '../../services/supabase-service';
+import { ApiServiceBack } from '../../services/apiservice-back';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-post-login',
@@ -13,6 +15,7 @@ export class PostLogin {
   private readonly fb = inject(FormBuilder);
   private readonly supabase = inject(SupabaseService);
   private readonly router = inject(Router);
+  private readonly api = inject(ApiServiceBack);
 
   loading = false;
 
@@ -36,18 +39,8 @@ export class PostLogin {
       return;
     }
 
-    await fetch('http://localhost:3000/users/profile-sync', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.access_token}`,
-      },
-      body: JSON.stringify({
-        name,
-        location,
-      }),
-    });
-
+    await firstValueFrom(this.api.post('/users/profile-sync', { name, location }));
+    
     this.loading = false;
     this.router.navigate(['/']);
 

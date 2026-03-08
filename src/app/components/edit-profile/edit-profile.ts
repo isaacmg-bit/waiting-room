@@ -4,17 +4,18 @@ import { FormBuilder } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UploadService } from '../../services/upload-service';
 import { firstValueFrom } from 'rxjs';
+import { UserGallery } from "../user-gallery/user-gallery";
 
 @Component({
   selector: 'app-edit-profile',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, UserGallery],
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.css',
 })
 export class EditProfile {
   readonly userService = inject(UserService);
   private readonly fb = inject(FormBuilder);
-  private uploadService = inject(UploadService);
+  readonly uploadService = inject(UploadService);
 
   profilePhotoUrl = signal<string | null>(null);
 
@@ -26,6 +27,13 @@ export class EditProfile {
         location: user.location,
       });
       this.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
+    });
+
+    this.uploadService.getGallery().subscribe({
+      next: (photos) => {
+        this.uploadService.galleryPhotosSignal.set(photos);
+      },
+      error: (err) => console.error('Error loading gallery photos:', err),
     });
   }
 

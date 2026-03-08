@@ -64,6 +64,10 @@ export class UserService {
     return this.api.get<User>(url);
   }
 
+  getGallery() {
+    return this.api.get<any[]>('/api/gallery/me');
+  }
+
   private getUsersUrl(): string {
     return `${environment.apiUrl}${environment.apiUserUrl}`;
   }
