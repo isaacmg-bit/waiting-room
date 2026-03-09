@@ -35,6 +35,8 @@
     "@fullcalendar/interaction": "^6.1.20",
     "@ng-icons/core": "^33.1.0",
     "@ng-icons/heroicons": "^33.1.0",
+    "@ng-icons/lucide": "^33.1.0",
+    "@ng-icons/tabler-icons": "^33.1.0",
     "@supabase/supabase-js": "^2.97.0",
     "chart.js": "^4.5.1",
     "cors": "^2.8.6",

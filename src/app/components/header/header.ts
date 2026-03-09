@@ -2,10 +2,17 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SupabaseService } from '../../services/supabase-service';
 import { UserService } from '../../services/user-service';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { lucideDrum } from '@ng-icons/lucide';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterModule],
+  imports: [RouterModule, NgIconComponent],
+  providers: [
+    provideIcons({
+      lucideDrum,
+    }),
+  ],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })

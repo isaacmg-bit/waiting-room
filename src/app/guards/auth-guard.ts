@@ -13,7 +13,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
     const profileCompleted = localStorage.getItem('profileMinimalCompleted');
 
     if (profileCompleted) {
-      router.navigate(['/home']);
+      router.navigate(['/edit-profile']);
       return false;
     }
 

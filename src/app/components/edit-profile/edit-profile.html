@@ -23,8 +23,16 @@
                 (click)="profileFileInput.click()"
               >
                 <img
+                  #img
                   class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                  [src]="profilePhotoUrl()"
+                  [src]="
+                    profilePhotoUrl() ||
+                    'assets/img/Portrait_Placeholder.png'
+                  "
+                  (error)="
+                    img.src =
+                      'assets/img/Portrait_Placeholder.png'
+                  "
                   alt="Primary musician profile photo"
                 />
               </div>

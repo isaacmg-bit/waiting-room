@@ -5,7 +5,7 @@
     <div class="flex items-center gap-8">
       <div class="flex items-center gap-3 text-primary">
         <div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
-          <span class="material-symbols-outlined text-primary">graphic_eq</span>
+          <ng-icon name="lucideDrum"></ng-icon>
         </div>
         <h2 class="text-slate-100 text-xl font-extrabold tracking-tight">Waiting Room</h2>
       </div>
@@ -88,17 +88,16 @@
         <span class="material-symbols-outlined">notifications</span>
       </button>
       <div class="size-10 rounded-full border-2 border-primary overflow-hidden">
-        <a
-          routerLink="/edit-profile"
-          class="size-10 rounded-full border-2 border-primary overflow-hidden block"
-        >
+        <a routerLink="/edit-profile" class="size-10 border-primary overflow-hidden block">
           <img
+            #img
             class="w-full h-full object-cover"
             [src]="
               'https://otfzbljpjqojoiojfvrq.supabase.co/storage/v1/object/public/profiles/' +
               userId() +
               '/profilepicture.jpg'
             "
+            (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
           />
         </a>
       </div>

@@ -7,6 +7,7 @@ import { firstValueFrom } from 'rxjs';
 import { UserGallery } from '../user-gallery/user-gallery';
 import { UserLocation } from '../user-location/user-location';
 import { CityService } from '../../services/city-service';
+import { SupabaseService } from '../../services/supabase-service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -19,6 +20,7 @@ export class EditProfile {
   private readonly fb = inject(FormBuilder);
   readonly uploadService = inject(UploadService);
   readonly cityService = inject(CityService);
+  private supabase = inject(SupabaseService)
 
   profilePhotoUrl = signal<string | null>(null);
   
@@ -55,5 +57,15 @@ export class EditProfile {
     const url = await this.uploadService.uploadProfilePhoto(file);
     const user = await firstValueFrom(this.userService.getMe());
     this.userService.editUser(user.id, { profile_photo_url: url });
+  }
+
+  async saveProfile(event: Event) {
+    const { data } = await this.supabase.getClient().auth.getSession();
+    const session = data.session;
+
+    const cityData = this.cityService.getCityCoords(this.form.value.location);
+
+
+
   }
 }
