@@ -10,9 +10,9 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './reset-pass.html',
 })
 export class ResetPass implements OnInit {
-  private supabase = inject(SupabaseService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private readonly supabase = inject(SupabaseService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   password = '';
 
@@ -26,23 +26,19 @@ export class ResetPass implements OnInit {
 
     if (!access_token) return;
 
-    this.supabase.getClient().auth.setSession({
-      access_token,
-      refresh_token: refresh_token || '',
-    });
+    this.supabase.setSession(access_token, refresh_token ?? '');
   }
 
-  async updatePassword() {
+  async updatePassword(): Promise<void> {
     if (!this.password) return;
 
-    const { error } = await this.supabase.getClient().auth.updateUser({
-      password: this.password,
-    });
+    const { error } = await this.supabase.updatePassword(this.password);
 
     if (error) {
       alert(`Error updating password: ${error.message}`);
       return;
     }
+
     alert('Password updated');
     this.router.navigate(['/login'], { replaceUrl: true });
   }

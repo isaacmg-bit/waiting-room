@@ -1,21 +1,25 @@
-<div class="relative">
+<div class="relative w-full">
   <input
     type="text"
     [formControl]="control"
     (input)="onInput($event)"
+    (blur)="filteredCities.set([])"
     placeholder="City name"
-    class="w-full bg-background-dark border-border-dark rounded-lg text-slate-200 px-3 py-2"
+    class="w-full bg-background-dark border border-border-dark rounded-lg text-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
   />
 
   @if (filteredCities().length) {
-    <div
-      class="absolute w-full bg-surface-dark border border-border-dark rounded mt-1 z-10 max-h-60 overflow-auto"
+    <ul
+      class="absolute w-full bg-surface-dark border border-border-dark rounded-lg shadow-lg z-9999 max-h-60 overflow-auto mt-1"
     >
       @for (city of filteredCities(); track city.city) {
-        <div class="px-3 py-2 hover:bg-background-dark cursor-pointer" (click)="selectCity(city)">
+        <li
+          class="px-3 py-2 text-slate-200 hover:bg-background-dark cursor-pointer transition-colors"
+          (mousedown)="selectCity(city)"
+        >
           {{ city.city }} ({{ city.province }})
-        </div>
+        </li>
       }
-    </div>
+    </ul>
   }
 </div>

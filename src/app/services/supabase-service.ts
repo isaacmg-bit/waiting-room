@@ -1,27 +1,19 @@
 import { Injectable } from '@angular/core';
-import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
-
-export interface Profile {
-  id?: string;
-  username: string;
-  website: string;
-  avatar_url: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class SupabaseService {
-  private supabase: SupabaseClient;
-
-  constructor() {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
-  }
+  private readonly supabase: SupabaseClient = createClient(
+    environment.supabaseUrl,
+    environment.supabaseAnonKey,
+  );
 
   getClient() {
     return this.supabase;
   }
 
-  async getSession() {
+  getSession() {
     return this.supabase.auth.getSession();
   }
 
@@ -37,9 +29,17 @@ export class SupabaseService {
     return this.supabase.auth.signOut();
   }
 
-  async resetPassword(email: string) {
+  setSession(access_token: string, refresh_token: string) {
+    return this.supabase.auth.setSession({ access_token, refresh_token });
+  }
+
+  updatePassword(password: string) {
+    return this.supabase.auth.updateUser({ password });
+  }
+
+  resetPassword(email: string) {
     return this.supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'http://localhost:4200/reset-pass',
+      redirectTo: `${environment.appUrl}${environment.apiResetPass}`,
     });
   }
 }

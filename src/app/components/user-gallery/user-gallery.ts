@@ -1,11 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { UploadService } from '../../services/upload-service';
 import { GalleryPhoto } from '../../models/GalleryPhoto';
-import { firstValueFrom } from 'rxjs';
-import { ApiServiceBack } from '../../services/apiservice-back';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroTrash } from '@ng-icons/heroicons/outline';
-import { heroArrowDownTray } from '@ng-icons/heroicons/outline';
+import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
 
 @Component({
   selector: 'app-user-gallery',
@@ -15,27 +12,16 @@ import { heroArrowDownTray } from '@ng-icons/heroicons/outline';
   styleUrl: './user-gallery.css',
 })
 export class UserGallery {
+  private readonly uploadService = inject(UploadService);
+
   selectedPhoto: string | null = null;
-
-  readonly uploadService = inject(UploadService);
-  readonly api = inject(ApiServiceBack);
-
-  ngOnInit() {
-    this.uploadService.getGallery().subscribe({
-      next: (photos) => {
-        this.uploadService.galleryPhotosSignal.set(photos);
-      },
-      error: (err) => console.error('Error loading gallery photos:', err),
-    });
-  }
+  galleryPhotos = this.uploadService.galleryPhotosSignal;
 
   async onGallerySelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) return;
+    if (!input.files?.length) return;
 
-    const files = Array.from(input.files);
-
-    for (const [i, file] of files.entries()) {
+    for (const [i, file] of Array.from(input.files).entries()) {
       await this.uploadService.uploadGalleryPhoto(file, i + 1);
     }
   }
@@ -43,20 +29,13 @@ export class UserGallery {
   openPhoto(url: string) {
     this.selectedPhoto = url;
   }
-
   closePhoto() {
     this.selectedPhoto = null;
   }
 
-  async removePhoto(photo: GalleryPhoto) {
+  async removePhoto(photo: GalleryPhoto): Promise<void> {
     try {
-      await firstValueFrom(this.api.delete(`/gallery/${photo.id}`));
-      const path = photo.url.split('/gallery/')[1];
-      await this.uploadService.deleteFromStorage(path);
-
-      this.uploadService.galleryPhotosSignal.update((photos) =>
-        photos.filter((p) => p.id !== photo.id),
-      );
+      await this.uploadService.removePhoto(photo);
     } catch (err) {
       console.error('Error deleting gallery photo:', err);
     }

@@ -15,7 +15,7 @@ import { UserEvent } from '../../models/UserEvent';
 export class Calendar implements AfterViewInit {
   @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
 
-  calendarService = inject(CalendarService);
+  private readonly calendarService = inject(CalendarService);
 
   calendarModalActive = signal<boolean>(false);
   editCalendarModalActive = signal<boolean>(false);
@@ -75,9 +75,8 @@ export class Calendar implements AfterViewInit {
 
   editEvent(): void {
     const event = this.selectedEvent();
-
-    if (!this.eventTitle() || !this.eventColor() || !this.selectedDate()) return;
     if (!event) return;
+    if (!this.eventTitle() || !this.eventColor() || !this.selectedDate()) return;
 
     this.calendarService.editEvent(event.id, this.buildEventBody());
     this.clearForm();

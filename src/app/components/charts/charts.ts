@@ -21,13 +21,13 @@ export class Charts implements AfterViewInit {
   @ViewChild('barChart') barChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('lineChart') lineChart!: ElementRef<HTMLCanvasElement>;
 
-  private calendarService = inject(CalendarService);
+  private readonly calendarService = inject(CalendarService);
 
-  private chartsReady = signal<boolean>(false);
+  private readonly chartsReady = signal(false);
   private barChartInstance?: Chart<'bar'>;
   private lineChartInstance?: Chart<'line'>;
 
-  private months: string[] = [
+  private readonly months: string[] = [
     'Jan',
     'Feb',
     'Mar',
@@ -42,46 +42,27 @@ export class Charts implements AfterViewInit {
     'Dec',
   ];
 
-  private data: number[] = Array(12).fill(0);
-
-  chartConfigBar = {
-    type: 'bar' as const,
-    data: {
-      labels: this.months,
-      datasets: [
-        {
-          label: 'Events',
-          data: this.data,
-        },
-      ],
-    },
-  };
-
-  chartConfigLine = {
-    type: 'line' as const,
-    data: {
-      labels: this.months,
-      datasets: [
-        {
-          label: 'Events',
-          data: this.data,
-        },
-      ],
-    },
-  };
-
   constructor() {
     effect(() => {
-      const events = this.calendarService.eventsSignal();
+      this.calendarService.eventsSignal();
       if (!this.chartsReady()) return;
-
       this.updateCharts();
     });
   }
 
   ngAfterViewInit(): void {
-    this.barChartInstance = new Chart(this.barChart.nativeElement, this.chartConfigBar);
-    this.lineChartInstance = new Chart(this.lineChart.nativeElement, this.chartConfigLine);
+    const initialData = Array(12).fill(0);
+
+    this.barChartInstance = new Chart(this.barChart.nativeElement, {
+      type: 'bar',
+      data: { labels: this.months, datasets: [{ label: 'Events', data: [...initialData] }] },
+    });
+
+    this.lineChartInstance = new Chart(this.lineChart.nativeElement, {
+      type: 'line',
+      data: { labels: this.months, datasets: [{ label: 'Events', data: [...initialData] }] },
+    });
+
     this.chartsReady.set(true);
   }
 
@@ -93,11 +74,11 @@ export class Charts implements AfterViewInit {
       return acc;
     }, {});
 
-    this.data = this.months.map((_, i) => eventsByMonth[i] || 0);
+    const data = this.months.map((_, i) => eventsByMonth[i] ?? 0);
 
     [this.barChartInstance, this.lineChartInstance].forEach((chart) => {
-      if (chart && chart.data.datasets.length > 0) {
-        chart.data.datasets[0].data = this.data;
+      if (chart?.data.datasets.length) {
+        chart.data.datasets[0].data = data;
         chart.update();
       }
     });

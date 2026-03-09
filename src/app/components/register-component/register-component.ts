@@ -2,11 +2,10 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SupabaseService } from '../../services/supabase-service';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register-component',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './register-component.html',
   styleUrl: './register-component.css',
 })
@@ -29,13 +28,9 @@ export class RegisterComponent {
 
     try {
       this.loading = true;
-
       const { error } = await this.supabase.signUp(email!, password!);
-
       if (error) throw error;
-
       alert('Check your email to verify account');
-
       this.router.navigate(['/login']);
     } catch (err) {
       console.error(err);

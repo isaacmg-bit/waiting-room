@@ -1,35 +1,27 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user-service';
 
 @Component({
   selector: 'app-users',
-  standalone: true,
   imports: [RouterModule, ReactiveFormsModule],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
-export class Users implements OnInit {
+export class Users {
   readonly userService = inject(UserService);
   private readonly fb = inject(FormBuilder);
 
-  userForm!: FormGroup;
   isEditMode = false;
   editingUserId: string | null = null;
 
-  ngOnInit(): void {
-    this.initializeForm();
-  }
-
-  private initializeForm(): void {
-    this.userForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
-      location: ['', [Validators.required, Validators.minLength(2)]],
-    });
-  }
+  userForm = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(2)]],
+    email: ['', [Validators.required, Validators.email]],
+    location: ['', [Validators.required, Validators.minLength(2)]],
+  });
 
   loadUserForEdit(user: User): void {
     this.isEditMode = true;

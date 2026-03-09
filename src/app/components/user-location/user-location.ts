@@ -1,18 +1,18 @@
-import { Component, Input, inject, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CityService } from '../../services/city-service';
 import { City } from '../../models/City';
 
 @Component({
   selector: 'app-user-location',
-  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './user-location.html',
 })
 export class UserLocation {
-  private cityService = inject(CityService);
+  private readonly cityService = inject(CityService);
 
   @Input() control!: FormControl;
+  @Output() citySelected = new EventEmitter<City>();
 
   filteredCities = signal<City[]>([]);
 
@@ -28,5 +28,6 @@ export class UserLocation {
   selectCity(city: City) {
     this.control.setValue(city.city);
     this.filteredCities.set([]);
+    this.citySelected.emit(city);
   }
 }

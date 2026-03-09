@@ -8,26 +8,25 @@ import { lucideDrum } from '@ng-icons/lucide';
 @Component({
   selector: 'app-header',
   imports: [RouterModule, NgIconComponent],
-  providers: [
-    provideIcons({
-      lucideDrum,
-    }),
-  ],
+  providers: [provideIcons({ lucideDrum })],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
 export class Header {
-  private supabase = inject(SupabaseService);
-  private userService = inject(UserService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly userService = inject(UserService);
+
   userId = signal<string | null>(null);
 
-  async logout() {
-    await this.supabase.signOut();
+  ngOnInit() {
+    this.userService.getMe().subscribe((user) => this.userId.set(user.id));
   }
 
-  ngOnInit() {
-    this.userService.getMe().subscribe((user) => {
-      this.userId.set(user.id);
-    });
+  async logout(): Promise<void> {
+    try {
+      await this.supabase.signOut();
+    } catch (err) {
+      console.error('Error signing out:', err);
+    }
   }
 }

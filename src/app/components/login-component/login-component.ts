@@ -9,9 +9,9 @@ import { SupabaseService } from '../../services/supabase-service';
   templateUrl: './login-component.html',
 })
 export class LoginComponent {
-  private fb = inject(FormBuilder);
-  private supabase = inject(SupabaseService);
-  private router = inject(Router);
+  private readonly fb = inject(FormBuilder);
+  private readonly supabase = inject(SupabaseService);
+  private readonly router = inject(Router);
 
   loading = false;
 
@@ -27,11 +27,8 @@ export class LoginComponent {
 
     try {
       this.loading = true;
-
       const { error } = await this.supabase.signIn(email!, password!);
-
       if (error) throw error;
-
       this.router.navigate(['/']);
     } catch (err) {
       console.error(err);
@@ -43,16 +40,12 @@ export class LoginComponent {
 
   async resetPassword() {
     const email = this.form.value.email;
-
     if (!email) {
       alert('Enter email first');
       return;
     }
 
-    const { error } = await this.supabase.getClient().auth.resetPasswordForEmail(email, {
-      redirectTo: 'http://localhost:4200/reset-pass',
-    });
-
+    const { error } = await this.supabase.resetPassword(email);
     if (error) {
       alert('Error sending reset email');
       return;

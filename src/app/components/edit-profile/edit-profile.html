@@ -25,14 +25,8 @@
                 <img
                   #img
                   class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                  [src]="
-                    profilePhotoUrl() ||
-                    'assets/img/Portrait_Placeholder.png'
-                  "
-                  (error)="
-                    img.src =
-                      'assets/img/Portrait_Placeholder.png'
-                  "
+                  [src]="profilePhotoUrl() || 'assets/img/Portrait_Placeholder.png'"
+                  (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
                   alt="Primary musician profile photo"
                 />
               </div>
@@ -75,9 +69,10 @@
                 formControlName="email"
               />
             </div>
-            <form [formGroup]="form">
-              <app-user-location [control]="form.controls.location"></app-user-location>
-            </form>
+            <app-user-location
+              [control]="form.controls.location"
+              (citySelected)="selectedCity = $event"
+            ></app-user-location>
           </div>
         </section>
         <!-- Section 3: Instruments & Level -->
@@ -318,6 +313,8 @@ Private home studio available for small acoustic sessions or electronic producti
             Discard Changes
           </button>
           <button
+            type="button"
+            (click)="saveProfile()"
             class="px-8 py-3 rounded-lg bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
           >
             Save Profile Changes
@@ -326,58 +323,4 @@ Private home studio available for small acoustic sessions or electronic producti
       </form>
     </div>
   </main>
-
-  <!-- Footer -->
-  <footer class="bg-surface-dark border-t border-border-dark py-12 px-4 md:px-10">
-    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
-      <div class="col-span-1 md:col-span-1">
-        <div class="flex items-center gap-2 text-primary mb-6">
-          <span class="material-symbols-outlined">graphic_eq</span>
-          <h2 class="text-slate-100 text-lg font-extrabold">Waiting Room</h2>
-        </div>
-        <p class="text-slate-500 text-sm">
-          The world's premier marketplace for finding band members, session musicians, and rehearsal
-          spaces.
-        </p>
-      </div>
-      <div>
-        <h3 class="text-slate-100 font-bold mb-4">Marketplace</h3>
-        <ul class="space-y-2 text-sm text-slate-500">
-          <li><a class="hover:text-primary transition-colors" href="#">Find Musicians</a></li>
-          <li><a class="hover:text-primary transition-colors" href="#">Search Bands</a></li>
-          <li><a class="hover:text-primary transition-colors" href="#">Studio Spaces</a></li>
-        </ul>
-      </div>
-      <div>
-        <h3 class="text-slate-100 font-bold mb-4">Support</h3>
-        <ul class="space-y-2 text-sm text-slate-500">
-          <li><a class="hover:text-primary transition-colors" href="#">Safety Center</a></li>
-          <li><a class="hover:text-primary transition-colors" href="#">Help &amp; FAQ</a></li>
-          <li><a class="hover:text-primary transition-colors" href="#">Terms of Service</a></li>
-        </ul>
-      </div>
-      <div>
-        <h3 class="text-slate-100 font-bold mb-4">Connect</h3>
-        <div class="flex gap-4">
-          <a
-            class="size-10 bg-background-dark border border-border-dark rounded-lg flex items-center justify-center text-slate-400 hover:text-primary transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined text-xl">brand_family</span>
-          </a>
-          <a
-            class="size-10 bg-background-dark border border-border-dark rounded-lg flex items-center justify-center text-slate-400 hover:text-primary transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined text-xl">alternate_email</span>
-          </a>
-        </div>
-      </div>
-    </div>
-    <div
-      class="max-w-7xl mx-auto mt-12 pt-8 border-t border-border-dark text-center text-slate-600 text-xs"
-    >
-      © 2024 Waiting Room Musician Marketplace. All rights reserved.
-    </div>
-  </footer>
 </body>
