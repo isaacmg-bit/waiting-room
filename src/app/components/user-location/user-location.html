@@ -1,25 +1,71 @@
-<div class="relative w-full">
-  <input
-    type="text"
-    [formControl]="control"
-    (input)="onInput($event)"
-    (blur)="filteredCities.set([])"
-    placeholder="City name"
-    class="w-full bg-background-dark border border-border-dark rounded-lg text-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-  />
-
-  @if (filteredCities().length) {
-    <ul
-      class="absolute w-full bg-surface-dark border border-border-dark rounded-lg shadow-lg z-9999 max-h-60 overflow-auto mt-1"
-    >
-      @for (city of filteredCities(); track city.city) {
-        <li
-          class="px-3 py-2 text-slate-200 hover:bg-background-dark cursor-pointer transition-colors"
-          (mousedown)="selectCity(city)"
-        >
-          {{ city.city }} ({{ city.province }})
-        </li>
+<div class="w-full space-y-2">
+  <label class="text-sm font-medium text-slate-400">City</label>
+  <button
+    type="button"
+    (click)="openModal()"
+    class="w-full flex items-center justify-between px-3 py-2 bg-background-dark border border-border-dark rounded-lg text-left hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+  >
+    <span class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-slate-500 text-base">location_on</span>
+      @if (selectedCity()) {
+        <span class="text-slate-200">{{ selectedCity()!.city }}</span>
+      } @else {
+        <span class="text-slate-500">Select a city...</span>
       }
-    </ul>
-  }
+    </span>
+    <span class="material-symbols-outlined text-slate-500 text-base">chevron_right</span>
+  </button>
 </div>
+
+@if (isModalOpen()) {
+  <div
+    class="fixed inset-0 z-9999 flex items-center justify-center p-4"
+    style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
+    (click)="closeModal()"
+  >
+    <div
+      class="w-full max-w-md bg-surface-dark border border-border-dark rounded-2xl shadow-2xl overflow-hidden"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-center justify-between px-5 py-4 border-b border-border-dark">
+        <h3 class="font-bold text-slate-100">Select your city</h3>
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="text-slate-500 hover:text-slate-200 transition-colors"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="px-4 py-3 border-b border-border-dark">
+        <div
+          class="flex items-center gap-2 px-3 py-2 bg-background-dark border border-border-dark rounded-lg focus-within:border-primary transition-colors"
+        >
+          <span class="material-symbols-outlined text-slate-500 text-base">search</span>
+          <input
+            type="text"
+            (input)="onSearch($event)"
+            placeholder="Search city..."
+            autofocus
+            class="flex-1 bg-transparent border-none text-slate-200 text-sm focus:outline-none focus:ring-0 placeholder-slate-500"
+          />
+        </div>
+      </div>
+
+      <ul class="max-h-64 overflow-y-auto">
+        @if (filteredCities().length === 0) {
+          <li class="px-5 py-8 text-center text-slate-500 text-sm">Start typing to search...</li>
+        }
+        @for (city of filteredCities(); track city.city) {
+          <li
+            class="flex items-center justify-between px-5 py-3 hover:bg-primary/10 cursor-pointer transition-colors border-b border-white/5 last:border-0"
+            (click)="selectCity(city)"
+          >
+            <span class="text-slate-200 font-medium">{{ city.city }}</span>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+}

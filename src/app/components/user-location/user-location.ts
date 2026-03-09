@@ -14,20 +14,33 @@ export class UserLocation {
   @Input() control!: FormControl;
   @Output() citySelected = new EventEmitter<City>();
 
+  isModalOpen = signal(false);
   filteredCities = signal<City[]>([]);
+  selectedCity = signal<City | null>(null);
 
-  onInput(event: Event) {
+  openModal() {
+    this.filteredCities.set([]);
+    this.isModalOpen.set(true);
+  }
+
+  closeModal() {
+    this.isModalOpen.set(false);
+    this.filteredCities.set([]);
+  }
+
+  onSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     if (!value) {
       this.filteredCities.set([]);
       return;
     }
-    this.filteredCities.set(this.cityService.searchCities(value).slice(0, 5));
+    this.filteredCities.set(this.cityService.searchCities(value).slice(0, 8));
   }
 
   selectCity(city: City) {
+    this.selectedCity.set(city);
     this.control.setValue(city.city);
-    this.filteredCities.set([]);
     this.citySelected.emit(city);
+    this.closeModal();
   }
 }

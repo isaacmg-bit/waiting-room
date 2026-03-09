@@ -8,7 +8,17 @@ export class CityService {
 
   searchCities(query: string): City[] {
     const q = query.toLowerCase();
-    return this.cities.filter((c) => c.city.toLowerCase().includes(q));
+    return this.cities
+      .filter((c) => c.city.toLowerCase().includes(q))
+      .sort((a, b) => {
+        const aName = a.city.toLowerCase();
+        const bName = b.city.toLowerCase();
+        const aStarts = aName.startsWith(q);
+        const bStarts = bName.startsWith(q);
+        if (aStarts && !bStarts) return -1;
+        if (!aStarts && bStarts) return 1;
+        return aName.localeCompare(bName);
+      });
   }
 
   getCityCoords(cityName: string): City | undefined {
