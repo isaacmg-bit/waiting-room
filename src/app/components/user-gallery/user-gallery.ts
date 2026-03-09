@@ -12,7 +12,7 @@ import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
   styleUrl: './user-gallery.css',
 })
 export class UserGallery {
-  private readonly uploadService = inject(UploadService);
+  readonly uploadService = inject(UploadService);
 
   selectedPhoto: string | null = null;
   galleryPhotos = this.uploadService.galleryPhotosSignal;
