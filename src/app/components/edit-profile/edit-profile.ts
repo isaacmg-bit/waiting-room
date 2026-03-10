@@ -8,10 +8,13 @@ import { User } from '../../models/User';
 import { City } from '../../models/City';
 import { UserInstruments } from '../user-instruments/user-instruments';
 import { CityService } from '../../services/city-service';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
 
 @Component({
   selector: 'app-edit-profile',
-  imports: [ReactiveFormsModule, UserGallery, UserLocation, UserInstruments],
+  imports: [NgIconComponent, ReactiveFormsModule, UserGallery, UserLocation, UserInstruments],
+  providers: [provideIcons({ heroTrash, heroArrowDownTray })],
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.css',
 })
@@ -56,10 +59,22 @@ export class EditProfile {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
+    const localUrl = URL.createObjectURL(input.files[0]);
+    this.profilePhotoUrl.set(localUrl);
+
     const url = await this.uploadService.uploadProfilePhoto(input.files[0]);
     if (this.currentUser) {
       this.userService.editUser(this.currentUser.id, { profile_photo_url: url });
     }
+
+    this.profilePhotoUrl.set(`${url}?t=${Date.now()}`);
+  }
+
+  async removeProfilePhoto(): Promise<void> {
+    if (!this.currentUser) return;
+    await this.uploadService.removeProfilePhoto(this.currentUser.id);
+    this.userService.editUser(this.currentUser.id, { profile_photo_url: null });
+    this.profilePhotoUrl.set(null);
   }
 
   saveProfile(): void {

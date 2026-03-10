@@ -77,4 +77,10 @@ export class UploadService {
     await this.deleteFromStorage(path);
     this.galleryPhotosSignal.update((photos) => photos.filter((p) => p.id !== photo.id));
   }
+
+  async removeProfilePhoto(userId: string): Promise<void> {
+    const fileName = `${userId}/profilepicture.jpg`;
+    const { error } = await this.supabase.storage.from('profiles').remove([fileName]);
+    if (error) throw error;
+  }
 }
