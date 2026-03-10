@@ -3,6 +3,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SupabaseService } from '../../services/supabase-service';
 import { RouterLink } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { UserService } from '../../services/user-service';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +15,7 @@ export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly supabase = inject(SupabaseService);
   private readonly router = inject(Router);
+  private readonly userService = inject(UserService);
 
   loading = false;
 
@@ -30,7 +33,9 @@ export class LoginComponent {
       this.loading = true;
       const { error } = await this.supabase.signIn(email!, password!);
       if (error) throw error;
-      this.router.navigate(['/']);
+
+      const user = await firstValueFrom(this.userService.getMe());
+      this.router.navigate([user.name ? '/' : '/post-login']);
     } catch (err) {
       console.error(err);
       alert('Login failed');

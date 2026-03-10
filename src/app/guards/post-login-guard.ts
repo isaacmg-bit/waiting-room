@@ -4,7 +4,7 @@ import { SupabaseService } from '../services/supabase-service';
 import { UserService } from '../services/user-service';
 import { firstValueFrom } from 'rxjs';
 
-export const profileGuard: CanActivateFn = async (route, state) => {
+export const postLoginGuard: CanActivateFn = async () => {
   const router = inject(Router);
   const supabase = inject(SupabaseService);
   const userService = inject(UserService);
@@ -18,8 +18,8 @@ export const profileGuard: CanActivateFn = async (route, state) => {
 
   const user = await firstValueFrom(userService.getMe());
 
-  if (!user.name) {
-    router.navigate(['/post-login']);
+  if (user.name) {
+    router.navigate(['/']);
     return false;
   }
 

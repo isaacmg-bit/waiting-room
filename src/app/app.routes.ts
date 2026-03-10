@@ -11,6 +11,7 @@ import { PostLogin } from './components/post-login/post-login';
 import { profileGuard } from './guards/profile-guard';
 import { authGuard } from './guards/auth-guard';
 import { EditProfile } from './components/edit-profile/edit-profile';
+import { postLoginGuard } from './guards/post-login-guard';
 
 export const routes: Routes = [
   {
@@ -21,6 +22,7 @@ export const routes: Routes = [
   {
     path: 'home',
     component: Home,
+    canActivate: [profileGuard],
   },
   {
     path: 'calendar',
@@ -59,9 +61,11 @@ export const routes: Routes = [
   {
     path: 'post-login',
     component: PostLogin,
+    canActivate: [postLoginGuard],
   },
   {
     path: 'edit-profile',
     component: EditProfile,
+    canActivate: [profileGuard],
   },
 ];

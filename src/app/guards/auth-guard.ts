@@ -7,17 +7,9 @@ export const authGuard: CanActivateFn = async (route, state) => {
   const supabase = inject(SupabaseService);
 
   const { data } = await supabase.getSession();
-  const session = data.session;
 
-  if (session) {
-    const profileCompleted = localStorage.getItem('profileMinimalCompleted');
-
-    if (profileCompleted) {
-      router.navigate(['/edit-profile']);
-      return false;
-    }
-
-    router.navigate(['/post-login']);
+  if (data.session) {
+    router.navigate(['/']);
     return false;
   }
 

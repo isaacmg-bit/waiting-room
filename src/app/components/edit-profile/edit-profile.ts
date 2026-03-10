@@ -7,6 +7,7 @@ import { UserLocation } from '../user-location/user-location';
 import { User } from '../../models/User';
 import { City } from '../../models/City';
 import { UserInstruments } from '../user-instruments/user-instruments';
+import { CityService } from '../../services/city-service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -16,6 +17,7 @@ import { UserInstruments } from '../user-instruments/user-instruments';
 })
 export class EditProfile {
   private readonly userService = inject(UserService);
+  private readonly cityService = inject(CityService);
   private readonly fb = inject(FormBuilder);
   private readonly uploadService = inject(UploadService);
 
@@ -26,17 +28,21 @@ export class EditProfile {
   form = this.fb.group({
     name: [''],
     email: [{ value: '', disabled: true }],
-    location: [''],
+    location: [null as City | null],
   });
 
   ngOnInit() {
-    this.userService.getMe().subscribe((user) => {
+    this.userService.getMe().subscribe(async (user) => {
       this.currentUser = user;
-      this.form.patchValue({
-        name: user.name,
-        email: user.email,
-        location: user.location,
-      });
+      this.form.patchValue({ name: user.name, email: user.email });
+
+      if (user.location) {
+        const city = await this.cityService.getCityCoords(user.location);
+        if (city) {
+          this.form.get('location')?.setValue(city);
+        }
+      }
+
       this.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
     });
 

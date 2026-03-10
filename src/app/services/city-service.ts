@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { City } from '../models/City';
 import { firstValueFrom } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class CityService {
-  private readonly nominatimUrl = 'https://nominatim.openstreetmap.org/search';
-  private debounceTimer: any;
+  private readonly nominatimUrl = `${environment.nominatimUrl}`;
 
   constructor(private http: HttpClient) {}
 
@@ -20,7 +20,7 @@ export class CityService {
             q: query,
             format: 'json',
             addressdetails: '1',
-            limit: '100', 
+            limit: '15',
             countrycodes: 'es',
             featuretype: 'settlement',
           },
@@ -28,22 +28,20 @@ export class CityService {
       );
 
       const q = query.toLowerCase();
-      const cities = response
+
+      return response
         .map((item) => {
           const address = item.address || {};
           const city = address.city || address.town || address.village || address.hamlet;
-
           if (!city || !item.lat || !item.lon) return null;
-
           return {
-            city: city,
+            city,
             province: address.state || address.province || '',
             lat: parseFloat(item.lat),
             lng: parseFloat(item.lon),
           };
         })
         .filter((city): city is City => city !== null)
-        .filter((city) => city.city.toLowerCase().includes(q))
         .filter(
           (city, index, self) =>
             index === self.findIndex((c) => c.city.toLowerCase() === city.city.toLowerCase()),
@@ -51,14 +49,10 @@ export class CityService {
         .sort((a, b) => {
           const aStarts = a.city.toLowerCase().startsWith(q);
           const bStarts = b.city.toLowerCase().startsWith(q);
-
           if (aStarts && !bStarts) return -1;
           if (!aStarts && bStarts) return 1;
-
           return a.city.localeCompare(b.city);
         });
-
-      return cities;
     } catch (error) {
       console.error('Error searching cities:', error);
       return [];
