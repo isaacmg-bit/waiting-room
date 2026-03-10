@@ -28,6 +28,6 @@ export class InstrumentsService {
   }
 
   private getInstrumentsUrl(): string {
-    return `${environment.apiUrl}${environment.apiInstrumentsUrl}`;
+    return `${environment.apiInstrumentsUrl}`;
   }
 }

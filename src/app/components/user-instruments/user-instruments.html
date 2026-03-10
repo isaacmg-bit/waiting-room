@@ -5,82 +5,97 @@
   </div>
   <div class="space-y-4">
     <div class="flex flex-wrap gap-2 mb-4">
-      <span
-        class="px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full text-sm flex items-center gap-2"
-      >
-        Electric zamboba
-        <span class="material-symbols-outlined text-xs cursor-pointer">close</span>
-      </span>
-      <span
-        class="px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full text-sm flex items-center gap-2"
-      >
-        Triangle
-        <span class="material-symbols-outlined text-xs cursor-pointer">close</span>
-      </span>
+      @for (ui of userInstruments(); track ui.id) {
+        <span
+          class="px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full text-sm flex items-center gap-2"
+        >
+          {{ ui.instruments?.instrument_name }}
+          <span
+            class="material-symbols-outlined text-xs cursor-pointer"
+            (click)="deleteInstrument(ui.id)"
+            >close</span
+          >
+        </span>
+      }
       <button
+        (click)="openModal()"
         class="px-3 py-1 bg-background-dark text-slate-400 border border-border-dark border-dashed rounded-full text-sm hover:border-primary transition-colors flex items-center gap-1"
       >
         <span class="material-symbols-outlined text-xs">add</span> Add Instrument
       </button>
     </div>
     <div class="grid grid-cols-1 gap-4">
-      <div
-        class="flex items-center justify-between p-4 bg-background-dark rounded-lg border border-border-dark"
-      >
-        <span class="font-medium">Electric zambomba</span>
-        <select
-          class="bg-surface-dark border-border-dark rounded-lg text-sm text-slate-200 focus:ring-primary"
+      @for (ui of userInstruments(); track ui.id) {
+        <div
+          class="flex items-center justify-between p-4 bg-background-dark rounded-lg border border-border-dark"
         >
-          <option>Beginner</option>
-          <option>Intermediate</option>
-          <option selected="">Advanced</option>
-          <option>Professional</option>
-        </select>
-      </div>
-      <div
-        class="flex items-center justify-between p-4 bg-background-dark rounded-lg border border-border-dark"
-      >
-        <span class="font-medium">Triangle</span>
-        <select
-          class="bg-surface-dark border-border-dark rounded-lg text-sm text-slate-200 focus:ring-primary"
-        >
-          <option>Beginner</option>
-          <option selected="">Intermediate</option>
-          <option>Advanced</option>
-          <option>Professional</option>
-        </select>
-      </div>
-    </div>
-  </div>
-  <!-- Music Theory Section -->
-  <div class="mt-8 pt-8 border-t border-border-dark">
-    <div class="flex items-center gap-3">
-      <input
-        checked=""
-        class="size-5 bg-background-dark border-border-dark rounded text-primary focus:ring-primary"
-        id="theory"
-        type="checkbox"
-      />
-      <label class="text-slate-200 font-medium cursor-pointer" for="theory"
-        >Do you know music theory?</label
-      >
-    </div>
-    <div class="mt-4 pl-8">
-      <label class="text-sm font-medium text-slate-400 block mb-2">Theory Level</label>
-      <div class="flex gap-4">
-        <label
-          class="flex-1 text-center py-2 px-4 rounded-lg bg-primary/10 border border-primary text-primary text-sm cursor-pointer"
-          >Basic</label
-        >
-        <label
-          class="flex-1 text-center py-2 px-4 rounded-lg bg-background-dark border border-border-dark text-slate-400 text-sm cursor-pointer hover:border-primary transition-colors"
-          >Composition</label
-        >
-        <label
-          class="flex-1 text-center py-2 px-4 rounded-lg bg-background-dark border border-border-dark text-slate-400 text-sm cursor-pointer hover:border-primary transition-colors"
-          >Advanced Orchestration</label
-        >
-      </div>
+          <span class="font-medium">{{ ui.instruments?.instrument_name }}</span>
+          <select
+            class="bg-surface-dark border-border-dark rounded-lg text-sm text-slate-200 focus:ring-primary"
+            [value]="ui.level"
+          >
+            <option>Beginner</option>
+            <option>Intermediate</option>
+            <option>Advanced</option>
+            <option>Professional</option>
+          </select>
+        </div>
+      }
     </div>
   </div>
 </section>
+
+@if (isModalOpen()) {
+  <div
+    class="fixed inset-0 z-9999 flex items-center justify-center p-4"
+    style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
+    (click)="closeModal()"
+  >
+    <div
+      class="w-full max-w-md bg-surface-dark border border-border-dark rounded-2xl shadow-2xl overflow-hidden"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-center justify-between px-5 py-4 border-b border-border-dark">
+        <h3 class="font-bold text-slate-100">Add Instrument</h3>
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="text-slate-500 hover:text-slate-200 transition-colors"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="px-4 py-3 border-b border-border-dark">
+        <div
+          class="flex items-center gap-2 px-3 py-2 bg-background-dark border border-border-dark rounded-lg focus-within:border-primary transition-colors"
+        >
+          <span class="material-symbols-outlined text-slate-500 text-base">search</span>
+          <input
+            type="text"
+            [value]="searchQuery()"
+            (input)="onSearch($event)"
+            placeholder="Search instrument..."
+            autofocus
+            class="flex-1 bg-transparent border-none text-slate-200 text-sm focus:outline-none focus:ring-0 placeholder-slate-500"
+          />
+        </div>
+      </div>
+      <ul class="max-h-64 overflow-y-auto">
+        @if (filteredInstruments().length === 0) {
+          <li class="px-5 py-8 text-center text-slate-500 text-sm">No instruments found.</li>
+        }
+        @for (instrument of filteredInstruments(); track instrument.id) {
+          <li
+            class="flex items-center justify-between px-5 py-3 hover:bg-primary/10 cursor-pointer transition-colors border-b border-white/5 last:border-0"
+            (click)="selectInstrument(instrument)"
+          >
+            <div class="flex flex-col">
+              <span class="text-slate-200 font-medium">{{ instrument.instrument_name }}</span>
+              <span class="text-xs text-slate-500">{{ instrument.instrument_family }}</span>
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+}
