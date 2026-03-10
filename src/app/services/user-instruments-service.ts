@@ -53,7 +53,13 @@ export class UserInstrumentsService {
       },
     });
   }
-
+  updateLevel(id: string, level: string) {
+    this.api.patch(`${environment.apiUserInstrumentsUrl}${id}`, { level }).subscribe(() => {
+      this.userInstrumentSignal.update((list) =>
+        list.map((ui) => (ui.id === id ? { ...ui, level } : ui)),
+      );
+    });
+  }
   private getUrl(): string {
     return `${environment.apiUserInstrumentsUrl}`;
   }

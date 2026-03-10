@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { InstrumentsService } from '../../services/instruments-service';
 import { UserInstrumentsService } from '../../services/user-instruments-service';
 import { Instrument } from '../../models/Instrument';
+import { UserInstrument } from '../../models/UserInstrument';
 
 @Component({
   selector: 'app-user-instruments',
@@ -43,6 +44,10 @@ export class UserInstruments implements OnInit {
     this.userInstrumentService.deleteUserInstrument(id);
   }
 
+  onLevelChange(id: string, level: string) {
+    this.userInstrumentService.updateLevel(id, level);
+  }
+
   openModal() {
     this.searchQuery.set('');
 
@@ -53,5 +58,4 @@ export class UserInstruments implements OnInit {
     this.isModalOpen.set(false);
     this.searchQuery.set('');
   }
-  
 }
