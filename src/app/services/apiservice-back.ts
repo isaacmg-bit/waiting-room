@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 })
 export class ApiServiceBack {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.apiUrl; // backend URL
+  private readonly baseUrl = environment.apiUrl;
 
   get<T>(path: string): Observable<T> {
     return this.http.get<T>(`${this.baseUrl}${path}`);
