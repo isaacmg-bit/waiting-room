@@ -9,9 +9,9 @@
       >
         <img [src]="photo.url" class="w-full h-full object-cover" />
         <button
-          class="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-red-600 z-10 flex items-center justify-center"
+          [hidden]="photo.id.startsWith('temp-')"
           (click)="$event.stopPropagation(); removePhoto(photo)"
-          title="Delete photo"
+          class="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-red-600 z-10 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ng-icon name="heroTrash" size="16" />
         </button>
@@ -35,13 +35,8 @@
     >
       <img
         #img
-        [src]="
-          selectedPhoto ||
-          'assets/img/Portrait_Placeholder.png'
-        "
-        (error)="
-          img.src = 'assets/img/Portrait_Placeholder.png'
-        "
+        [src]="selectedPhoto || 'assets/img/Portrait_Placeholder.png'"
+        (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
         class="max-h-[90%] max-w-[90%] rounded-lg shadow-lg"
       />
     </div>

@@ -41,12 +41,13 @@
               />
             </div>
           </div>
+          <!-- User gallery -->
           <app-user-gallery></app-user-gallery>
         </div>
       </section>
       <!-- Section 2: Basic Info -->
       <form [formGroup]="form">
-        <section class="bg-surface-dark border border-border-dark rounded-xl p-6">
+        <section class="bg-surface-dark border border-border-dark rounded-xl p-6 mb-6">
           <div class="flex items-center gap-2 mb-6">
             <span class="material-symbols-outlined text-primary">person</span>
             <h2 class="text-xl font-bold">Basic Information</h2>
@@ -76,94 +77,9 @@
           </div>
         </section>
         <!-- Section 3: Instruments & Level -->
-        <section class="bg-surface-dark border border-border-dark rounded-xl p-6">
-          <div class="flex items-center gap-2 mb-6">
-            <span class="material-symbols-outlined text-primary">piano</span>
-            <h2 class="text-xl font-bold">Instruments</h2>
-          </div>
-          <div class="space-y-4">
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span
-                class="px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full text-sm flex items-center gap-2"
-              >
-                Electric Guitar
-                <span class="material-symbols-outlined text-xs cursor-pointer">close</span>
-              </span>
-              <span
-                class="px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full text-sm flex items-center gap-2"
-              >
-                Synthesizer
-                <span class="material-symbols-outlined text-xs cursor-pointer">close</span>
-              </span>
-              <button
-                class="px-3 py-1 bg-background-dark text-slate-400 border border-border-dark border-dashed rounded-full text-sm hover:border-primary transition-colors flex items-center gap-1"
-              >
-                <span class="material-symbols-outlined text-xs">add</span> Add Instrument
-              </button>
-            </div>
-            <div class="grid grid-cols-1 gap-4">
-              <div
-                class="flex items-center justify-between p-4 bg-background-dark rounded-lg border border-border-dark"
-              >
-                <span class="font-medium">Electric Guitar</span>
-                <select
-                  class="bg-surface-dark border-border-dark rounded-lg text-sm text-slate-200 focus:ring-primary"
-                >
-                  <option>Beginner</option>
-                  <option>Intermediate</option>
-                  <option selected="">Advanced</option>
-                  <option>Professional</option>
-                </select>
-              </div>
-              <div
-                class="flex items-center justify-between p-4 bg-background-dark rounded-lg border border-border-dark"
-              >
-                <span class="font-medium">Synthesizer</span>
-                <select
-                  class="bg-surface-dark border-border-dark rounded-lg text-sm text-slate-200 focus:ring-primary"
-                >
-                  <option>Beginner</option>
-                  <option selected="">Intermediate</option>
-                  <option>Advanced</option>
-                  <option>Professional</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <!-- Music Theory Section -->
-          <div class="mt-8 pt-8 border-t border-border-dark">
-            <div class="flex items-center gap-3">
-              <input
-                checked=""
-                class="size-5 bg-background-dark border-border-dark rounded text-primary focus:ring-primary"
-                id="theory"
-                type="checkbox"
-              />
-              <label class="text-slate-200 font-medium cursor-pointer" for="theory"
-                >Do you know music theory?</label
-              >
-            </div>
-            <div class="mt-4 pl-8">
-              <label class="text-sm font-medium text-slate-400 block mb-2">Theory Level</label>
-              <div class="flex gap-4">
-                <label
-                  class="flex-1 text-center py-2 px-4 rounded-lg bg-primary/10 border border-primary text-primary text-sm cursor-pointer"
-                  >Basic</label
-                >
-                <label
-                  class="flex-1 text-center py-2 px-4 rounded-lg bg-background-dark border border-border-dark text-slate-400 text-sm cursor-pointer hover:border-primary transition-colors"
-                  >Composition</label
-                >
-                <label
-                  class="flex-1 text-center py-2 px-4 rounded-lg bg-background-dark border border-border-dark text-slate-400 text-sm cursor-pointer hover:border-primary transition-colors"
-                  >Advanced Orchestration</label
-                >
-              </div>
-            </div>
-          </div>
-        </section>
+        <app-user-instruments></app-user-instruments>
         <!-- Section 4: Genres & Influences -->
-        <section class="bg-surface-dark border border-border-dark rounded-xl p-6">
+        <section class="bg-surface-dark border border-border-dark rounded-xl p-6 mb-6">
           <div class="flex items-center gap-2 mb-6">
             <span class="material-symbols-outlined text-primary">library_music</span>
             <h2 class="text-xl font-bold">Musical DNA</h2>
@@ -184,7 +100,7 @@
                 >
                 <span
                   class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
-                  >Punk <span class="material-symbols-outlined text-[10px]">close</span></span
+                  >Makineta <span class="material-symbols-outlined text-[10px]">close</span></span
                 >
                 <input
                   class="bg-transparent border-none p-0 text-xs focus:ring-0 w-24"
@@ -201,16 +117,17 @@
               >
                 <span
                   class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
-                  >Radiohead <span class="material-symbols-outlined text-[10px]">close</span></span
+                  >Los caños <span class="material-symbols-outlined text-[10px]">close</span></span
                 >
                 <span
                   class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
-                  >Tame Impala
+                  >Cannibal Corpse
                   <span class="material-symbols-outlined text-[10px]">close</span></span
                 >
                 <span
                   class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
-                  >Daft Punk <span class="material-symbols-outlined text-[10px]">close</span></span
+                  >Xavi Metralla
+                  <span class="material-symbols-outlined text-[10px]">close</span></span
                 >
                 <input
                   class="bg-transparent border-none p-0 text-xs focus:ring-0 w-24"
@@ -223,7 +140,7 @@
           </div>
         </section>
         <!-- Section 5: Gear & Space -->
-        <section class="bg-surface-dark border border-border-dark rounded-xl p-6">
+        <section class="bg-surface-dark border border-border-dark rounded-xl p-6 mb-6">
           <div class="flex items-center gap-2 mb-6">
             <span class="material-symbols-outlined text-primary">speaker_group</span>
             <h2 class="text-xl font-bold">Equipment &amp; Rehearsal Space</h2>

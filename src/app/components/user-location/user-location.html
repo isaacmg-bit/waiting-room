@@ -45,24 +45,36 @@
           <span class="material-symbols-outlined text-slate-500 text-base">search</span>
           <input
             type="text"
+            [value]="searchInput()"
             (input)="onSearch($event)"
             placeholder="Search city..."
             autofocus
-            class="flex-1 bg-transparent border-none text-slate-200 text-sm focus:outline-none focus:ring-0 placeholder-slate-500"
+            [disabled]="isLoading()"
+            class="flex-1 bg-transparent border-none text-slate-200 text-sm focus:outline-none focus:ring-0 placeholder-slate-500 disabled:opacity-50"
           />
+          @if (isLoading()) {
+            <span class="material-symbols-outlined text-slate-500 text-base animate-spin"
+              >sync</span
+            >
+          }
         </div>
       </div>
 
       <ul class="max-h-64 overflow-y-auto">
-        @if (filteredCities().length === 0) {
+        @if (isLoading()) {
+          <li class="px-5 py-8 text-center text-slate-500 text-sm">Searching...</li>
+        } @else if (filteredCities().length === 0) {
           <li class="px-5 py-8 text-center text-slate-500 text-sm">Start typing to search...</li>
         }
-        @for (city of filteredCities(); track city.city) {
+        @for (city of filteredCities(); track city.city + city.province) {
           <li
             class="flex items-center justify-between px-5 py-3 hover:bg-primary/10 cursor-pointer transition-colors border-b border-white/5 last:border-0"
             (click)="selectCity(city)"
           >
-            <span class="text-slate-200 font-medium">{{ city.city }}</span>
+            <div class="flex flex-col">
+              <span class="text-slate-200 font-medium">{{ city.city }}</span>
+              <span class="text-xs text-slate-500">{{ city.province }}</span>
+            </div>
           </li>
         }
       </ul>

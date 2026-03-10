@@ -6,10 +6,11 @@ import { UserGallery } from '../user-gallery/user-gallery';
 import { UserLocation } from '../user-location/user-location';
 import { User } from '../../models/User';
 import { City } from '../../models/City';
+import { UserInstruments } from '../user-instruments/user-instruments';
 
 @Component({
   selector: 'app-edit-profile',
-  imports: [ReactiveFormsModule, UserGallery, UserLocation],
+  imports: [ReactiveFormsModule, UserGallery, UserLocation, UserInstruments],
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.css',
 })
