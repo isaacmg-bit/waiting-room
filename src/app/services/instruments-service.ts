@@ -26,6 +26,7 @@ export class InstrumentsService {
         error: (err) => console.error('Error loading instruments:', err),
       });
   }
+  
 
   private getInstrumentsUrl(): string {
     return `${environment.apiInstrumentsUrl}`;

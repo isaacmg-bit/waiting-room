@@ -24,6 +24,15 @@ export class UserInstrumentsService {
       });
   }
 
+  updateInstrumentLevel(userInstrumentId: string, level: string): void {
+    this.api.patch(`${this.getUrl()}${userInstrumentId}`, { level }).subscribe({
+      next: () => {
+        this.loadUserInstruments();
+      },
+      error: (err) => console.error('Error:', err),
+    });
+  }
+
   addUserInstrument(instrumentId: string, level: string): void {
     const tempId = `temp-${Date.now()}`;
     this.userInstrumentSignal.update((list) => [

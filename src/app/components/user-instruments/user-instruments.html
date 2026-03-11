@@ -33,16 +33,18 @@
           <select
             class="bg-surface-dark border-border-dark rounded-lg text-sm text-slate-200 focus:ring-primary"
             [value]="ui.level"
+            (change)="updateInstrumentLevel(ui.id, $event)"
           >
-            <option>Beginner</option>
-            <option>Intermediate</option>
-            <option>Advanced</option>
-            <option>Professional</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+            <option value="Professional">Professional</option>
           </select>
         </div>
       }
     </div>
   </div>
+  <app-user-theory></app-user-theory>
 </section>
 
 @if (isModalOpen()) {
