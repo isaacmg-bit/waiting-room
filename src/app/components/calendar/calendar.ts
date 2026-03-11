@@ -37,6 +37,7 @@ export class Calendar implements AfterViewInit {
 
   constructor() {
     effect(() => {
+      console.log('EVENTS SIGNAL:', this.calendarService.eventsSignal());
       const events = this.calendarService.eventsSignal();
       const api = this.calendarApi();
 

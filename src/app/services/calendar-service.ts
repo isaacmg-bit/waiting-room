@@ -34,7 +34,7 @@ export class CalendarService {
   }
 
   deleteEvent(id: string): void {
-    this.api.delete(`${this.getEventsUrl()}/${id}`).subscribe({
+    this.api.delete(`${this.getEventsUrl()}`).subscribe({
       next: () => this.eventsSignal.update((events) => events.filter((e) => e.id !== id)),
       error: (err) => console.error('Error deleting event:', err),
     });
