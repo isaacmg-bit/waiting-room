@@ -34,7 +34,7 @@ export class UserGenres {
   }
 
   selectGenre(genre: Genre): void {
-    this.userGenresService.addUserGenre(genre.id);
+    this.userGenresService.addUserGenre(genre.id, genre);
     this.closeModal();
   }
 

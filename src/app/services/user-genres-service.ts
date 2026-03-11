@@ -3,6 +3,7 @@ import { ApiServiceBack } from './apiservice-back';
 import { UserGenre } from '../models/UserGenre';
 import { finalize } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Genre } from '../models/Genre';
 
 @Injectable({
   providedIn: 'root',
@@ -24,11 +25,11 @@ export class UserGenresService {
       });
   }
 
-  addUserGenre(genreId: string): void {
+  addUserGenre(genreId: string, genre: Genre): void {
     const tempId = `temp-${Date.now()}`;
     this.userGenreSignal.update((list) => [
       ...list,
-      { id: tempId, genre_id: genreId, genres: null },
+      { id: tempId, genre_id: genreId, genres: genre },
     ]);
 
     this.api.post<UserGenre>(this.getUrl(), { genre_id: genreId }).subscribe({
@@ -40,7 +41,6 @@ export class UserGenresService {
       },
     });
   }
-
   deleteUserGenre(id: string): void {
     this.userGenreSignal.update((genres) => genres.filter((u) => u.id !== id));
 
