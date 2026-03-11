@@ -2,6 +2,7 @@ import { Component, AfterViewInit, inject, signal, effect } from '@angular/core'
 import { LocationService } from '../../services/location-service';
 import * as L from 'leaflet';
 import { UserLocation } from '../../models/UserLocation';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-map',
@@ -87,7 +88,7 @@ export class Map implements AfterViewInit {
       const { latitude: myLat, longitude: myLng } = position.coords;
 
       this.map = L.map('map', { center: [myLat, myLng], zoom: 13 });
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+      L.tileLayer(`${environment.leafletTileLayer}`).addTo(this.map);
       L.marker([myLat, myLng], { icon: this.iconUser }).addTo(this.map);
       this.savedMarkersLayer.addTo(this.map);
       this.mapReady.set(true);

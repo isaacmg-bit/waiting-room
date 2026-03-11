@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
   styleUrl: './home.css',
 })
 export class Home {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   testBackend() {
     this.http.get('http://localhost:3000/users/me').subscribe({

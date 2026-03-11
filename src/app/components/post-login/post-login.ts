@@ -6,6 +6,7 @@ import { firstValueFrom } from 'rxjs';
 import { UserLocation } from '../user-location/user-location';
 import { City } from '../../models/City';
 import * as L from 'leaflet';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-post-login',
@@ -37,7 +38,7 @@ export class PostLogin {
 
     setTimeout(() => {
       this.map = L.map('map-preview', { zoom: 12, zoomControl: false });
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+      L.tileLayer(`${environment.leafletTileLayer}`).addTo(this.map);
       this.map.setView([city.lat, city.lng], 12);
     }, 50);
   }

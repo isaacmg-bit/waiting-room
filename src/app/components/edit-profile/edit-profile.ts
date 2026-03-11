@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { UserService } from '../../services/user-service';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UploadService } from '../../services/upload-service';
@@ -26,7 +26,7 @@ import { UserGenres } from '../user-genres/user-genres';
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.css',
 })
-export class EditProfile {
+export class EditProfile implements OnInit {
   private readonly userService = inject(UserService);
   private readonly cityService = inject(CityService);
   private readonly fb = inject(FormBuilder);

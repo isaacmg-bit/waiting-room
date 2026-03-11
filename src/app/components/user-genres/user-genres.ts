@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { GenresService } from '../../services/genres-service';
 import { UserGenresService } from '../../services/user-genres-service';
 import { computed } from '@angular/core';
@@ -10,7 +10,7 @@ import { Genre } from '../../models/Genre';
   templateUrl: './user-genres.html',
   styleUrl: './user-genres.css',
 })
-export class UserGenres {
+export class UserGenres implements OnInit {
   private readonly genresService = inject(GenresService);
   private readonly userGenresService = inject(UserGenresService);
   readonly userGenres = this.userGenresService.userGenreSignal;

@@ -4,7 +4,7 @@ import { SupabaseService } from '../services/supabase-service';
 import { UserService } from '../services/user-service';
 import { firstValueFrom } from 'rxjs';
 
-export const profileGuard: CanActivateFn = async (route, state) => {
+export const profileGuard: CanActivateFn = async () => {
   const router = inject(Router);
   const supabase = inject(SupabaseService);
   const userService = inject(UserService);

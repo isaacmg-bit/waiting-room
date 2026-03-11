@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { SupabaseService } from '../../services/supabase-service';
 import { UserService } from '../../services/user-service';
@@ -13,7 +13,7 @@ import { HostListener } from '@angular/core';
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
-export class Header {
+export class Header implements OnInit {
   private readonly supabase = inject(SupabaseService);
   private readonly userService = inject(UserService);
   private readonly router = inject(Router);
