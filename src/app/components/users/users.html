@@ -1,124 +1,152 @@
-<main>
+<main class="bg-background-dark min-h-screen">
   <div class="max-w-7xl mx-auto px-6 py-8">
-    <h1 class="text-3xl font-bold mb-2">Users</h1>
+    <h1 class="text-3xl font-black tracking-tight text-slate-100 mb-2">
+      Users
+    </h1>
+    <p class="text-slate-500 text-sm mb-8">Manage and browse all registered musicians.</p>
   </div>
 
-  <div class="max-w-7xl mx-auto px-6 mb-4 flex items-end">
-    <form
-      [formGroup]="userForm"
-      (ngSubmit)="onSubmit()"
-      class="flex flex-col gap-4 w-full max-w-2xl"
-      aria-label="User form"
-    >
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label for="user-name" class="block text-sm font-medium mb-2">Name</label>
-          <input
-            id="user-name"
-            formControlName="name"
-            placeholder="Full name"
-            class="w-full rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          />
-          @if (userForm.get('name')?.touched && nameError) {
-            <p class="text-red-400 text-xs mt-1">{{ nameError }}</p>
-          }
+  <div class="max-w-7xl mx-auto px-6 mb-6">
+    <div class="glass-card rounded-3xl p-6">
+      <form
+        [formGroup]="userForm"
+        (ngSubmit)="onSubmit()"
+        class="flex flex-col gap-4"
+        aria-label="User form"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="space-y-2">
+            <label class="text-xs font-semibold uppercase tracking-widest text-slate-500"
+              >Name</label
+            >
+            <input
+              formControlName="name"
+              placeholder="Full name"
+              class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
+            />
+            @if (userForm.get('name')?.touched && nameError) {
+              <p class="text-red-400 text-xs">{{ nameError }}</p>
+            }
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-semibold uppercase tracking-widest text-slate-500"
+              >Email</label
+            >
+            <input
+              formControlName="email"
+              type="email"
+              placeholder="user@example.com"
+              class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
+            />
+            @if (userForm.get('email')?.touched && emailError) {
+              <p class="text-red-400 text-xs">{{ emailError }}</p>
+            }
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-semibold uppercase tracking-widest text-slate-500"
+              >Location</label
+            >
+            <input
+              formControlName="location"
+              placeholder="City, Country"
+              class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
+            />
+            @if (userForm.get('location')?.touched && locationError) {
+              <p class="text-red-400 text-xs">{{ locationError }}</p>
+            }
+          </div>
         </div>
-
-        <div>
-          <label for="user-email" class="block text-sm font-medium mb-2">Email</label>
-          <input
-            id="user-email"
-            formControlName="email"
-            type="email"
-            placeholder="user@example.com"
-            class="w-full rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          />
-          @if (userForm.get('email')?.touched && emailError) {
-            <p class="text-red-400 text-xs mt-1">{{ emailError }}</p>
-          }
-        </div>
-
-        <div>
-          <label for="user-location" class="block text-sm font-medium mb-2">Location</label>
-          <input
-            id="user-location"
-            formControlName="location"
-            placeholder="City, Country"
-            class="w-full rounded bg-slate-800 text-slate-100 px-4 py-2 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          />
-          @if (userForm.get('location')?.touched && locationError) {
-            <p class="text-red-400 text-xs mt-1">{{ locationError }}</p>
-          }
-        </div>
-      </div>
-
-      <div class="flex gap-2">
-        <button
-          type="submit"
-          [disabled]="userForm.invalid"
-          class="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-600/50 disabled:cursor-not-allowed transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
-        >
-          {{ isEditMode ? 'Edit user' : 'Add User' }}
-        </button>
-        @if (isEditMode) {
+        <div class="flex gap-2">
           <button
-            type="button"
-            (click)="cancelEdit()"
-            class="px-4 py-2 rounded-md bg-slate-700 hover:bg-slate-600 transition text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            type="submit"
+            [disabled]="userForm.invalid"
+            class="px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
-            Cancel
+            {{ isEditMode ? 'Edit user' : 'Add User' }}
           </button>
-        }
-      </div>
-    </form>
+          @if (isEditMode) {
+            <button
+              type="button"
+              (click)="cancelEdit()"
+              class="px-6 py-2.5 rounded-xl border border-white/10 text-slate-400 text-sm font-medium hover:bg-white/5 transition-all"
+            >
+              Cancel
+            </button>
+          }
+        </div>
+      </form>
+    </div>
   </div>
 
   <div class="max-w-7xl mx-auto px-6 pb-12">
     @if (userService.loadingSignal()) {
-      <div class="text-center py-12 text-slate-400" aria-live="polite" aria-busy="true">
-        <div class="animate-pulse">Loading users...</div>
-      </div>
+      <div class="text-center py-12 text-slate-500 animate-pulse">Loading users...</div>
     }
 
     @if (!userService.loadingSignal() && userService.usersSignal().length === 0) {
-      <p class="text-center py-12 text-slate-400 text-lg" aria-live="polite">No users found</p>
+      <p class="text-center py-12 text-slate-500">No users found</p>
     }
 
     @if (!userService.loadingSignal() && userService.usersSignal().length > 0) {
-      <div class="overflow-x-auto rounded-lg border border-slate-800">
+      <div class="glass-card rounded-3xl overflow-hidden">
         <table class="w-full text-sm" aria-label="Users table">
-          <thead class="bg-slate-900 text-slate-400">
-            <tr>
-              <th scope="col" class="px-4 py-3 text-left">ID</th>
-              <th scope="col" class="px-4 py-3 text-left">First</th>
-              <th scope="col" class="px-4 py-3 text-left">Last</th>
-              <th scope="col" class="px-4 py-3 text-left">Email</th>
-              <th scope="col" class="px-4 py-3 text-left">Location</th>
-              <th scope="col" class="px-4 py-3 text-left">Actions</th>
+          <thead>
+            <tr class="border-b border-white/5">
+              <th
+                class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500"
+              >
+                ID
+              </th>
+              <th
+                class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500"
+              >
+                First
+              </th>
+              <th
+                class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500"
+              >
+                Last
+              </th>
+              <th
+                class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500"
+              >
+                Email
+              </th>
+              <th
+                class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500"
+              >
+                Location
+              </th>
+              <th
+                class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-500"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-800">
+          <tbody>
             @for (user of userService.usersSignal(); track user.id) {
-              <tr class="hover:bg-slate-900/50 transition">
-                <td class="px-4 py-3 text-slate-400 font-mono text-xs" [title]="user.id">
+              <tr class="border-b border-white/5 last:border-0 hover:bg-white/3 transition-colors">
+                <td
+                  class="px-5 py-3 text-slate-600 font-mono text-xs truncate max-w-24"
+                  [title]="user.id"
+                >
                   {{ user.id }}
                 </td>
-                <td class="px-4 py-3">{{ user.name.split(' ')[0] }}</td>
-                <td class="px-4 py-3">{{ user.name.split(' ').slice(-1)[0] }}</td>
-                <td class="px-4 py-3 text-slate-400">{{ user.email }}</td>
-                <td class="px-4 py-3 text-slate-400">{{ user.location }}</td>
-                <td class="px-4 py-3 flex gap-2">
+                <td class="px-5 py-3 text-slate-200 font-medium">{{ user.name.split(' ')[0] }}</td>
+                <td class="px-5 py-3 text-slate-200">{{ user.name.split(' ').slice(-1)[0] }}</td>
+                <td class="px-5 py-3 text-slate-400">{{ user.email }}</td>
+                <td class="px-5 py-3 text-slate-400">{{ user.location }}</td>
+                <td class="px-5 py-3 flex gap-2">
                   <button
-                    class="px-3 py-1 rounded bg-amber-500/90 hover:bg-amber-500 text-xs font-medium text-black focus:outline-none focus:ring-2 focus:ring-amber-400"
-                    [aria-label]="'Edit user ' + user.name"
                     (click)="loadUserForEdit(user)"
+                    class="px-3 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 text-xs font-medium hover:bg-primary/20 transition-all"
                   >
                     Edit
                   </button>
                   <button
-                    class="px-3 py-1 rounded bg-red-600/90 hover:bg-red-600 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-red-400"
-                    [aria-label]="'Delete user ' + user.name"
                     (click)="onDelete(user.id)"
+                    class="px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-medium hover:bg-red-500/20 transition-all"
                   >
                     Delete
                   </button>

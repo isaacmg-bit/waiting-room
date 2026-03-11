@@ -8,13 +8,4 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home {
-  private http = inject(HttpClient);
-
-  testBackend() {
-    this.http.get('http://localhost:3000/users/me').subscribe({
-      next: (res) => console.log('User logueado:', res),
-      error: (err) => console.error('No logueado:', err),
-    });
-  }
-}
+export class Home {}

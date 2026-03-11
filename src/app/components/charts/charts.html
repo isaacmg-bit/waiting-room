@@ -1,16 +1,15 @@
-<main>
+<main class="bg-background-dark min-h-screen">
   <div class="max-w-7xl mx-auto px-6 py-8">
-    <h1 class="text-3xl font-bold mb-2">Charts</h1>
+    <h1 class="text-3xl font-black tracking-tight text-slate-100 mb-2">Charts</h1>
+    <p class="text-slate-500 text-sm mb-8">Visual overview of your musical activity.</p>
   </div>
 
   <div class="max-w-7xl mx-auto px-6 pb-12">
     <div class="grid gap-6 md:grid-cols-2">
-      <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-lg overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center">
-          <h2 id="bar-chart-title" class="text-sm font-semibold tracking-wide text-slate-300">
-            Bar Chart
-          </h2>
-          <span class="text-xs text-slate-500">Overview</span>
+      <div class="glass-card rounded-3xl overflow-hidden shadow-xl">
+        <div class="px-6 py-4 border-b border-white/5 flex justify-between items-center">
+          <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">Bar Chart</h2>
+          <span class="text-xs text-slate-600">Overview</span>
         </div>
         <div class="p-6">
           <canvas
@@ -22,12 +21,10 @@
         </div>
       </div>
 
-      <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-lg overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center">
-          <h2 id="line-chart-title" class="text-sm font-semibold tracking-wide text-slate-300">
-            Line Chart
-          </h2>
-          <span class="text-xs text-slate-500">Trends</span>
+      <div class="glass-card rounded-3xl overflow-hidden shadow-xl">
+        <div class="px-6 py-4 border-b border-white/5 flex justify-between items-center">
+          <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">Line Chart</h2>
+          <span class="text-xs text-slate-600">Trends</span>
         </div>
         <div class="p-6">
           <canvas

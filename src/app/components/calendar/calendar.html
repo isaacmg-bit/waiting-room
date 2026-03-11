@@ -1,48 +1,54 @@
-<main>
+<main class="bg-background-dark min-h-screen">
   <div class="max-w-7xl mx-auto px-6 py-8">
-    <h1 class="text-3xl font-bold mb-2">Calendar</h1>
+    <h1 class="text-3xl font-black tracking-tight text-slate-100 mb-2">Calendar</h1>
+    <p class="text-slate-500 text-sm mb-8">Plan your gigs, rehearsals and sessions.</p>
   </div>
 
   <div class="max-w-7xl mx-auto px-6 pb-12">
-    <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-lg">
-      <div class="p-6">
-        <full-calendar #calendar [options]="calendarOptions"></full-calendar>
-      </div>
+    <div class="glass-card rounded-3xl shadow-xl p-6">
+      <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     </div>
 
+    <!-- Add Event Modal -->
     @if (calendarModalActive()) {
       <div
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="add-event-title"
       >
-        <div class="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-6">
-          <h2 id="add-event-title" class="text-lg font-semibold mb-4">Add Event</h2>
-
-          <form class="flex flex-col gap-4">
-            <div>
-              <label for="event-name" class="block text-xs text-slate-400 mb-1">Event name</label>
+        <div class="w-full max-w-sm glass-card rounded-2xl shadow-2xl overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
+            <h2 class="font-bold text-slate-100">Add Event</h2>
+            <button
+              type="button"
+              (click)="calendarModalActive.set(false)"
+              class="text-slate-500 hover:text-slate-200 transition-colors"
+            >
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <form class="flex flex-col gap-4 p-5">
+            <div class="space-y-2">
+              <label class="text-xs font-semibold uppercase tracking-widest text-slate-500"
+                >Event name</label
+              >
               <input
-                id="event-name"
                 type="text"
                 placeholder="Balm show @ Palau St. Jordi"
                 (input)="onTitleInput($event)"
-                class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
               />
             </div>
-
-            <div>
-              <label for="color-select-add" class="block text-xs text-slate-400 mb-1"
+            <div class="space-y-2">
+              <label class="text-xs font-semibold uppercase tracking-widest text-slate-500"
                 >Event color</label
               >
               <select
-                id="color-select-add"
-                name="colors"
-                class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 (change)="onColorChange($event)"
+                class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary text-slate-200 transition-all"
               >
-                <option value="">--Please choose an option--</option>
+                <option value="">-- Choose color --</option>
                 <option value="red">Red</option>
                 <option value="blue">Blue</option>
                 <option value="green">Green</option>
@@ -52,20 +58,18 @@
                 <option value="purple">Purple</option>
               </select>
             </div>
-
             <div class="flex justify-end gap-2 pt-2">
               <button
                 type="button"
-                aria-label="Close dialog"
-                class="px-4 py-2 text-xs rounded-md bg-slate-800 hover:bg-slate-700 transition"
-                (click)="this.calendarModalActive.set(false)"
+                (click)="calendarModalActive.set(false)"
+                class="px-4 py-2 text-sm rounded-xl border border-white/10 text-slate-400 hover:bg-white/5 transition-all"
               >
                 Cancel
               </button>
               <button
                 type="button"
-                class="px-4 py-2 text-xs rounded-md bg-emerald-600 hover:bg-emerald-500 transition font-medium"
                 (click)="saveEvent()"
+                class="px-6 py-2 text-sm rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
               >
                 Save
               </button>
@@ -75,43 +79,48 @@
       </div>
     }
 
+    <!-- Edit Event Modal -->
     @if (editCalendarModalActive()) {
       <div
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="edit-event-title"
       >
-        <div class="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-6">
-          <h2 id="edit-event-title" class="text-lg font-semibold mb-4">Edit Event</h2>
-
-          <form class="flex flex-col gap-4">
-            <div>
-              <label for="edit-event-name" class="block text-xs text-slate-400 mb-1"
+        <div class="w-full max-w-sm glass-card rounded-2xl shadow-2xl overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
+            <h2 class="font-bold text-slate-100">Edit Event</h2>
+            <button
+              type="button"
+              (click)="editCalendarModalActive.set(false)"
+              class="text-slate-500 hover:text-slate-200 transition-colors"
+            >
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <form class="flex flex-col gap-4 p-5">
+            <div class="space-y-2">
+              <label class="text-xs font-semibold uppercase tracking-widest text-slate-500"
                 >Event name</label
               >
               <input
-                id="edit-event-name"
                 type="text"
                 placeholder="Your mom's birthday"
                 [value]="eventTitle()"
                 (input)="onTitleInput($event)"
-                class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
               />
             </div>
-
-            <div>
-              <label for="color-select-edit" class="block text-xs text-slate-400 mb-1"
+            <div class="space-y-2">
+              <label class="text-xs font-semibold uppercase tracking-widest text-slate-500"
                 >Event color</label
               >
               <select
-                id="color-select-edit"
-                name="colors"
                 [value]="eventColor()"
                 (change)="onColorChange($event)"
-                class="w-full px-3 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary text-slate-200 transition-all"
               >
-                <option value="">--Please choose an option--</option>
+                <option value="">-- Choose color --</option>
                 <option value="red">Red</option>
                 <option value="blue">Blue</option>
                 <option value="green">Green</option>
@@ -121,29 +130,27 @@
                 <option value="purple">Purple</option>
               </select>
             </div>
-
             <div class="flex justify-end gap-2 pt-2">
               <button
                 type="button"
-                aria-label="Close dialog"
-                class="px-4 py-2 text-xs rounded-md bg-slate-800 hover:bg-slate-700 transition"
-                (click)="this.editCalendarModalActive.set(false)"
+                (click)="editCalendarModalActive.set(false)"
+                class="px-4 py-2 text-sm rounded-xl border border-white/10 text-slate-400 hover:bg-white/5 transition-all"
               >
                 Cancel
               </button>
               <button
                 type="button"
-                class="px-4 py-2 text-xs rounded-md bg-emerald-600 hover:bg-emerald-500 transition font-medium"
-                (click)="editEvent()"
+                (click)="deleteEvent()"
+                class="px-4 py-2 text-sm rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all"
               >
-                Save
+                Delete
               </button>
               <button
                 type="button"
-                class="px-4 py-2 text-xs rounded-md bg-red-600 hover:bg-red-500 transition font-medium"
-                (click)="deleteEvent()"
+                (click)="editEvent()"
+                class="px-6 py-2 text-sm rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
               >
-                Delete
+                Save
               </button>
             </div>
           </form>

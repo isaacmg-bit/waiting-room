@@ -36,7 +36,7 @@ export class LocationService {
   }
 
   deleteLocation(id: string): void {
-    this.api.delete<UserLocation>(`${this.getLocationsUrl()}${id}`).subscribe({
+    this.api.delete<UserLocation>(`${this.getLocationsUrl()}/${id}`).subscribe({
       next: () => this.locationsSignal.update((locs) => locs.filter((l) => l.id !== id)),
       error: (err) => console.error('Error deleting location:', err),
     });

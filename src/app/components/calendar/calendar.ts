@@ -28,6 +28,7 @@ export class Calendar implements AfterViewInit {
 
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
+    displayEventTime: false,
     plugins: [dayGridPlugin, interactionPlugin],
     dateClick: (arg) => this.handleDateClick(arg),
     eventClick: (arg) => this.handleEventClick(arg),
@@ -68,7 +69,6 @@ export class Calendar implements AfterViewInit {
 
   saveEvent(): void {
     if (!this.eventTitle() || !this.eventColor() || !this.selectedDate()) return;
-
     this.calendarService.addEvent(this.buildEventBody());
     this.clearForm();
   }
