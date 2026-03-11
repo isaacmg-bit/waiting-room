@@ -25,7 +25,7 @@ export class UserInstrumentsService {
   }
 
   updateInstrumentLevel(userInstrumentId: string, level: string): void {
-    this.api.patch(`${this.getUrl()}${userInstrumentId}`, { level }).subscribe({
+    this.api.patch(`${this.getUrl()}/${userInstrumentId}`, { level }).subscribe({
       next: () => {
         this.loadUserInstruments();
       },

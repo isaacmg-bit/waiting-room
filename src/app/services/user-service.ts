@@ -42,7 +42,7 @@ export class UserService {
   }
 
   editUser(id: string, body: Partial<User>): void {
-    this.api.patch<User>(`${this.getUsersUrl()}${id}`, body).subscribe({
+    this.api.patch<User>(`${this.getUsersUrl()}/${id}`, body).subscribe({
       next: (updatedUser) =>
         this.usersSignal.update((users) => users.map((u) => (u.id === id ? updatedUser : u))),
       error: (err) => console.error('Error updating user:', err),
