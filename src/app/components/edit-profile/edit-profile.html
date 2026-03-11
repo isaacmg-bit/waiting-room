@@ -1,223 +1,224 @@
-<body class="bg-background-dark text-slate-100 font-display min-h-screen">
-  <main class="max-w-5xl mx-auto px-4 py-10">
-    <!-- Page Title -->
-    <div class="mb-10">
-      <h1 class="text-4xl font-black text-slate-100 mb-2 tracking-tight">Edit Profile</h1>
-      <p class="text-slate-400">
-        Complete your musician profile to get found by bands and collaborators.
-      </p>
-    </div>
-    <div class="grid grid-cols-1 gap-8">
-      <!-- Section 1: Profile Media -->
-      <section class="bg-surface-dark border border-border-dark rounded-xl p-6">
-        <div class="flex items-center gap-2 mb-6">
+<body class="bg-background-dark font-display text-slate-100 min-h-screen">
+  <div class="max-w-5xl mx-auto px-4 py-8 md:px-8">
+
+
+    <form [formGroup]="form" class="space-y-6">
+      <!-- 1. Profile Media -->
+      <section class="glass-card rounded-3xl p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-6">
           <span class="material-symbols-outlined text-primary">photo_camera</span>
           <h2 class="text-xl font-bold">Profile Media</h2>
         </div>
-        <div class="flex flex-col md:flex-row gap-8 items-start">
-          <!-- Profile Photo -->
-          <div class="relative group">
-            <div
-              class="size-40 rounded-xl overflow-hidden border-2 border-dashed border-border-dark group-hover:border-primary transition-colors cursor-pointer"
-              (click)="profileFileInput.click()"
-            >
-              <img
-                #img
-                class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                [src]="profilePhotoUrl() || 'assets/img/Portrait_Placeholder.png'"
-                (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
-                alt="Primary musician profile photo"
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div class="flex flex-col items-center gap-4">
+            <div class="relative group">
+              <div
+                class="size-48 rounded-full overflow-hidden border-4 border-primary/20 p-1 cursor-pointer"
+                (click)="profileFileInput.click()"
+              >
+                <img
+                  #img
+                  class="w-full h-full object-cover rounded-full opacity-80 group-hover:opacity-100 transition-opacity"
+                  [src]="profilePhotoUrl() || 'assets/img/Portrait_Placeholder.png'"
+                  (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
+                  alt="Profile photo"
+                />
+              </div>
+              @if (profilePhotoUrl()) {
+                <button
+                  (click)="removeProfilePhoto()"
+                  type="button"
+                  class="absolute bottom-2 right-2 size-10 bg-red-600 text-white rounded-full flex items-center justify-center shadow-xl hover:bg-red-500 transition-colors z-10"
+                >
+                  <ng-icon name="heroTrash" size="16" />
+                </button>
+              } @else {
+                <button
+                  (click)="profileFileInput.click()"
+                  type="button"
+                  class="absolute bottom-2 right-2 size-10 bg-primary text-white rounded-full flex items-center justify-center shadow-xl hover:bg-primary/90 transition-colors"
+                >
+                  <span class="material-symbols-outlined text-base">edit</span>
+                </button>
+              }
+              <input
+                type="file"
+                #profileFileInput
+                hidden
+                accept="image/*"
+                (change)="onProfileSelected($event)"
               />
             </div>
-            @if (profilePhotoUrl()) {
-              <button
-                (click)="removeProfilePhoto()"
-                class="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-red-600 z-10 flex items-center justify-center"
-              >
-                <ng-icon name="heroTrash" size="16" />
-              </button>
-            }
-            <input
-              type="file"
-              #profileFileInput
-              hidden
-              accept="image/*"
-              (change)="onProfileSelected($event)"
-            />
           </div>
-          <!-- User gallery -->
-          <app-user-gallery></app-user-gallery>
+          <div class="lg:col-span-2">
+            <label class="block text-xs font-semibold mb-3 text-slate-400 uppercase tracking-widest"
+              >Showcase Gallery</label
+            >
+            <app-user-gallery></app-user-gallery>
+          </div>
         </div>
       </section>
-      <!-- Section 2: Basic Info -->
-      <form [formGroup]="form">
-        <section class="bg-surface-dark border border-border-dark rounded-xl p-6 mb-6">
-          <div class="flex items-center gap-2 mb-6">
-            <span class="material-symbols-outlined text-primary">person</span>
-            <h2 class="text-xl font-bold">Basic Information</h2>
-          </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-2">
-              <label class="text-sm font-medium text-slate-400">Full Name</label>
-              <input
-                formControlName="name"
-                class="w-full bg-background-dark border-border-dark rounded-lg focus:ring-primary focus:border-primary text-slate-200"
-                type="text"
-              />
-            </div>
-            <div class="space-y-2">
-              <label class="text-sm font-medium text-slate-400">Email Address</label>
-              <input
-                class="w-full bg-background-dark border-border-dark rounded-lg focus:ring-primary focus:border-primary text-slate-200"
-                type="email"
-                formControlName="email"
-              />
-            </div>
+      <!-- 2. Identity -->
+      <section class="glass-card rounded-3xl p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-cyan-400">badge</span>
+          <h2 class="text-xl font-bold">Identity</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest"
+              >Full Name</label
+            >
+            <input
+              formControlName="name"
+              class="w-full bg-black/30 border border-border-dark rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-200"
+              type="text"
+              placeholder="Stage or real name"
+            />
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest"
+              >Email Address</label
+            >
+            <input
+              formControlName="email"
+              class="w-full bg-black/30 border border-border-dark rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-200"
+              type="email"
+              placeholder="hello@musician.com"
+            />
+          </div>
+          <div class="md:col-span-2">
             <app-user-location
               [control]="form.controls.location"
               (citySelected)="selectedCity = $event"
             ></app-user-location>
           </div>
-        </section>
-        <!-- Section 3: Instruments & Level -->
-        <app-user-instruments></app-user-instruments>
-        <!-- Section 4: Genres & Influences -->
-        <section class="bg-surface-dark border border-border-dark rounded-xl p-6 mb-6">
-          <div class="flex items-center gap-2 mb-6">
-            <span class="material-symbols-outlined text-primary">library_music</span>
-            <h2 class="text-xl font-bold">Musical DNA</h2>
+        </div>
+      </section>
+
+      <!-- 3. Musical DNA -->
+      <section class="glass-card rounded-3xl p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-purple-400">music_note</span>
+          <h2 class="text-xl font-bold">Musical DNA</h2>
+        </div>
+        <div class="space-y-6">
+          <div>
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3"
+              >Instruments</label
+            >
+            <app-user-instruments></app-user-instruments>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="mt-6 pt-6 relative">
+  <div class="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent"></div>
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3"
+              >Genres</label
+            >
             <app-user-genres></app-user-genres>
-            <div class="space-y-4">
-              <label class="text-sm font-medium text-slate-400 block">Influence Bands</label>
-              <div
-                class="w-full min-h-12 p-3 bg-background-dark border border-border-dark rounded-lg flex flex-wrap gap-2 items-center"
+          </div>
+         <div class="mt-6 pt-6 relative">
+  <div class="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent"></div>
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3"
+              >Influence Bands</label
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Gear & Space -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="glass-card rounded-3xl p-6 md:p-8">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="material-symbols-outlined text-primary">speaker</span>
+            <h2 class="text-xl font-bold">Gear &amp; Equipment</h2>
+          </div>
+          <textarea
+            class="w-full bg-black/30 border border-border-dark rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-none text-slate-200"
+            placeholder="Describe your instruments, amps, pedals..."
+            rows="4"
+          ></textarea>
+        </div>
+        <div class="glass-card rounded-3xl p-6 md:p-8">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="material-symbols-outlined text-cyan-400">room_preferences</span>
+            <h2 class="text-xl font-bold">Rehearsal Space</h2>
+          </div>
+          <textarea
+            class="w-full bg-black/30 border border-border-dark rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-none text-slate-200"
+            placeholder="Details about your studio or practice room..."
+            rows="4"
+          ></textarea>
+        </div>
+      </section>
+
+      <!-- 5. Presence -->
+      <section class="glass-card rounded-3xl p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-purple-400">language</span>
+          <h2 class="text-xl font-bold">Presence</h2>
+        </div>
+        <div class="space-y-4">
+          <div class="flex flex-col md:flex-row gap-4 items-end md:items-center">
+            <div class="w-full md:w-1/4">
+              <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
+                >Platform</label
               >
-                <span
-                  class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
-                  >Los caños <span class="material-symbols-outlined text-[10px]">close</span></span
-                >
-                <span
-                  class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
-                  >Cannibal Corpse
-                  <span class="material-symbols-outlined text-[10px]">close</span></span
-                >
-                <span
-                  class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
-                  >Xavi Metralla
-                  <span class="material-symbols-outlined text-[10px]">close</span></span
-                >
-                <input
-                  class="bg-transparent border-none p-0 text-xs focus:ring-0 w-24"
-                  placeholder="Add band..."
-                  type="text"
-                />
-              </div>
-              <p class="text-xs text-slate-500">List bands that inspire your sound.</p>
+              <select
+                class="w-full bg-black/30 border border-border-dark rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none appearance-none text-slate-200"
+              >
+                <option>Instagram</option>
+                <option>SoundCloud</option>
+                <option>Spotify</option>
+                <option>YouTube</option>
+              </select>
             </div>
-          </div>
-        </section>
-        <!-- Section 5: Gear & Space -->
-        <section class="bg-surface-dark border border-border-dark rounded-xl p-6 mb-6">
-          <div class="flex items-center gap-2 mb-6">
-            <span class="material-symbols-outlined text-primary">speaker_group</span>
-            <h2 class="text-xl font-bold">Equipment &amp; Rehearsal Space</h2>
-          </div>
-          <div class="space-y-6">
-            <div class="space-y-2">
-              <label class="text-sm font-medium text-slate-400">Your Equipment</label>
-              <textarea
-                class="w-full bg-background-dark border-border-dark rounded-lg focus:ring-primary focus:border-primary text-slate-200"
-                placeholder="List your guitars, pedals, amps, workstations..."
-                rows="3"
+            <div class="flex-1 w-full">
+              <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
+                >URL / Handle</label
               >
-Fender Jazzmaster, Roland Juno-DS, Focusrite Scarlett 2i2, collection of boutique reverb pedals.</textarea
-              >
-            </div>
-            <div class="space-y-2">
-              <label class="text-sm font-medium text-slate-400">Rehearsal Space Details</label>
-              <textarea
-                class="w-full bg-background-dark border-border-dark rounded-lg focus:ring-primary focus:border-primary text-slate-200"
-                placeholder="Do you have a studio? Is it available for practice?"
-                rows="3"
-              >
-Private home studio available for small acoustic sessions or electronic production. Not suitable for full drum kits.</textarea
-              >
-            </div>
-          </div>
-        </section>
-        <!-- Section 6: Social Links -->
-        <section class="bg-surface-dark border border-border-dark rounded-xl p-6">
-          <div class="flex items-center gap-2 mb-6">
-            <span class="material-symbols-outlined text-primary">link</span>
-            <h2 class="text-xl font-bold">Social &amp; Portfolio Links</h2>
-          </div>
-          <div class="space-y-4">
-            <div class="flex gap-3">
-              <div class="w-32">
-                <select
-                  class="w-full bg-background-dark border-border-dark rounded-lg text-sm text-slate-200"
-                >
-                  <option>Instagram</option>
-                  <option>SoundCloud</option>
-                  <option>YouTube</option>
-                  <option>Spotify</option>
-                </select>
-              </div>
               <input
-                class="flex-1 bg-background-dark border-border-dark rounded-lg text-sm text-slate-200"
-                placeholder="https://instagram.com/alexmusic"
+                class="w-full bg-black/30 border border-border-dark rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all text-slate-200"
+                placeholder="https://..."
                 type="text"
               />
-              <button class="p-2 text-slate-500 hover:text-red-400">
-                <span class="material-symbols-outlined">delete</span>
-              </button>
-            </div>
-            <div class="flex gap-3">
-              <div class="w-32">
-                <select
-                  class="w-full bg-background-dark border-border-dark rounded-lg text-sm text-slate-200"
-                >
-                  <option>SoundCloud</option>
-                  <option>Instagram</option>
-                  <option>YouTube</option>
-                  <option>Spotify</option>
-                </select>
-              </div>
-              <input
-                class="flex-1 bg-background-dark border-border-dark rounded-lg text-sm text-slate-200"
-                placeholder="https://soundcloud.com/rivers-records"
-                type="text"
-              />
-              <button class="p-2 text-slate-500 hover:text-red-400">
-                <span class="material-symbols-outlined">delete</span>
-              </button>
             </div>
             <button
-              class="flex items-center gap-2 text-primary font-semibold text-sm hover:underline mt-2"
+              class="p-3 text-red-500 hover:bg-red-500/10 rounded-xl transition-colors"
+              type="button"
             >
-              <span class="material-symbols-outlined text-base">add_circle</span> Add another link
+              <span class="material-symbols-outlined">delete</span>
             </button>
           </div>
-        </section>
-        <!-- Action Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 justify-end pt-4 pb-20">
           <button
-            class="px-8 py-3 rounded-lg border border-border-dark text-slate-300 font-bold hover:bg-white/5 transition-colors"
+            class="flex items-center gap-2 text-primary font-bold mt-2 hover:opacity-80 transition-opacity"
+            type="button"
           >
-            Discard Changes
+            <span class="material-symbols-outlined">add_circle</span> Add Social Link
+          </button>
+        </div>
+      </section>
+
+      <!-- Sticky bottom bar -->
+      <div class="sticky bottom-6 z-20 flex justify-center pb-8">
+        <div
+          class="bg-black/50 backdrop-blur-2xl border border-white/10 p-2 rounded-2xl shadow-2xl flex items-center gap-4"
+        >
+          <button
+            class="px-6 py-3 rounded-xl font-medium hover:bg-white/5 transition-colors text-slate-300"
+            type="button"
+          >
+            Discard
           </button>
           <button
             type="button"
             (click)="saveProfile()"
-            class="px-8 py-3 rounded-lg bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+            class="px-10 py-3 bg-primary text-white font-black rounded-xl shadow-lg shadow-primary/30 hover:scale-[1.05] transition-transform"
           >
             Save Profile Changes
           </button>
         </div>
-      </form>
-    </div>
-  </main>
+      </div>
+    </form>
+  </div>
 </body>

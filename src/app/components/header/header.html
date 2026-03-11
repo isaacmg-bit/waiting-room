@@ -1,94 +1,95 @@
 <header
-  class="sticky top-0 z-50 w-full border-b border-border-dark bg-background-dark/80 backdrop-blur-md px-4 md:px-10 py-3"
+  class="sticky top-0 z-50 w-full border-b border-white/5 bg-background-dark/80 backdrop-blur-md px-4 md:px-10 py-3"
 >
   <div class="max-w-7xl mx-auto flex items-center justify-between">
     <div class="flex items-center gap-8">
-      <div class="flex items-center gap-3 text-primary">
+      <div class="flex items-center gap-3">
         <div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
-          <ng-icon name="lucideDrum"></ng-icon>
+          <ng-icon name="lucideDrum" class="text-primary"></ng-icon>
         </div>
-        <h2 class="text-slate-100 text-xl font-extrabold tracking-tight">Waiting Room</h2>
+        <h2
+          class="text-xl font-black tracking-tight bg-linear-to-r from-primary via-purple-400 to-cyan-400 bg-clip-text text-transparent"
+        >
+          Waiting Room
+        </h2>
       </div>
-      <nav class="hidden md:flex items-center gap-6">
+      <nav class="hidden md:flex items-center gap-1">
         <a
           routerLink="/"
-          routerLinkActive="text-white"
+          routerLinkActive="text-white bg-white/5"
           [routerLinkActiveOptions]="{ exact: true }"
-          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
         >
           Home
         </a>
         <a
           routerLink="/map"
-          routerLinkActive="text-white"
-          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+          routerLinkActive="text-white bg-white/5"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
         >
           Map
         </a>
         <a
           routerLink="/calendar"
-          routerLinkActive="text-white"
-          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+          routerLinkActive="text-white bg-white/5"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
         >
           Calendar
         </a>
         <a
           routerLink="/charts"
-          routerLinkActive="text-white"
-          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+          routerLinkActive="text-white bg-white/5"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
         >
           Charts
         </a>
         <a
           routerLink="/users"
-          routerLinkActive="text-white"
-          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+          routerLinkActive="text-white bg-white/5"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
         >
           Users
         </a>
         <a
           routerLink="/register"
-          routerLinkActive="text-white"
-          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+          routerLinkActive="text-white bg-white/5"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
         >
           Register
         </a>
         <a
           routerLink="/login"
-          routerLinkActive="text-white"
-          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
+          routerLinkActive="text-white bg-white/5"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
         >
           Login
         </a>
-        <a
-          (click)="logout()"
-          routerLink="/login"
-          routerLinkActive="text-white"
-          class="text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 rounded"
-        >
-          Logout
-        </a>
       </nav>
     </div>
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-3">
       <div class="relative hidden sm:block">
         <span
           class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-lg"
           >search</span
         >
         <input
-          class="bg-surface-dark border-border-dark text-slate-200 text-sm rounded-lg pl-10 pr-4 py-2 w-64 focus:ring-primary focus:border-primary transition-all"
+          class="bg-black/30 border border-white/10 text-slate-200 text-sm rounded-xl pl-10 pr-4 py-2 w-56 focus:ring-1 focus:ring-primary focus:border-primary/50 outline-none transition-all placeholder-slate-600"
           placeholder="Search musicians..."
           type="text"
         />
       </div>
       <button
-        class="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+        class="p-2 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
       >
         <span class="material-symbols-outlined">notifications</span>
       </button>
-      <div class="size-10 rounded-full border-2 border-primary overflow-hidden">
-        <a routerLink="/edit-profile" class="size-10 border-primary overflow-hidden block">
+
+      <!-- User menu -->
+      <div class="relative user-menu">
+        <button
+          (click)="isUserMenuOpen = !isUserMenuOpen"
+          class="size-9 rounded-full border-2 border-primary/30 hover:border-primary overflow-hidden block transition-all"
+        >
           <img
             #img
             class="w-full h-full object-cover"
@@ -99,7 +100,30 @@
             "
             (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
           />
-        </a>
+        </button>
+
+        @if (isUserMenuOpen) {
+          <div
+            class="absolute right-0 top-12 w-48 glass-card rounded-2xl shadow-2xl overflow-hidden z-50"
+          >
+            <a
+              routerLink="/edit-profile"
+              (click)="isUserMenuOpen = false"
+              class="flex items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all"
+            >
+              <span class="material-symbols-outlined text-base text-primary">manage_accounts</span>
+              Edit Profile
+            </a>
+            <div class="h-px bg-linear-to-r from-transparent via-white/10 to-transparent"></div>
+            <button
+              (click)="logout(); isUserMenuOpen = false"
+              class="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-red-500/10 hover:text-red-400 transition-all"
+            >
+              <span class="material-symbols-outlined text-base">logout</span>
+              Logout
+            </button>
+          </div>
+        }
       </div>
     </div>
   </div>

@@ -1,45 +1,47 @@
-<!-- Music Theory Section -->
-<section>
-  <div class="mt-8 pt-8 border-t border-border-dark">
-    <div class="flex items-center gap-3">
-      <input
-        class="size-5 bg-background-dark border-border-dark rounded text-primary focus:ring-primary"
-        id="theory"
-        type="checkbox"
-        [(ngModel)]="knowsTheory"
-        (change)="onTheoryChange()"
-      />
-      <label class="text-slate-200 font-medium cursor-pointer" for="theory"
-        >Do you know music theory?</label
-      >
-    </div>
-
-    @if (knowsTheory()) {
-      <div class="mt-4 pl-8">
-        <label class="text-sm font-medium text-slate-400 block mb-2">Theory Level</label>
-        <div class="flex gap-4">
-          @for (level of theoryLevels; track level) {
-            <label
-              [class]="
-                'flex-1 text-center py-2 px-4 rounded-lg text-sm cursor-pointer transition-colors ' +
-                (selectedTheoryLevel() === level
-                  ? 'bg-primary/10 border border-primary text-primary'
-                  : 'bg-background-dark border border-border-dark text-slate-400 hover:border-primary')
-              "
-            >
-              <input
-                type="radio"
-                name="theoryLevel"
-                [value]="level"
-                [(ngModel)]="selectedTheoryLevel"
-                (change)="onTheoryLevelChange()"
-                class="hidden"
-              />
-              {{ level }}
-            </label>
-          }
-        </div>
-      </div>
-    }
+<div class="mt-6 pt-6 relative">
+  <div
+    class="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent"
+  ></div>
+  <div class="flex items-center gap-3">
+    <input
+      class="size-5 bg-black/30 border border-white/10 rounded text-primary focus:ring-primary cursor-pointer"
+      id="theory"
+      type="checkbox"
+      [(ngModel)]="knowsTheory"
+      (change)="onTheoryChange()"
+    />
+    <label class="text-slate-300 font-medium cursor-pointer" for="theory">
+      Do you know music theory?
+    </label>
   </div>
-</section>
+
+  @if (knowsTheory()) {
+    <div class="mt-4 pl-8">
+      <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3"
+        >Theory Level</label
+      >
+      <div class="flex gap-3">
+        @for (level of theoryLevels; track level) {
+          <label
+            [class]="
+              'flex-1 text-center py-2 px-4 rounded-xl text-sm cursor-pointer transition-all border ' +
+              (selectedTheoryLevel() === level
+                ? 'bg-primary/10 border-primary text-primary'
+                : 'bg-black/20 border-white/10 text-slate-400 hover:border-primary/50')
+            "
+          >
+            <input
+              type="radio"
+              name="theoryLevel"
+              [value]="level"
+              [(ngModel)]="selectedTheoryLevel"
+              (change)="onTheoryLevelChange()"
+              class="hidden"
+            />
+            {{ level }}
+          </label>
+        }
+      </div>
+    </div>
+  }
+</div>

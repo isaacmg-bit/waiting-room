@@ -1,10 +1,11 @@
-<div class="space-y-4">
-  <label class="text-sm font-medium text-slate-400 block">Musical Genres</label>
+<div class="space-y-3">
   <div
-    class="w-full min-h-12 p-3 bg-background-dark border border-border-dark rounded-lg flex flex-wrap gap-2 items-center"
+    class="w-full min-h-12 p-3 bg-black/20 border border-white/10 rounded-xl flex flex-wrap gap-2 items-center"
   >
     @for (ug of userGenres(); track ug.id) {
-      <span class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1">
+      <span
+        class="px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded-full text-xs flex items-center gap-1"
+      >
         {{ ug.genres?.genre }}
         <span
           class="material-symbols-outlined text-[10px] cursor-pointer"
@@ -14,14 +15,14 @@
       </span>
     }
     <input
-      class="bg-transparent border-none p-0 text-xs focus:ring-0 w-24 cursor-pointer"
+      class="bg-transparent border-none p-0 text-xs focus:ring-0 w-24 cursor-pointer text-slate-500 placeholder-slate-600"
       placeholder="Add genre..."
       type="text"
       readonly
       (click)="openModal()"
     />
   </div>
-  <p class="text-xs text-slate-500">List genres you like.</p>
+  <p class="text-xs text-slate-600">List genres you like.</p>
 </div>
 
 @if (isModalOpen()) {
@@ -30,11 +31,11 @@
     style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
     (click)="closeModal()"
   >
-    <div
-      class="w-full max-w-md bg-surface-dark border border-border-dark rounded-2xl shadow-2xl overflow-hidden"
-      (click)="$event.stopPropagation()"
-    >
-      <div class="flex items-center justify-between px-5 py-4 border-b border-border-dark">
+<div
+  class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-auto"
+  (click)="$event.stopPropagation()"
+>
+      <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
         <h3 class="font-bold text-slate-100">Add Genre</h3>
         <button
           type="button"
@@ -44,9 +45,9 @@
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
-      <div class="px-4 py-3 border-b border-border-dark">
+      <div class="px-4 py-3 border-b border-white/10">
         <div
-          class="flex items-center gap-2 px-3 py-2 bg-background-dark border border-border-dark rounded-lg focus-within:border-primary transition-colors"
+          class="flex items-center gap-2 px-3 py-2 bg-black/30 border border-white/10 rounded-xl focus-within:border-primary transition-colors"
         >
           <span class="material-symbols-outlined text-slate-500 text-base">search</span>
           <input

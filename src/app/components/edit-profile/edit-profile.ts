@@ -10,11 +10,18 @@ import { UserInstruments } from '../user-instruments/user-instruments';
 import { CityService } from '../../services/city-service';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
-import { UserGenres } from "../user-genres/user-genres";
+import { UserGenres } from '../user-genres/user-genres';
 
 @Component({
   selector: 'app-edit-profile',
-  imports: [NgIconComponent, ReactiveFormsModule, UserGallery, UserLocation, UserInstruments, UserGenres],
+  imports: [
+    NgIconComponent,
+    ReactiveFormsModule,
+    UserGallery,
+    UserLocation,
+    UserInstruments,
+    UserGenres,
+  ],
   providers: [provideIcons({ heroTrash, heroArrowDownTray })],
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.css',

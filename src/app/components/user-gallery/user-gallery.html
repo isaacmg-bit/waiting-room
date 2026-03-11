@@ -1,17 +1,15 @@
-<div class="flex-1">
-  <p class="text-slate-200 font-semibold mb-2">Photo Gallery</p>
-
-  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="w-full">
+  <div class="grid grid-cols-4 gap-3">
     @for (photo of uploadService.galleryPhotosSignal(); track photo.id) {
       <div
-        class="relative size-40 rounded-xl overflow-hidden border-2 border-dashed border-border-dark cursor-pointer"
+        class="relative w-full aspect-square rounded-xl overflow-hidden border-2 border-dashed border-border-dark cursor-pointer"
         (click)="openPhoto(photo.url)"
       >
         <img [src]="photo.url" class="w-full h-full object-cover" />
         <button
           [hidden]="photo.id.startsWith('temp-')"
           (click)="$event.stopPropagation(); removePhoto(photo)"
-          class="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-red-600 z-10 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+          class="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-600 z-10 flex items-center justify-center"
         >
           <ng-icon name="heroTrash" size="16" />
         </button>
@@ -19,7 +17,7 @@
     }
     @if (uploadService.galleryPhotosSignal().length < 4) {
       <button
-        class="size-40 border-2 border-dashed border-gray-600 rounded-xl flex flex-col items-center justify-center hover:border-purple-500 hover:text-purple-500 text-gray-500 transition-colors"
+        class="w-full aspect-square border-2 border-dashed border-border-dark rounded-xl flex flex-col items-center justify-center hover:border-primary hover:text-primary text-slate-500 transition-colors"
         (click)="galleryFileInput.click()"
       >
         <ng-icon name="heroArrowDownTray" size="24" />
@@ -30,7 +28,7 @@
 
   @if (selectedPhoto) {
     <div
-      class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+      class="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
       (click)="closePhoto()"
     >
       <img
@@ -42,13 +40,6 @@
     </div>
   }
 
-  <input
-    type="file"
-    #galleryFileInput
-    hidden
-    accept="image/*"
-    multiple
-    (change)="onGallerySelected($event)"
-  />
+  <input type="file" #galleryFileInput hidden accept="image/*" multiple (change)="onGallerySelected($event)" />
   <p class="text-xs text-slate-500 mt-3">Upload up to 4 photos.</p>
 </div>

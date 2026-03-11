@@ -1,51 +1,45 @@
-<section class="bg-surface-dark border border-border-dark rounded-xl p-6 mb-6">
-  <div class="flex items-center gap-2 mb-6">
-    <span class="material-symbols-outlined text-primary">piano</span>
-    <h2 class="text-xl font-bold">Instruments</h2>
-  </div>
-  <div class="space-y-4">
-    <div class="flex flex-wrap gap-2 mb-4">
-      @for (ui of userInstruments(); track ui.id) {
-        <span
-          class="px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full text-sm flex items-center gap-2"
-        >
-          {{ ui.instruments?.instrument_name }}
-          <span
-            class="material-symbols-outlined text-xs cursor-pointer"
-            (click)="deleteInstrument(ui.id)"
-            >close</span
-          >
-        </span>
-      }
-      <button
-        (click)="openModal()"
-        class="px-3 py-1 bg-background-dark text-slate-400 border border-border-dark border-dashed rounded-full text-sm hover:border-primary transition-colors flex items-center gap-1"
+<div class="space-y-4">
+  <div class="flex flex-wrap gap-2">
+    @for (ui of userInstruments(); track ui.id) {
+      <span
+        class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-sm flex items-center gap-2"
       >
-        <span class="material-symbols-outlined text-xs">add</span> Add Instrument
-      </button>
-    </div>
-    <div class="grid grid-cols-1 gap-4">
-      @for (ui of userInstruments(); track ui.id) {
-        <div
-          class="flex items-center justify-between p-4 bg-background-dark rounded-lg border border-border-dark"
+        {{ ui.instruments?.instrument_name }}
+        <span
+          class="material-symbols-outlined text-xs cursor-pointer"
+          (click)="deleteInstrument(ui.id)"
+          >close</span
         >
-          <span class="font-medium">{{ ui.instruments?.instrument_name }}</span>
-          <select
-            class="bg-surface-dark border-border-dark rounded-lg text-sm text-slate-200 focus:ring-primary"
-            [value]="ui.level"
-            (change)="updateInstrumentLevel(ui.id, $event)"
-          >
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
-            <option value="Professional">Professional</option>
-          </select>
-        </div>
-      }
-    </div>
+      </span>
+    }
+    <button
+      (click)="openModal()"
+      class="px-3 py-1 bg-transparent text-slate-500 border border-white/10 border-dashed rounded-full text-sm hover:border-primary hover:text-primary transition-colors flex items-center gap-1"
+    >
+      <span class="material-symbols-outlined text-xs">add</span> Add Instrument
+    </button>
   </div>
-  <app-user-theory></app-user-theory>
-</section>
+  <div class="grid grid-cols-1 gap-2">
+    @for (ui of userInstruments(); track ui.id) {
+      <div
+        class="flex items-center justify-between px-4 py-3 bg-black/20 rounded-xl border border-white/5"
+      >
+        <span class="font-medium text-slate-200">{{ ui.instruments?.instrument_name }}</span>
+        <select
+          class="bg-black/30 border border-white/10 rounded-lg text-sm text-slate-300 focus:ring-primary px-3 py-1.5"
+          [value]="ui.level"
+          (change)="updateInstrumentLevel(ui.id, $event)"
+        >
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Advanced">Advanced</option>
+          <option value="Professional">Professional</option>
+        </select>
+      </div>
+    }
+  </div>
+</div>
+<app-user-theory></app-user-theory>
 
 @if (isModalOpen()) {
   <div
@@ -53,11 +47,11 @@
     style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
     (click)="closeModal()"
   >
-    <div
-      class="w-full max-w-md bg-surface-dark border border-border-dark rounded-2xl shadow-2xl overflow-hidden"
-      (click)="$event.stopPropagation()"
-    >
-      <div class="flex items-center justify-between px-5 py-4 border-b border-border-dark">
+<div
+  class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-auto"
+  (click)="$event.stopPropagation()"
+>
+      <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
         <h3 class="font-bold text-slate-100">Add Instrument</h3>
         <button
           type="button"
@@ -67,9 +61,9 @@
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
-      <div class="px-4 py-3 border-b border-border-dark">
+      <div class="px-4 py-3 border-b border-white/10">
         <div
-          class="flex items-center gap-2 px-3 py-2 bg-background-dark border border-border-dark rounded-lg focus-within:border-primary transition-colors"
+          class="flex items-center gap-2 px-3 py-2 bg-black/30 border border-white/10 rounded-xl focus-within:border-primary transition-colors"
         >
           <span class="material-symbols-outlined text-slate-500 text-base">search</span>
           <input
