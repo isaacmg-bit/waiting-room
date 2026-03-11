@@ -7,8 +7,8 @@ import { environment } from '../../environments/environment';
 export class LocationService {
   private readonly api = inject(ApiService);
 
-  locationsSignal = signal<UserLocation[]>([]);
-  loadingSignal = signal<boolean>(false);
+  readonly locationsSignal = signal<UserLocation[]>([]);
+  readonly loadingSignal = signal(false);
 
   constructor() {
     this.loadLocations();
@@ -30,7 +30,7 @@ export class LocationService {
 
   addLocation(location: UserLocation): void {
     this.api.post<UserLocation>(this.getLocationsUrl(), location).subscribe({
-      next: (createdLocation) => this.locationsSignal.update((locs) => [...locs, createdLocation]),
+      next: (created) => this.locationsSignal.update((locs) => [...locs, created]),
       error: (err) => console.error('Error adding location:', err),
     });
   }

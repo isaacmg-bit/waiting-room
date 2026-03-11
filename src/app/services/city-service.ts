@@ -6,9 +6,9 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class CityService {
-  private readonly nominatimUrl = `${environment.nominatimUrl}`;
+  private readonly nominatimUrl = environment.nominatimUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   async searchCities(query: string): Promise<City[]> {
     if (!query.trim() || query.length < 2) return [];
@@ -27,15 +27,15 @@ export class CityService {
         }),
       );
 
-      const q = query.toLowerCase();
+      const qLower = query.toLowerCase();
 
       return response
         .map((item) => {
           const address = item.address || {};
-          const city = address.city || address.town || address.village || address.hamlet;
-          if (!city || !item.lat || !item.lon) return null;
+          const cityName = address.city || address.town || address.village || address.hamlet;
+          if (!cityName || !item.lat || !item.lon) return null;
           return {
-            city,
+            city: cityName,
             province: address.state || address.province || '',
             lat: parseFloat(item.lat),
             lng: parseFloat(item.lon),
@@ -47,14 +47,14 @@ export class CityService {
             index === self.findIndex((c) => c.city.toLowerCase() === city.city.toLowerCase()),
         )
         .sort((a, b) => {
-          const aStarts = a.city.toLowerCase().startsWith(q);
-          const bStarts = b.city.toLowerCase().startsWith(q);
+          const aStarts = a.city.toLowerCase().startsWith(qLower);
+          const bStarts = b.city.toLowerCase().startsWith(qLower);
           if (aStarts && !bStarts) return -1;
           if (!aStarts && bStarts) return 1;
           return a.city.localeCompare(b.city);
         });
-    } catch (error) {
-      console.error('Error searching cities:', error);
+    } catch (err) {
+      console.error('Error searching cities:', err);
       return [];
     }
   }

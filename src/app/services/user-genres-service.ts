@@ -1,23 +1,24 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { ApiServiceBack } from './apiservice-back';
 import { UserGenre } from '../models/UserGenre';
+import { Genre } from '../models/Genre';
 import { finalize } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Genre } from '../models/Genre';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class UserGenresService {
-  loadingSignal = signal<boolean>(false);
-  api = inject(ApiServiceBack);
+  private readonly api = inject(ApiServiceBack);
 
-  userGenreSignal = signal<UserGenre[]>([]);
+  readonly userGenreSignal = signal<UserGenre[]>([]);
+  readonly loadingSignal = signal(false);
+
+  private readonly BASE_URL = environment.apiUserGenresUrl;
+  private readonly ME_URL = `${environment.apiUserGenresUrl}${environment.apiMeUrl}`;
 
   loadUserGenres(): void {
     this.loadingSignal.set(true);
     this.api
-      .get<UserGenre[]>(this.getMeUrl())
+      .get<UserGenre[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
         next: (genres) => this.userGenreSignal.set(genres),
@@ -27,12 +28,9 @@ export class UserGenresService {
 
   addUserGenre(genreId: string, genre: Genre): void {
     const tempId = `temp-${Date.now()}`;
-    this.userGenreSignal.update((list) => [
-      ...list,
-      { id: tempId, genre_id: genreId, genres: genre },
-    ]);
+    this.userGenreSignal.update((list) => [...list, { id: tempId, genre_id: genreId, genres: genre }]);
 
-    this.api.post<UserGenre>(this.getUrl(), { genre_id: genreId }).subscribe({
+    this.api.post<UserGenre>(this.BASE_URL, { genre_id: genreId }).subscribe({
       next: (created) =>
         this.userGenreSignal.update((list) => list.map((i) => (i.id === tempId ? created : i))),
       error: (err) => {
@@ -41,22 +39,15 @@ export class UserGenresService {
       },
     });
   }
-  deleteUserGenre(id: string): void {
-    this.userGenreSignal.update((genres) => genres.filter((u) => u.id !== id));
 
-    this.api.delete<UserGenre>(`${this.getUrl()}/${id}`).subscribe({
+  deleteUserGenre(id: string): void {
+    this.userGenreSignal.update((list) => list.filter((g) => g.id !== id));
+
+    this.api.delete<UserGenre>(`${this.BASE_URL}/${id}`).subscribe({
       error: (err) => {
         console.error('Error deleting genre:', err);
         this.loadUserGenres();
       },
     });
-  }
-
-  private getUrl(): string {
-    return `${environment.apiUserGenresUrl}`;
-  }
-
-  private getMeUrl(): string {
-    return `${environment.apiUserGenresUrl}${environment.apiMeUrl}`;
   }
 }

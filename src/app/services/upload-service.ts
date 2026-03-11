@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { SupabaseService } from './supabase-service';
-import { GalleryPhoto } from '../models/GalleryPhoto';
 import { ApiServiceBack } from './apiservice-back';
+import { GalleryPhoto } from '../models/GalleryPhoto';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { firstValueFrom } from 'rxjs';
 
@@ -11,7 +11,7 @@ export class UploadService {
   private readonly supabase: SupabaseClient = this.supabaseService.getClient();
   private readonly api = inject(ApiServiceBack);
 
-  galleryPhotosSignal = signal<GalleryPhoto[]>([]);
+  readonly galleryPhotosSignal = signal<GalleryPhoto[]>([]);
 
   private async getSession() {
     const {

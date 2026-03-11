@@ -48,7 +48,7 @@ export class UserInstruments implements OnInit {
   }
 
   onLevelChange(id: string, level: string) {
-    this.userInstrumentService.updateLevel(id, level);
+    this.userInstrumentService.updateInstrumentLevel(id, level);
   }
 
   openModal() {
