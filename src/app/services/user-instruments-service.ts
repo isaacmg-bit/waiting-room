@@ -55,13 +55,14 @@ export class UserInstrumentsService {
   deleteUserInstrument(id: string): void {
     this.userInstrumentSignal.update((instruments) => instruments.filter((u) => u.id !== id));
 
-    this.api.delete<UserInstrument>(`${this.getUrl()}${id}`).subscribe({
+    this.api.delete<UserInstrument>(`${this.getUrl()}/${id}`).subscribe({
       error: (err) => {
         console.error('Error deleting instrument:', err);
         this.loadUserInstruments();
       },
     });
   }
+  
   updateLevel(id: string, level: string) {
     this.api.patch(`${environment.apiUserInstrumentsUrl}${id}`, { level }).subscribe(() => {
       this.userInstrumentSignal.update((list) =>
@@ -69,6 +70,7 @@ export class UserInstrumentsService {
       );
     });
   }
+
   private getUrl(): string {
     return `${environment.apiUserInstrumentsUrl}`;
   }

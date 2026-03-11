@@ -89,31 +89,7 @@
             <h2 class="text-xl font-bold">Musical DNA</h2>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="space-y-4">
-              <label class="text-sm font-medium text-slate-400 block">Musical Genres</label>
-              <div
-                class="w-full min-h-12 p-3 bg-background-dark border border-border-dark rounded-lg flex flex-wrap gap-2 items-center"
-              >
-                <span
-                  class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
-                  >Emo <span class="material-symbols-outlined text-[10px]">close</span></span
-                >
-                <span
-                  class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
-                  >Flamenco <span class="material-symbols-outlined text-[10px]">close</span></span
-                >
-                <span
-                  class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs flex items-center gap-1"
-                  >Makineta <span class="material-symbols-outlined text-[10px]">close</span></span
-                >
-                <input
-                  class="bg-transparent border-none p-0 text-xs focus:ring-0 w-24"
-                  placeholder="Add genre..."
-                  type="text"
-                />
-              </div>
-              <p class="text-xs text-slate-500">List genres you like.</p>
-            </div>
+            <app-user-genres></app-user-genres>
             <div class="space-y-4">
               <label class="text-sm font-medium text-slate-400 block">Influence Bands</label>
               <div

@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { InstrumentsService } from '../../services/instruments-service';
 import { UserInstrumentsService } from '../../services/user-instruments-service';
 import { Instrument } from '../../models/Instrument';
+import { UserTheory } from '../user-theory/user-theory';
 
 @Component({
   selector: 'app-user-instruments',

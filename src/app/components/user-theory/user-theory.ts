@@ -30,6 +30,10 @@ export class UserTheory implements OnInit {
     this.userTheoryService.loadUserTheory();
   }
 
+  private updateTheory() {
+    this.userTheoryService.updateUserTheory(this.knowsTheory(), this.selectedTheoryLevel());
+  }
+
   onTheoryChange() {
     if (!this.knowsTheory()) {
       this.selectedTheoryLevel.set(null);
@@ -39,9 +43,5 @@ export class UserTheory implements OnInit {
 
   onTheoryLevelChange() {
     this.updateTheory();
-  }
-
-  private updateTheory() {
-    this.userTheoryService.updateUserTheory(this.knowsTheory(), this.selectedTheoryLevel());
   }
 }

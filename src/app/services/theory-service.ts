@@ -42,11 +42,11 @@ export class UserTheoryService {
         error: (err) => console.error('Error saving theory:', err),
       });
   }
+
   updateUserTheory(knowsTheory: boolean, theoryLevel: string | null): void {
     this.loadingSignal.set(true);
     this.api
       .patch<UserTheory>(this.getMeUrl(), {
-        // ← Cambiar a getMeUrl()
         knows_theory: knowsTheory,
         theory_level: theoryLevel,
       })
@@ -56,6 +56,7 @@ export class UserTheoryService {
         error: (err) => console.error('Error updating theory:', err),
       });
   }
+
   private getMeUrl(): string {
     return `${environment.apiUserTheoryUrl}${environment.apiMeUrl}`;
   }
