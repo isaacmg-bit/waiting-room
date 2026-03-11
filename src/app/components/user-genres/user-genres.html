@@ -14,13 +14,12 @@
         >
       </span>
     }
-    <input
-      class="bg-transparent border-none p-0 text-xs focus:ring-0 w-24 cursor-pointer text-slate-500 placeholder-slate-600"
-      placeholder="Add genre..."
-      type="text"
-      readonly
+    <button
       (click)="openModal()"
-    />
+      class="px-3 py-1 bg-transparent text-slate-500 border border-white/10 border-dashed rounded-full text-sm hover:border-primary hover:text-primary transition-colors flex items-center gap-1"
+    >
+      <span class="material-symbols-outlined text-xs">add</span> Add Genre
+    </button>
   </div>
   <p class="text-xs text-slate-600">List genres you like.</p>
 </div>
@@ -31,10 +30,10 @@
     style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
     (click)="closeModal()"
   >
-<div
-  class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-auto"
-  (click)="$event.stopPropagation()"
->
+    <div
+      class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-auto"
+      (click)="$event.stopPropagation()"
+    >
       <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
         <h3 class="font-bold text-slate-100">Add Genre</h3>
         <button
@@ -55,7 +54,6 @@
             [value]="searchQuery()"
             (input)="onSearch($event)"
             placeholder="Search genre..."
-           
             class="flex-1 bg-transparent border-none text-slate-200 text-sm focus:outline-none focus:ring-0 placeholder-slate-500"
           />
         </div>
