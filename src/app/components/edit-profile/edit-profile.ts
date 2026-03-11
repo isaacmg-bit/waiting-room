@@ -86,13 +86,16 @@ export class EditProfile implements OnInit {
   }
 
   saveProfile(): void {
-    if (!this.selectedCity || !this.currentUser) return;
+    if (!this.currentUser) return;
 
     const payload: Partial<User> = {
       name: this.form.value.name ?? undefined,
-      location: this.selectedCity.city,
-      location_point: `POINT(${this.selectedCity.lng} ${this.selectedCity.lat})`,
     };
+
+    if (this.selectedCity) {
+      payload.location = this.selectedCity.city;
+      payload.location_point = `POINT(${this.selectedCity.lng} ${this.selectedCity.lat})`;
+    }
 
     this.userService.editUser(this.currentUser.id, payload);
   }
