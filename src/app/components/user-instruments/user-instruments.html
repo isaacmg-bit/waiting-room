@@ -31,9 +31,9 @@
         >
           <span class="font-medium">{{ ui.instruments?.instrument_name }}</span>
           <select
-            [value]="ui.level"
-            (change)="onLevelChange(ui.id, $any($event.target).value)"
             class="bg-surface-dark border-border-dark rounded-lg text-sm text-slate-200 focus:ring-primary"
+            [value]="ui.level"
+            (change)="updateInstrumentLevel(ui.id, $event)"
           >
             <option value="Beginner">Beginner</option>
             <option value="Intermediate">Intermediate</option>
@@ -44,6 +44,7 @@
       }
     </div>
   </div>
+  <app-user-theory></app-user-theory>
 </section>
 
 @if (isModalOpen()) {
