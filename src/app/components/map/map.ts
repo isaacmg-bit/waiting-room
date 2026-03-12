@@ -1,7 +1,7 @@
-import { Component, AfterViewInit, inject, signal, effect } from '@angular/core';
+// map.component.ts
+import { Component, AfterViewInit, inject, effect } from '@angular/core';
 import { LocationService } from '../../services/location-service';
 import * as L from 'leaflet';
-import { UserLocation } from '../../models/UserLocation';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -11,26 +11,10 @@ import { environment } from '../../../environments/environment';
   styleUrl: './map.css',
 })
 export class Map implements AfterViewInit {
-  private readonly locationService = inject(LocationService);
-
-  private readonly mapReady = signal(false);
-  private readonly clickCoordinates = signal<{ lat: number; lng: number } | null>(null);
-
-  readonly locationModalActive = signal(false);
-  readonly editLocationModalActive = signal(false);
-  readonly descriptionInput = signal('');
-  readonly nameInput = signal('');
-  readonly categoryInput = signal('');
-  readonly selectedLocation = signal<UserLocation | null>(null);
-  readonly activeFilters = signal(['show', 'rehearsalspace']);
+  readonly locationService = inject(LocationService);
 
   private map: L.Map | null = null;
   private readonly savedMarkersLayer = L.layerGroup();
-
-  readonly categoryLabels: Record<string, string> = {
-    rehearsalspace: 'Rehearsal Space',
-    show: 'Show',
-  };
 
   private readonly iconSavedMarker = L.icon({
     iconUrl: '/assets/icons/savedlocationicon.png',
@@ -48,126 +32,107 @@ export class Map implements AfterViewInit {
 
   constructor() {
     effect(() => {
-      if (!this.mapReady()) return;
+      console.log('Effect ejecutándose...');
+      console.log('Mapa existe?', !!this.map);
+      console.log('Locations:', this.locationService.locationsSignal());
+      console.log('Filters:', this.locationService.activeFilters());
+
+      if (!this.map) {
+        console.log('Mapa no está listo, saliendo...');
+        return;
+      }
 
       const locations = this.locationService.locationsSignal();
-      const filters = this.activeFilters();
+      const filters = this.locationService.activeFilters();
 
+      console.log('Limpiando layer...');
       this.savedMarkersLayer.clearLayers();
+
+      console.log('Agregando markers...');
       locations
         .filter((loc) => filters.includes(loc.category))
         .forEach((loc) => {
+          console.log('Agregando marker para:', loc.name, loc.lat, loc.lng);
+
           const marker = L.marker([loc.lat, loc.lng], { icon: this.iconSavedMarker });
 
           marker.bindTooltip(
             `<div style="font-size: 12px">
               <strong>${loc.name}</strong><br/>
               ${loc.description ?? ''}<br/>
-              ${this.categoryLabels[loc.category] || loc.category}
+              ${this.locationService.categoryLabels[loc.category] || loc.category}
             </div>`,
             { direction: 'top', offset: [0, -10], opacity: 0.9 },
           );
 
           marker.on('click', (e) => {
             L.DomEvent.stopPropagation(e);
-            this.selectedLocation.set(loc);
-            this.editLocationModalActive.set(true);
-            this.nameInput.set(loc.name);
-            this.descriptionInput.set(loc.description);
-            this.categoryInput.set(loc.category);
-            this.clickCoordinates.set({ lat: loc.lat, lng: loc.lng });
+            this.locationService.selectLocation(loc);
           });
 
           marker.addTo(this.savedMarkersLayer);
         });
+
+      console.log('Markers agregados al layer');
     });
   }
 
   ngAfterViewInit(): void {
+    console.log('ngAfterViewInit iniciado');
+
     navigator.geolocation.getCurrentPosition((position) => {
+      console.log('Posición obtenida:', position.coords);
+
       const { latitude: myLat, longitude: myLng } = position.coords;
 
       this.map = L.map('map', { center: [myLat, myLng], zoom: 13 });
+      console.log('Mapa creado');
+
       L.tileLayer(`${environment.leafletTileLayer}`).addTo(this.map);
       L.marker([myLat, myLng], { icon: this.iconUser }).addTo(this.map);
       this.savedMarkersLayer.addTo(this.map);
-      this.mapReady.set(true);
+      console.log('Layer agregada al mapa');
 
       this.map.on('click', (selectedCoords) => {
-        this.selectedLocation.set(null);
-        this.locationModalActive.set(true);
-        this.clickCoordinates.set({
-          lat: selectedCoords.latlng.lat,
-          lng: selectedCoords.latlng.lng,
-        });
+        this.locationService.openAddModal(selectedCoords.latlng.lat, selectedCoords.latlng.lng);
       });
 
       setTimeout(() => this.map!.invalidateSize(), 0);
+
+      console.log('Cargando locations...');
+      this.locationService.loadLocations();
     });
   }
 
   toggleFilter(category: string): void {
-    this.activeFilters.update((filters) =>
-      filters.includes(category) ? filters.filter((f) => f !== category) : [...filters, category],
-    );
+    this.locationService.toggleFilter(category);
   }
 
   saveLocation(): void {
-    const coords = this.clickCoordinates();
-    if (!coords || !this.nameInput() || !this.categoryInput()) return;
-
-    this.locationService.addLocation({
-      lat: coords.lat,
-      lng: coords.lng,
-      name: this.nameInput(),
-      description: this.descriptionInput(),
-      category: this.categoryInput(),
-    });
-    this.clearForm();
+    this.locationService.saveLocation();
   }
 
-  editSavedLocation(): void {
-    const location = this.selectedLocation();
-    if (!location) return;
-
-    const coords = this.clickCoordinates();
-    this.locationService.editLocation({
-      id: location.id,
-      lat: coords?.lat ?? location.lat,
-      lng: coords?.lng ?? location.lng,
-      name: this.nameInput(),
-      description: this.descriptionInput(),
-      category: this.categoryInput(),
-    });
-    this.clearForm();
+  editLocation(): void {
+    this.locationService.editSavedLocation();
   }
 
   deleteLocation(): void {
-    const location = this.selectedLocation();
-    if (!location) return;
-    this.locationService.deleteLocation(location.id!);
-    this.clearForm();
+    this.locationService.deleteSelectedLocation();
+  }
+
+  closeModals(): void {
+    this.locationService.closeModals();
   }
 
   onNameInput(event: Event): void {
-    this.nameInput.set((event.target as HTMLInputElement).value);
+    this.locationService.onNameInput((event.target as HTMLInputElement).value);
   }
 
   onDescriptionInput(event: Event): void {
-    this.descriptionInput.set((event.target as HTMLInputElement).value);
+    this.locationService.onDescriptionInput((event.target as HTMLInputElement).value);
   }
 
   onCategoryChange(event: Event): void {
-    this.categoryInput.set((event.target as HTMLSelectElement).value);
-  }
-
-  private clearForm(): void {
-    this.locationModalActive.set(false);
-    this.editLocationModalActive.set(false);
-    this.descriptionInput.set('');
-    this.nameInput.set('');
-    this.categoryInput.set('');
-    this.clickCoordinates.set(null);
-    this.selectedLocation.set(null);
+    this.locationService.onCategoryChange((event.target as HTMLSelectElement).value);
   }
 }

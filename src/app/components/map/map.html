@@ -16,7 +16,7 @@
           >
             <input
               type="checkbox"
-              checked
+              [checked]="locationService.activeFilters().includes('show')"
               (change)="toggleFilter('show')"
               class="rounded border-white/10 bg-black/30 text-primary focus:ring-primary"
             />
@@ -27,7 +27,7 @@
           >
             <input
               type="checkbox"
-              checked
+              [checked]="locationService.activeFilters().includes('rehearsalspace')"
               (change)="toggleFilter('rehearsalspace')"
               class="rounded border-white/10 bg-black/30 text-primary focus:ring-primary"
             />
@@ -44,7 +44,7 @@
     </div>
 
     <!-- Add Location Modal -->
-    @if (locationModalActive()) {
+    @if (locationService.locationModalActive()) {
       <div
         class="fixed inset-0 z-1000 flex items-center justify-center p-4"
         style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
@@ -56,7 +56,7 @@
             <h2 class="font-bold text-slate-100">Add Location</h2>
             <button
               type="button"
-              (click)="locationModalActive.set(false)"
+              (click)="closeModals()"
               class="text-slate-500 hover:text-slate-200 transition-colors"
             >
               <span class="material-symbols-outlined">close</span>
@@ -70,6 +70,7 @@
               <input
                 type="text"
                 placeholder="Enter name"
+                [value]="locationService.nameInput()"
                 (input)="onNameInput($event)"
                 class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
               />
@@ -81,6 +82,7 @@
               <input
                 type="text"
                 placeholder="Max Donal..."
+                [value]="locationService.descriptionInput()"
                 (input)="onDescriptionInput($event)"
                 class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
               />
@@ -90,6 +92,7 @@
                 >Category</label
               >
               <select
+                [value]="locationService.categoryInput()"
                 (change)="onCategoryChange($event)"
                 class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary text-slate-200 transition-all"
               >
@@ -101,7 +104,7 @@
             <div class="flex justify-end gap-2 pt-2">
               <button
                 type="button"
-                (click)="locationModalActive.set(false)"
+                (click)="closeModals()"
                 class="px-4 py-2 text-sm rounded-xl border border-white/10 text-slate-400 hover:bg-white/5 transition-all"
               >
                 Cancel
@@ -120,7 +123,7 @@
     }
 
     <!-- Edit Location Modal -->
-    @if (editLocationModalActive()) {
+    @if (locationService.editLocationModalActive()) {
       <div
         class="fixed inset-0 z-1000 flex items-center justify-center p-4"
         style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
@@ -132,7 +135,7 @@
             <h2 class="font-bold text-slate-100">Edit Location</h2>
             <button
               type="button"
-              (click)="editLocationModalActive.set(false)"
+              (click)="closeModals()"
               class="text-slate-500 hover:text-slate-200 transition-colors"
             >
               <span class="material-symbols-outlined">close</span>
@@ -146,7 +149,7 @@
               <input
                 type="text"
                 placeholder="Enter name"
-                [value]="nameInput()"
+                [value]="locationService.nameInput()"
                 (input)="onNameInput($event)"
                 class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
               />
@@ -158,7 +161,7 @@
               <input
                 type="text"
                 placeholder="Max Donal..."
-                [value]="descriptionInput()"
+                [value]="locationService.descriptionInput()"
                 (input)="onDescriptionInput($event)"
                 class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
               />
@@ -168,7 +171,7 @@
                 >Category</label
               >
               <select
-                [value]="categoryInput()"
+                [value]="locationService.categoryInput()"
                 (change)="onCategoryChange($event)"
                 class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary text-slate-200 transition-all"
               >
@@ -180,7 +183,7 @@
             <div class="flex justify-end gap-2 pt-2">
               <button
                 type="button"
-                (click)="editLocationModalActive.set(false)"
+                (click)="closeModals()"
                 class="px-4 py-2 text-sm rounded-xl border border-white/10 text-slate-400 hover:bg-white/5 transition-all"
               >
                 Cancel
@@ -194,7 +197,7 @@
               </button>
               <button
                 type="button"
-                (click)="editSavedLocation()"
+                (click)="editLocation()"
                 class="px-6 py-2 text-sm rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
               >
                 Save

@@ -1,3 +1,4 @@
+// location.service.ts
 import { Injectable, inject, signal } from '@angular/core';
 import { UserLocation } from '../models/UserLocation';
 import { ApiService } from './apiservice';
@@ -9,10 +10,19 @@ export class LocationService {
 
   readonly locationsSignal = signal<UserLocation[]>([]);
   readonly loadingSignal = signal(false);
+  readonly locationModalActive = signal(false);
+  readonly editLocationModalActive = signal(false);
+  readonly descriptionInput = signal('');
+  readonly nameInput = signal('');
+  readonly categoryInput = signal('');
+  readonly selectedLocation = signal<UserLocation | null>(null);
+  readonly activeFilters = signal(['show', 'rehearsalspace']);
+  readonly clickCoordinates = signal<{ lat: number; lng: number } | null>(null);
 
-  constructor() {
-    this.loadLocations();
-  }
+  readonly categoryLabels: Record<string, string> = {
+    rehearsalspace: 'Rehearsal Space',
+    show: 'Show',
+  };
 
   loadLocations(): void {
     this.loadingSignal.set(true);
@@ -48,11 +58,95 @@ export class LocationService {
       return;
     }
 
-    this.api.patch<UserLocation>(`${this.getLocationsUrl()}${body.id}`, body).subscribe({
+    this.api.patch<UserLocation>(`${this.getLocationsUrl()}/${body.id}`, body).subscribe({
       next: (updated) =>
         this.locationsSignal.update((locs) => locs.map((l) => (l.id === updated.id ? updated : l))),
       error: (err) => console.error('Error updating location:', err),
     });
+  }
+
+  toggleFilter(category: string): void {
+    this.activeFilters.update((filters) =>
+      filters.includes(category) ? filters.filter((f) => f !== category) : [...filters, category],
+    );
+  }
+
+  saveLocation(): void {
+    const coords = this.clickCoordinates();
+    if (!coords || !this.nameInput() || !this.categoryInput()) return;
+
+    this.addLocation({
+      lat: coords.lat,
+      lng: coords.lng,
+      name: this.nameInput(),
+      description: this.descriptionInput(),
+      category: this.categoryInput(),
+    } as UserLocation);
+    this.clearForm();
+  }
+
+  editSavedLocation(): void {
+    const location = this.selectedLocation();
+    if (!location) return;
+
+    const coords = this.clickCoordinates();
+    this.editLocation({
+      id: location.id,
+      lat: coords?.lat ?? location.lat,
+      lng: coords?.lng ?? location.lng,
+      name: this.nameInput(),
+      description: this.descriptionInput(),
+      category: this.categoryInput(),
+    });
+    this.clearForm();
+  }
+
+  deleteSelectedLocation(): void {
+    const location = this.selectedLocation();
+    if (!location) return;
+    this.deleteLocation(location.id!);
+    this.clearForm();
+  }
+
+  selectLocation(location: UserLocation): void {
+    this.selectedLocation.set(location);
+    this.editLocationModalActive.set(true);
+    this.nameInput.set(location.name);
+    this.descriptionInput.set(location.description);
+    this.categoryInput.set(location.category);
+    this.clickCoordinates.set({ lat: location.lat, lng: location.lng });
+  }
+
+  openAddModal(lat: number, lng: number): void {
+    this.selectedLocation.set(null);
+    this.locationModalActive.set(true);
+    this.clickCoordinates.set({ lat, lng });
+  }
+
+  closeModals(): void {
+    this.clearForm();
+  }
+
+  onNameInput(value: string): void {
+    this.nameInput.set(value);
+  }
+
+  onDescriptionInput(value: string): void {
+    this.descriptionInput.set(value);
+  }
+
+  onCategoryChange(value: string): void {
+    this.categoryInput.set(value);
+  }
+
+  private clearForm(): void {
+    this.locationModalActive.set(false);
+    this.editLocationModalActive.set(false);
+    this.descriptionInput.set('');
+    this.nameInput.set('');
+    this.categoryInput.set('');
+    this.clickCoordinates.set(null);
+    this.selectedLocation.set(null);
   }
 
   private getLocationsUrl(): string {
