@@ -1,6 +1,7 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { UserInstrument } from '../models/UserInstrument';
 import { ApiServiceBack } from './apiservice-back';
+import { InstrumentsService } from './instruments-service';
 import { environment } from '../../environments/environment';
 import { finalize } from 'rxjs';
 
@@ -9,9 +10,20 @@ import { finalize } from 'rxjs';
 })
 export class UserInstrumentsService {
   private readonly api = inject(ApiServiceBack);
+  private readonly instrumentService = inject(InstrumentsService);
 
   readonly userInstrumentSignal = signal<UserInstrument[]>([]);
   readonly loadingSignal = signal(false);
+  readonly isModalOpen = signal(false);
+  readonly searchQuery = signal('');
+
+  readonly filteredInstruments = computed(() => {
+    const q = this.searchQuery().toLowerCase();
+    if (!q) return this.instrumentService.instrumentsSignal();
+    return this.instrumentService
+      .instrumentsSignal()
+      .filter((i) => i.instrument_name.toLowerCase().includes(q));
+  });
 
   private readonly BASE_URL = environment.apiUserInstrumentsUrl;
   private readonly ME_URL = `${environment.apiUserInstrumentsUrl}${environment.apiMeUrl}`;
@@ -36,7 +48,9 @@ export class UserInstrumentsService {
 
     this.api.post<UserInstrument>(this.BASE_URL, { instrument_id: instrumentId, level }).subscribe({
       next: (created) =>
-        this.userInstrumentSignal.update((list) => list.map((i) => (i.id === tempId ? created : i))),
+        this.userInstrumentSignal.update((list) =>
+          list.map((i) => (i.id === tempId ? created : i)),
+        ),
       error: (err) => {
         console.error('Error adding instrument:', err);
         this.userInstrumentSignal.update((list) => list.filter((i) => i.id !== tempId));
@@ -64,5 +78,24 @@ export class UserInstrumentsService {
         this.loadUserInstruments();
       },
     });
+  }
+
+  onSearch(query: string): void {
+    this.searchQuery.set(query);
+  }
+
+  selectInstrument(instrumentId: string): void {
+    this.addUserInstrument(instrumentId, 'Beginner');
+    this.closeModal();
+  }
+
+  openModal(): void {
+    this.searchQuery.set('');
+    this.isModalOpen.set(true);
+  }
+
+  closeModal(): void {
+    this.isModalOpen.set(false);
+    this.searchQuery.set('');
   }
 }
