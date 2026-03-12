@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { SupabaseService } from '../../services/supabase-service';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SupabaseService } from '../../services/supabase-service';
 
 @Component({
   selector: 'app-reset-pass',
@@ -15,17 +15,9 @@ export class ResetPass implements OnInit {
 
   password = '';
 
-  ngOnInit() {
+  ngOnInit(): void {
     const fragment = this.route.snapshot.fragment;
-    if (!fragment) return;
-
-    const params = new URLSearchParams(fragment);
-    const access_token = params.get('access_token');
-    const refresh_token = params.get('refresh_token');
-
-    if (!access_token) return;
-
-    this.supabase.setSession(access_token, refresh_token ?? '');
+    this.supabase.setSessionFromFragment(fragment);
   }
 
   async updatePassword(): Promise<void> {
