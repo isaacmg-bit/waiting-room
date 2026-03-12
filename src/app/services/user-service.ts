@@ -1,3 +1,4 @@
+// user.service.ts
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -11,6 +12,8 @@ export class UserService {
 
   readonly usersSignal = signal<User[]>([]);
   readonly loadingSignal = signal(false);
+  readonly isEditMode = signal(false);
+  readonly editingUserId = signal<string | null>(null);
 
   private readonly USERS_URL = `${environment.apiUrl}${environment.apiUserUrl}`;
   private readonly ME_URL = `${environment.apiUrl}${environment.apiUserUrl}${environment.apiMeUrl}`;
@@ -21,7 +24,6 @@ export class UserService {
 
   loadUsers(): void {
     this.loadingSignal.set(true);
-
     this.api
       .get<User[]>(this.USERS_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
@@ -39,10 +41,12 @@ export class UserService {
   }
 
   deleteUser(id: string): void {
-    this.api.delete<void>(`${this.USERS_URL}/${id}`).subscribe({
-      next: () => this.usersSignal.update((users) => users.filter((u) => u.id !== id)),
-      error: (err) => console.error('Error deleting user:', err),
-    });
+    if (confirm('Are you sure you wanna delete the user?')) {
+      this.api.delete<void>(`${this.USERS_URL}/${id}`).subscribe({
+        next: () => this.usersSignal.update((users) => users.filter((u) => u.id !== id)),
+        error: (err) => console.error('Error deleting user:', err),
+      });
+    }
   }
 
   editUser(id: string, body: Partial<User>): void {
@@ -51,6 +55,29 @@ export class UserService {
         this.usersSignal.update((users) => users.map((u) => (u.id === id ? updatedUser : u))),
       error: (err) => console.error('Error updating user:', err),
     });
+  }
+
+  loadUserForEdit(user: User): void {
+    this.isEditMode.set(true);
+    this.editingUserId.set(user.id);
+  }
+
+  cancelEdit(): void {
+    this.resetEditState();
+  }
+
+  submitUser(userData: User): void {
+    if (this.isEditMode() && this.editingUserId()) {
+      this.editUser(this.editingUserId()!, userData);
+    } else {
+      this.addUser(userData);
+    }
+    this.resetEditState();
+  }
+
+  private resetEditState(): void {
+    this.isEditMode.set(false);
+    this.editingUserId.set(null);
   }
 
   getMe(): Observable<User> {

@@ -1,8 +1,6 @@
 <main class="bg-background-dark min-h-screen">
   <div class="max-w-7xl mx-auto px-6 py-8">
-    <h1 class="text-3xl font-black tracking-tight text-slate-100 mb-2">
-      Users
-    </h1>
+    <h1 class="text-3xl font-black tracking-tight text-slate-100 mb-2">Users</h1>
     <p class="text-slate-500 text-sm mb-8">Manage and browse all registered musicians.</p>
   </div>
 
@@ -19,40 +17,27 @@
             <label class="text-xs font-semibold uppercase tracking-widest text-slate-500"
               >Name</label
             >
-            <input
-              formControlName="name"
-              placeholder="Full name"
-              class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
-            />
-            @if (userForm.get('name')?.touched && nameError) {
-              <p class="text-red-400 text-xs">{{ nameError }}</p>
+            <input formControlName="name" ... />
+            @if (userForm.get('name')?.touched && getFieldError('name')) {
+              <p class="text-red-400 text-xs">{{ getFieldError('name') }}</p>
             }
           </div>
           <div class="space-y-2">
             <label class="text-xs font-semibold uppercase tracking-widest text-slate-500"
               >Email</label
             >
-            <input
-              formControlName="email"
-              type="email"
-              placeholder="user@example.com"
-              class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
-            />
-            @if (userForm.get('email')?.touched && emailError) {
-              <p class="text-red-400 text-xs">{{ emailError }}</p>
+            <input formControlName="email" ... />
+            @if (userForm.get('email')?.touched && getFieldError('email')) {
+              <p class="text-red-400 text-xs">{{ getFieldError('email') }}</p>
             }
           </div>
           <div class="space-y-2">
             <label class="text-xs font-semibold uppercase tracking-widest text-slate-500"
               >Location</label
             >
-            <input
-              formControlName="location"
-              placeholder="City, Country"
-              class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
-            />
-            @if (userForm.get('location')?.touched && locationError) {
-              <p class="text-red-400 text-xs">{{ locationError }}</p>
+            <input formControlName="location" ... />
+            @if (userForm.get('location')?.touched && getFieldError('location')) {
+              <p class="text-red-400 text-xs">{{ getFieldError('location') }}</p>
             }
           </div>
         </div>
@@ -62,9 +47,9 @@
             [disabled]="userForm.invalid"
             class="px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
-            {{ isEditMode ? 'Edit user' : 'Add User' }}
+            {{ userService.isEditMode() ? 'Edit user' : 'Add User' }}
           </button>
-          @if (isEditMode) {
+          @if (userService.isEditMode()) {
             <button
               type="button"
               (click)="cancelEdit()"
