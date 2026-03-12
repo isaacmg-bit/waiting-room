@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { UserService } from '../../services/user-service';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UploadService } from '../../services/upload-service';
@@ -11,6 +11,7 @@ import { CityService } from '../../services/city-service';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
 import { UserGenres } from '../user-genres/user-genres';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-edit-profile',
@@ -26,11 +27,12 @@ import { UserGenres } from '../user-genres/user-genres';
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.css',
 })
-export class EditProfile implements OnInit {
+export class EditProfile implements OnInit, OnDestroy {
   private readonly userService = inject(UserService);
   private readonly cityService = inject(CityService);
   private readonly fb = inject(FormBuilder);
   private readonly uploadService = inject(UploadService);
+  private readonly destroy$ = new Subject<void>();
 
   private currentUser: User | null = null;
   selectedCity: City | null = null;
@@ -43,24 +45,36 @@ export class EditProfile implements OnInit {
   });
 
   ngOnInit() {
-    this.userService.getMe().subscribe(async (user) => {
-      this.currentUser = user;
-      this.form.patchValue({ name: user.name, email: user.email });
+    this.userService
+      .getMe()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(async (user) => {
+        this.currentUser = user;
+        this.form.patchValue({ name: user.name, email: user.email });
 
-      if (user.location) {
-        const city = await this.cityService.getCityCoords(user.location);
-        if (city) {
-          this.form.get('location')?.setValue(city);
+        if (user.location) {
+          const city = await this.cityService.getCityCoords(user.location);
+          if (city) {
+            this.form.get('location')?.setValue(city);
+          }
         }
-      }
 
-      this.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
-    });
+        this.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
+      });
 
-    this.uploadService.getGallery().subscribe({
-      next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
-      error: (err) => console.error('Error loading gallery photos:', err),
-    });
+    this.uploadService
+      .getGallery()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
+        error: (err) => console.error('Error loading gallery photos:', err),
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.cityService.destroy();
   }
 
   async onProfileSelected(event: Event) {
@@ -70,19 +84,28 @@ export class EditProfile implements OnInit {
     const localUrl = URL.createObjectURL(input.files[0]);
     this.profilePhotoUrl.set(localUrl);
 
-    const url = await this.uploadService.uploadProfilePhoto(input.files[0]);
-    if (this.currentUser) {
-      this.userService.editUser(this.currentUser.id, { profile_photo_url: url });
+    try {
+      const url = await this.uploadService.uploadProfilePhoto(input.files[0]);
+      if (this.currentUser) {
+        this.userService.editUser(this.currentUser.id, { profile_photo_url: url });
+      }
+      this.profilePhotoUrl.set(`${url}?t=${Date.now()}`);
+    } catch (err) {
+      console.error('Error uploading profile photo:', err);
+      this.profilePhotoUrl.set(null);
     }
-
-    this.profilePhotoUrl.set(`${url}?t=${Date.now()}`);
   }
 
   async removeProfilePhoto(): Promise<void> {
     if (!this.currentUser) return;
-    await this.uploadService.removeProfilePhoto(this.currentUser.id);
-    this.userService.editUser(this.currentUser.id, { profile_photo_url: null });
-    this.profilePhotoUrl.set(null);
+
+    try {
+      await this.uploadService.removeProfilePhoto(this.currentUser.id);
+      this.userService.editUser(this.currentUser.id, { profile_photo_url: null });
+      this.profilePhotoUrl.set(null);
+    } catch (err) {
+      console.error('Error removing profile photo:', err);
+    }
   }
 
   saveProfile(): void {
