@@ -7,8 +7,8 @@
   >
     <span class="flex items-center gap-2">
       <span class="material-symbols-outlined text-slate-500 text-base">location_on</span>
-      @if (selectedCity()) {
-        <span class="text-slate-200">{{ selectedCity()!.city }}</span>
+      @if (cityService.selectedCity()) {
+        <span class="text-slate-200">{{ cityService.selectedCity()!.city }}</span>
       } @else {
         <span class="text-slate-500">Select a city...</span>
       }
@@ -17,16 +17,16 @@
   </button>
 </div>
 
-@if (isModalOpen()) {
+@if (cityService.isModalOpen()) {
   <div
     class="fixed inset-0 z-9999 flex items-center justify-center p-4"
     style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
     (click)="closeModal()"
   >
-<div
-  class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-auto"
-  (click)="$event.stopPropagation()"
->
+    <div
+      class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-auto"
+      (click)="$event.stopPropagation()"
+    >
       <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
         <h3 class="font-bold text-slate-100">Select your city</h3>
         <button
@@ -44,14 +44,13 @@
           <span class="material-symbols-outlined text-slate-500 text-base">search</span>
           <input
             type="text"
-            [value]="searchInput()"
+            [value]="cityService.searchInput()"
             (input)="onSearch($event)"
             placeholder="Search city..."
-           
-            [disabled]="isLoading()"
+            [disabled]="cityService.isLoading()"
             class="flex-1 bg-transparent border-none text-slate-200 text-sm focus:outline-none focus:ring-0 placeholder-slate-500 disabled:opacity-50"
           />
-          @if (isLoading()) {
+          @if (cityService.isLoading()) {
             <span class="material-symbols-outlined text-slate-500 text-base animate-spin"
               >sync</span
             >
@@ -59,12 +58,12 @@
         </div>
       </div>
       <ul class="max-h-64 overflow-y-auto">
-        @if (isLoading()) {
+        @if (cityService.isLoading()) {
           <li class="px-5 py-8 text-center text-slate-500 text-sm">Searching...</li>
-        } @else if (filteredCities().length === 0) {
+        } @else if (cityService.filteredCities().length === 0) {
           <li class="px-5 py-8 text-center text-slate-500 text-sm">Start typing to search...</li>
         }
-        @for (city of filteredCities(); track city.city + city.province) {
+        @for (city of cityService.filteredCities(); track city.city + city.province) {
           <li
             class="flex items-center justify-between px-5 py-3 hover:bg-primary/10 cursor-pointer transition-colors border-b border-white/5 last:border-0"
             (click)="selectCity(city)"
