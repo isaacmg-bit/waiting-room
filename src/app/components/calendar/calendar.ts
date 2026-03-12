@@ -1,4 +1,3 @@
-// calendar.component.ts
 import {
   Component,
   inject,

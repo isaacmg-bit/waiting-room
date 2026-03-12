@@ -1,4 +1,3 @@
-// map.component.ts
 import { Component, AfterViewInit, inject, effect } from '@angular/core';
 import { LocationService } from '../../services/location-service';
 import * as L from 'leaflet';
