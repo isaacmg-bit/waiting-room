@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild, ElementRef } from '@angular/core';
 import { UploadService } from '../../services/upload-service';
 import { GalleryPhoto } from '../../models/GalleryPhoto';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -14,30 +14,26 @@ import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
 export class UserGallery {
   readonly uploadService = inject(UploadService);
 
-  selectedPhoto: string | null = null;
-  galleryPhotos = this.uploadService.galleryPhotosSignal;
+  @ViewChild('galleryFileInput') galleryFileInput!: ElementRef<HTMLInputElement>;
 
-  async onGallerySelected(event: Event) {
+  async onGallerySelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
-
-    for (const [i, file] of Array.from(input.files).entries()) {
-      await this.uploadService.uploadGalleryPhoto(file, i + 1);
-    }
+    await this.uploadService.onGallerySelected(input.files || new FileList());
   }
 
-  openPhoto(url: string) {
-    this.selectedPhoto = url;
+  openPhoto(url: string): void {
+    this.uploadService.openPhoto(url);
   }
-  closePhoto() {
-    this.selectedPhoto = null;
+
+  closePhoto(): void {
+    this.uploadService.closePhoto();
   }
 
   async removePhoto(photo: GalleryPhoto): Promise<void> {
-    try {
-      await this.uploadService.removePhoto(photo);
-    } catch (err) {
-      console.error('Error deleting gallery photo:', err);
-    }
+    await this.uploadService.removePhoto(photo);
+  }
+
+  triggerFileInput(): void {
+    this.galleryFileInput.nativeElement.click();
   }
 }

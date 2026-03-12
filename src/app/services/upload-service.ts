@@ -12,6 +12,7 @@ export class UploadService {
   private readonly api = inject(ApiServiceBack);
 
   readonly galleryPhotosSignal = signal<GalleryPhoto[]>([]);
+  readonly selectedPhoto = signal<string | null>(null);
 
   private async getSession() {
     const {
@@ -66,21 +67,50 @@ export class UploadService {
     return this.api.get<GalleryPhoto[]>('/gallery/me');
   }
 
-  async deleteFromStorage(path: string): Promise<void> {
+  private async deleteFromStorage(path: string): Promise<void> {
     const { error } = await this.supabase.storage.from('gallery').remove([path]);
     if (error) throw error;
   }
 
   async removePhoto(photo: GalleryPhoto): Promise<void> {
-    await firstValueFrom(this.api.delete(`/gallery/${photo.id}`));
-    const path = photo.url.split('/gallery/')[1];
-    await this.deleteFromStorage(path);
-    this.galleryPhotosSignal.update((photos) => photos.filter((p) => p.id !== photo.id));
+    try {
+      await firstValueFrom(this.api.delete(`/gallery/${photo.id}`));
+      const path = photo.url.split('/gallery/')[1];
+      await this.deleteFromStorage(path);
+      this.galleryPhotosSignal.update((photos) => photos.filter((p) => p.id !== photo.id));
+    } catch (err) {
+      console.error('Error deleting gallery photo:', err);
+      throw err;
+    }
   }
 
   async removeProfilePhoto(userId: string): Promise<void> {
     const fileName = `${userId}/profilepicture.jpg`;
     const { error } = await this.supabase.storage.from('profiles').remove([fileName]);
     if (error) throw error;
+  }
+
+  openPhoto(url: string): void {
+    this.selectedPhoto.set(url);
+  }
+
+  closePhoto(): void {
+    this.selectedPhoto.set(null);
+  }
+
+  async onGallerySelected(files: FileList): Promise<void> {
+    if (!files?.length) return;
+
+    for (const [i, file] of Array.from(files).entries()) {
+      await this.uploadGalleryPhoto(file, i + 1);
+    }
+  }
+
+  isPhotoTemporary(photoId: string): boolean {
+    return photoId.startsWith('temp-');
+  }
+
+  canAddMorePhotos(): boolean {
+    return this.galleryPhotosSignal().length < 4;
   }
 }

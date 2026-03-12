@@ -1,3 +1,4 @@
+<!-- user-gallery.html -->
 <div class="w-full">
   <div class="grid grid-cols-4 gap-3">
     @for (photo of uploadService.galleryPhotosSignal(); track photo.id) {
@@ -6,19 +7,20 @@
         (click)="openPhoto(photo.url)"
       >
         <img [src]="photo.url" class="w-full h-full object-cover" />
-        <button
-          [hidden]="photo.id.startsWith('temp-')"
-          (click)="$event.stopPropagation(); removePhoto(photo)"
-          class="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-600 z-10 flex items-center justify-center"
-        >
-          <ng-icon name="heroTrash" size="16" />
-        </button>
+        @if (!uploadService.isPhotoTemporary(photo.id)) {
+          <button
+            (click)="$event.stopPropagation(); removePhoto(photo)"
+            class="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-600 z-10 flex items-center justify-center"
+          >
+            <ng-icon name="heroTrash" size="16" />
+          </button>
+        }
       </div>
     }
-    @if (uploadService.galleryPhotosSignal().length < 4) {
+    @if (uploadService.canAddMorePhotos()) {
       <button
         class="w-full aspect-square border-2 border-dashed border-border-dark rounded-xl flex flex-col items-center justify-center hover:border-primary hover:text-primary text-slate-500 transition-colors"
-        (click)="galleryFileInput.click()"
+        (click)="triggerFileInput()"
       >
         <ng-icon name="heroArrowDownTray" size="24" />
         <span class="text-xs mt-1">Upload</span>
@@ -26,20 +28,27 @@
     }
   </div>
 
-  @if (selectedPhoto) {
+  @if (uploadService.selectedPhoto()) {
     <div
       class="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
       (click)="closePhoto()"
     >
       <img
         #img
-        [src]="selectedPhoto || 'assets/img/Portrait_Placeholder.png'"
+        [src]="uploadService.selectedPhoto() || 'assets/img/Portrait_Placeholder.png'"
         (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
         class="max-h-[90%] max-w-[90%] rounded-lg shadow-lg"
       />
     </div>
   }
 
-  <input type="file" #galleryFileInput hidden accept="image/*" multiple (change)="onGallerySelected($event)" />
+  <input
+    type="file"
+    #galleryFileInput
+    hidden
+    accept="image/*"
+    multiple
+    (change)="onGallerySelected($event)"
+  />
   <p class="text-xs text-slate-500 mt-3">Upload up to 4 photos.</p>
 </div>
