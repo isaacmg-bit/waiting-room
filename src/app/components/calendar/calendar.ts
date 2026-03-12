@@ -1,10 +1,18 @@
-import { Component, signal, inject, viewChild, effect } from '@angular/core';
+// calendar.component.ts
+import {
+  Component,
+  inject,
+  viewChild,
+  AfterViewInit,
+  OnDestroy,
+  effect,
+  signal,
+} from '@angular/core';
 import { FullCalendarModule, FullCalendarComponent } from '@fullcalendar/angular';
 import { CalendarOptions } from '@fullcalendar/core/index.js';
 import { CalendarService } from '../../services/calendar-service';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { UserEvent } from '../../models/UserEvent';
 
 @Component({
   selector: 'app-calendar',
@@ -12,106 +20,78 @@ import { UserEvent } from '../../models/UserEvent';
   templateUrl: './calendar.html',
   styleUrl: './calendar.css',
 })
-export class Calendar {
+export class Calendar implements AfterViewInit, OnDestroy {
   calendarComponent = viewChild<FullCalendarComponent>('calendar');
+  readonly calendarService = inject(CalendarService);
 
-  private readonly calendarService = inject(CalendarService);
-
-  calendarModalActive = signal<boolean>(false);
-  editCalendarModalActive = signal<boolean>(false);
-  selectedDate = signal<string>('');
-  eventTitle = signal<string>('');
-  eventColor = signal<string>('');
-  selectedEvent = signal<any>(null);
-
-  private calendarApi = signal<any>(null);
+  private calendarApi: any = null;
+  private readonly apiReady = signal(false);
 
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     displayEventTime: false,
     plugins: [dayGridPlugin, interactionPlugin],
-    dateClick: (arg) => this.handleDateClick(arg),
-    eventClick: (arg) => this.handleEventClick(arg),
-    events: [],
+    dateClick: (arg) => this.calendarService.openAddModal(arg.dateStr),
+    eventClick: (arg) => this.calendarService.openEditModal(arg.event),
+    events: (info, successCallback) => {
+      const events = this.calendarService.eventsSignal();
+      const formattedEvents = events.map((event) => ({
+        id: event.id,
+        title: event.title,
+        start: event.date,
+        backgroundColor: this.calendarService.getColorCode(event.color),
+        borderColor: this.calendarService.getColorCode(event.color),
+      }));
+      successCallback(formattedEvents);
+    },
   };
 
   constructor() {
     effect(() => {
-      const calendar = this.calendarComponent();
-      const events = this.calendarService.eventsSignal();
-
-      if (!calendar) return;
-
-      const api = calendar.getApi();
-      if (!api) return;
-
-      api.removeAllEvents();
-      events.forEach((event) => api.addEvent({ ...event, id: event.id }));
+      if (!this.apiReady()) return;
+      this.calendarService.eventsSignal();
+      this.calendarApi?.refetchEvents();
     });
   }
 
-  handleDateClick(arg: any): void {
-    this.calendarModalActive.set(true);
-    this.selectedDate.set(arg.dateStr);
+  ngAfterViewInit(): void {
+    const calendar = this.calendarComponent();
+
+    if (calendar) {
+      this.calendarApi = calendar.getApi();
+
+      this.apiReady.set(true);
+    }
+
+    this.calendarService.loadEvents();
   }
 
-  handleEventClick(arg: any): void {
-    const event = arg.event;
-
-    this.editCalendarModalActive.set(true);
-    this.selectedEvent.set(event);
-
-    this.eventTitle.set(event.title);
-    this.eventColor.set(event.backgroundColor ?? '');
-    this.selectedDate.set(event.startStr);
+  ngOnDestroy(): void {
+    this.calendarApi = null;
+    this.apiReady.set(false);
   }
 
   saveEvent(): void {
-    if (!this.eventTitle() || !this.eventColor() || !this.selectedDate()) return;
-    this.calendarService.addEvent(this.buildEventBody());
-    this.clearForm();
+    this.calendarService.saveEvent();
   }
 
   editEvent(): void {
-    const event = this.selectedEvent();
-    if (!event) return;
-    if (!this.eventTitle() || !this.eventColor() || !this.selectedDate()) return;
-
-    this.calendarService.editEvent(event.id, this.buildEventBody());
-    this.clearForm();
+    this.calendarService.saveEditedEvent();
   }
 
   deleteEvent(): void {
-    const event = this.selectedEvent();
-    if (!event) return;
-
-    this.calendarService.deleteEvent(event.id);
-    this.clearForm();
-  }
-
-  private buildEventBody(): UserEvent {
-    return {
-      title: this.eventTitle(),
-      date: this.selectedDate(),
-      color: this.eventColor(),
-    };
-  }
-
-  onColorChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value;
-    this.eventColor.set(value);
+    this.calendarService.deleteSelectedEvent();
   }
 
   onTitleInput(event: Event): void {
-    this.eventTitle.set((event.target as HTMLInputElement).value);
+    this.calendarService.onTitleInput((event.target as HTMLInputElement).value);
   }
 
-  private clearForm(): void {
-    this.calendarModalActive.set(false);
-    this.editCalendarModalActive.set(false);
-    this.eventTitle.set('');
-    this.eventColor.set('');
-    this.selectedDate.set('');
-    this.selectedEvent.set(null);
+  onColorChange(event: Event): void {
+    this.calendarService.onColorChange((event.target as HTMLSelectElement).value);
+  }
+
+  closeModals(): void {
+    this.calendarService.closeModals();
   }
 }

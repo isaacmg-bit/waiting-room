@@ -6,6 +6,7 @@ import {
   inject,
   effect,
   signal,
+  OnDestroy,
 } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { CalendarService } from '../../services/calendar-service';
@@ -17,7 +18,7 @@ Chart.register(...registerables);
   templateUrl: './charts.html',
   styleUrls: ['./charts.css'],
 })
-export class Charts implements AfterViewInit {
+export class Charts implements AfterViewInit, OnDestroy {
   barChart = viewChild<ElementRef<HTMLCanvasElement>>('barChart');
   lineChart = viewChild<ElementRef<HTMLCanvasElement>>('lineChart');
 
@@ -62,7 +63,19 @@ export class Charts implements AfterViewInit {
       type: 'bar',
       data: {
         labels: this.months,
-        datasets: [{ label: 'Events', data: [...initialData] }],
+        datasets: [
+          {
+            label: 'Events',
+            data: initialData,
+            backgroundColor: 'rgba(var(--color-primary), 0.1)',
+            borderColor: 'rgba(var(--color-primary), 1)',
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
       },
     });
 
@@ -70,12 +83,25 @@ export class Charts implements AfterViewInit {
       type: 'line',
       data: {
         labels: this.months,
-        datasets: [{ label: 'Events', data: [...initialData] }],
+        datasets: [
+          {
+            label: 'Events',
+            data: initialData,
+            borderColor: 'rgba(var(--color-primary), 1)',
+            backgroundColor: 'rgba(var(--color-primary), 0.05)',
+            tension: 0.4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
       },
     });
 
     this.chartsReady.set(true);
   }
+
   private updateCharts(): void {
     const events = this.calendarService.eventsSignal();
     const eventsByMonth = events.reduce<Record<number, number>>((acc, event) => {
@@ -87,10 +113,15 @@ export class Charts implements AfterViewInit {
     const data = this.months.map((_, i) => eventsByMonth[i] ?? 0);
 
     [this.barChartInstance, this.lineChartInstance].forEach((chart) => {
-      if (chart?.data.datasets.length) {
+      if (chart?.data.datasets[0]) {
         chart.data.datasets[0].data = data;
         chart.update();
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.barChartInstance?.destroy();
+    this.lineChartInstance?.destroy();
   }
 }

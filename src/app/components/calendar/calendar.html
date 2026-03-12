@@ -1,3 +1,4 @@
+<!-- calendar.html (cambios) -->
 <main class="bg-background-dark min-h-screen">
   <div class="max-w-7xl mx-auto px-6 py-8">
     <h1 class="text-3xl font-black tracking-tight text-slate-100 mb-2">Calendar</h1>
@@ -10,7 +11,7 @@
     </div>
 
     <!-- Add Event Modal -->
-    @if (calendarModalActive()) {
+    @if (calendarService.calendarModalActive()) {
       <div
         class="fixed inset-0 z-50 flex items-center justify-center p-4"
         style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
@@ -22,7 +23,7 @@
             <h2 class="font-bold text-slate-100">Add Event</h2>
             <button
               type="button"
-              (click)="calendarModalActive.set(false)"
+              (click)="closeModals()"
               class="text-slate-500 hover:text-slate-200 transition-colors"
             >
               <span class="material-symbols-outlined">close</span>
@@ -36,6 +37,7 @@
               <input
                 type="text"
                 placeholder="Balm show @ Palau St. Jordi"
+                [value]="calendarService.eventTitle()"
                 (input)="onTitleInput($event)"
                 class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
               />
@@ -45,6 +47,7 @@
                 >Event color</label
               >
               <select
+                [value]="calendarService.eventColor()"
                 (change)="onColorChange($event)"
                 class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary text-slate-200 transition-all"
               >
@@ -61,7 +64,7 @@
             <div class="flex justify-end gap-2 pt-2">
               <button
                 type="button"
-                (click)="calendarModalActive.set(false)"
+                (click)="closeModals()"
                 class="px-4 py-2 text-sm rounded-xl border border-white/10 text-slate-400 hover:bg-white/5 transition-all"
               >
                 Cancel
@@ -80,7 +83,7 @@
     }
 
     <!-- Edit Event Modal -->
-    @if (editCalendarModalActive()) {
+    @if (calendarService.editCalendarModalActive()) {
       <div
         class="fixed inset-0 z-50 flex items-center justify-center p-4"
         style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
@@ -92,7 +95,7 @@
             <h2 class="font-bold text-slate-100">Edit Event</h2>
             <button
               type="button"
-              (click)="editCalendarModalActive.set(false)"
+              (click)="closeModals()"
               class="text-slate-500 hover:text-slate-200 transition-colors"
             >
               <span class="material-symbols-outlined">close</span>
@@ -106,7 +109,7 @@
               <input
                 type="text"
                 placeholder="Your mom's birthday"
-                [value]="eventTitle()"
+                [value]="calendarService.eventTitle()"
                 (input)="onTitleInput($event)"
                 class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
               />
@@ -116,7 +119,7 @@
                 >Event color</label
               >
               <select
-                [value]="eventColor()"
+                [value]="calendarService.eventColor()"
                 (change)="onColorChange($event)"
                 class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary text-slate-200 transition-all"
               >
@@ -133,7 +136,7 @@
             <div class="flex justify-end gap-2 pt-2">
               <button
                 type="button"
-                (click)="editCalendarModalActive.set(false)"
+                (click)="closeModals()"
                 class="px-4 py-2 text-sm rounded-xl border border-white/10 text-slate-400 hover:bg-white/5 transition-all"
               >
                 Cancel
