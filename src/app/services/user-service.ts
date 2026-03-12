@@ -1,7 +1,7 @@
-// user.service.ts
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+
 import { User } from '../models/User';
 import { ApiService } from './apiservice';
 import { environment } from '../../environments/environment';
@@ -40,6 +40,14 @@ export class UserService {
     });
   }
 
+  editUser(id: string, body: Partial<User>): void {
+    this.api.patch<User>(`${this.USERS_URL}/${id}`, body).subscribe({
+      next: (updatedUser) =>
+        this.usersSignal.update((users) => users.map((u) => (u.id === id ? updatedUser : u))),
+      error: (err) => console.error('Error updating user:', err),
+    });
+  }
+
   deleteUser(id: string): void {
     if (confirm('Are you sure you wanna delete the user?')) {
       this.api.delete<void>(`${this.USERS_URL}/${id}`).subscribe({
@@ -47,14 +55,6 @@ export class UserService {
         error: (err) => console.error('Error deleting user:', err),
       });
     }
-  }
-
-  editUser(id: string, body: Partial<User>): void {
-    this.api.patch<User>(`${this.USERS_URL}/${id}`, body).subscribe({
-      next: (updatedUser) =>
-        this.usersSignal.update((users) => users.map((u) => (u.id === id ? updatedUser : u))),
-      error: (err) => console.error('Error updating user:', err),
-    });
   }
 
   loadUserForEdit(user: User): void {

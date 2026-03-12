@@ -1,6 +1,6 @@
-import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { UserService } from '../../services/user-service';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, FormArray, Validators } from '@angular/forms';
 import { UploadService } from '../../services/upload-service';
 import { UserGallery } from '../user-gallery/user-gallery';
 import { UserLocation } from '../user-location/user-location';
@@ -44,7 +44,13 @@ export class EditProfile implements OnInit, OnDestroy {
     name: [''],
     email: [{ value: '', disabled: true }],
     location: [null as City | null],
+    bio: [''],
+    gear: [''],
+    rehearsal_space: [''],
+    social_links: this.fb.array([]),
   });
+
+  socialLinksControls = computed(() => (this.form.get('social_links') as FormArray).controls);
 
   ngOnInit() {
     this.userService
@@ -52,7 +58,25 @@ export class EditProfile implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(async (user) => {
         this.currentUser = user;
-        this.form.patchValue({ name: user.name, email: user.email });
+        this.form.patchValue({
+          name: user.name,
+          email: user.email,
+          bio: user.bio,
+          gear: user.gear,
+          rehearsal_space: user.rehearsal_space,
+        });
+
+        if (user.social_links && Array.isArray(user.social_links)) {
+          const arr = this.form.get('social_links') as FormArray;
+          user.social_links.forEach((link) => {
+            arr.push(
+              this.fb.group({
+                platform: [link.platform, Validators.required],
+                url: [link.url, Validators.required],
+              }),
+            );
+          });
+        }
 
         if (user.location) {
           const city = await this.cityService.getCityCoords(user.location);
@@ -110,11 +134,39 @@ export class EditProfile implements OnInit, OnDestroy {
     }
   }
 
+  addLink(): void {
+    const arr = this.form.get('social_links') as FormArray;
+    arr.push(
+      this.fb.group({
+        platform: ['', Validators.required],
+        url: ['', Validators.required],
+      }),
+    );
+  }
+
+  removeLink(index: number): void {
+    const arr = this.form.get('social_links') as FormArray;
+    arr.removeAt(index);
+  }
+
+  hasIncompleteLinks(): boolean {
+    const linksArray = this.form.get('social_links') as FormArray;
+    return linksArray.controls.some((c) => !c.get('platform')?.value);
+  }
+
+  canSave(): boolean {
+    return this.form.valid && !this.hasIncompleteLinks();
+  }
+
   saveProfile(): void {
     if (!this.currentUser) return;
 
     const payload: Partial<User> = {
       name: this.form.value.name ?? undefined,
+      bio: this.form.value.bio ?? undefined,
+      gear: this.form.value.gear ?? undefined,
+      rehearsal_space: this.form.value.rehearsal_space ?? undefined,
+      social_links: (this.form.get('social_links') as FormArray).value,
     };
 
     if (this.selectedCity) {

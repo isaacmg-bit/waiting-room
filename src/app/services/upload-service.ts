@@ -14,6 +14,8 @@ export class UploadService {
   readonly galleryPhotosSignal = signal<GalleryPhoto[]>([]);
   readonly selectedPhoto = signal<string | null>(null);
 
+  private readonly profilePicUrl = '/profilepicture.jpg';
+
   private async getSession() {
     const {
       data: { session },
@@ -24,7 +26,7 @@ export class UploadService {
 
   async uploadProfilePhoto(file: File): Promise<string> {
     const session = await this.getSession();
-    const fileName = `${session.user.id}/profilepicture.jpg`;
+    const fileName = `${session.user.id}${this.profilePicUrl}`;
 
     const { data, error } = await this.supabase.storage
       .from('profiles')
