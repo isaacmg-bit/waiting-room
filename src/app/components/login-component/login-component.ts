@@ -2,9 +2,9 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SupabaseService } from '../../services/supabase-service';
+import { UserService } from '../../services/user-service';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { UserService } from '../../services/user-service';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +24,7 @@ export class LoginComponent {
     password: ['', [Validators.required]],
   });
 
-  async onSubmit() {
+  async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
 
     const { email, password } = this.form.getRawValue();
@@ -44,19 +44,20 @@ export class LoginComponent {
     }
   }
 
-  async resetPassword() {
+  async resetPassword(): Promise<void> {
     const email = this.form.value.email;
     if (!email) {
       alert('Enter email first');
       return;
     }
 
-    const { error } = await this.supabase.resetPassword(email);
-    if (error) {
+    try {
+      const { error } = await this.supabase.resetPassword(email);
+      if (error) throw error;
+      alert('Check your email');
+    } catch (err) {
+      console.error(err);
       alert('Error sending reset email');
-      return;
     }
-
-    alert('Check your email');
   }
 }

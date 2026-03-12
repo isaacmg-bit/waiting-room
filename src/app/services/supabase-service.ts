@@ -51,4 +51,5 @@ export class SupabaseService {
       redirectTo: `${environment.appUrl}${environment.apiResetPass}`,
     });
   }
+  
 }
