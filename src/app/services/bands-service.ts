@@ -12,7 +12,6 @@ export class MusicBrainzService {
   readonly loadingSignal = signal(false);
 
   private readonly BASE_URL = `${environment.apiMusicBrainz}`;
-  private readonly type = 'group';
 
   searchArtists(query: string): void {
     if (!query) {
@@ -22,7 +21,8 @@ export class MusicBrainzService {
 
     this.loadingSignal.set(true);
 
-    const url = `${this.BASE_URL}?query=${encodeURIComponent(query)}&type=artist&limit=10&fmt=json`;
+    const term = encodeURIComponent(query);
+    const url = `${this.BASE_URL}?query=artist:${term}+AND+type:Group&limit=10&fmt=json`;
 
     this.http
       .get<{ artists: { id: string; name: string }[] }>(url)

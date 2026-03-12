@@ -67,8 +67,8 @@ export class Charts implements AfterViewInit, OnDestroy {
           {
             label: 'Events',
             data: initialData,
-            backgroundColor: 'rgba(var(--color-primary), 0.1)',
-            borderColor: 'rgba(var(--color-primary), 1)',
+            backgroundColor: '#38bdf8',
+            borderColor: '#0ea5e9',
             borderWidth: 2,
           },
         ],
@@ -87,8 +87,8 @@ export class Charts implements AfterViewInit, OnDestroy {
           {
             label: 'Events',
             data: initialData,
-            borderColor: 'rgba(var(--color-primary), 1)',
-            backgroundColor: 'rgba(var(--color-primary), 0.05)',
+            borderColor: '#38bdf8',
+            backgroundColor: 'rgba(56, 189, 248, 0.2)',
             tension: 0.4,
           },
         ],

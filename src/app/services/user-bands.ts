@@ -72,6 +72,7 @@ export class UserBandsService {
 
   onSearch(query: string): void {
     this.searchQuery.set(query);
+    this.bandsService.searchArtists(query);
   }
 
   selectBand(band: Band): void {

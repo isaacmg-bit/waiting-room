@@ -12,6 +12,7 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
 import { UserGenres } from '../user-genres/user-genres';
 import { Subject, takeUntil } from 'rxjs';
+import { UserBands } from '../user-bands/user-bands';
 
 @Component({
   selector: 'app-edit-profile',
@@ -22,6 +23,7 @@ import { Subject, takeUntil } from 'rxjs';
     UserLocation,
     UserInstruments,
     UserGenres,
+    UserBands,
   ],
   providers: [provideIcons({ heroTrash, heroArrowDownTray })],
   templateUrl: './edit-profile.html',

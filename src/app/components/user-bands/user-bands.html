@@ -1,1 +1,76 @@
-<p>user-bands works!</p>
+<div class="space-y-3">
+  <div
+    class="w-full min-h-12 p-3 bg-black/20 border border-white/10 rounded-xl flex flex-wrap gap-2 items-center"
+  >
+    @for (ub of userBandsService.userBandsSignal(); track ub.id) {
+      <span
+        class="px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded-full text-xs flex items-center gap-1"
+      >
+        {{ ub.name }}
+        <span
+          class="material-symbols-outlined text-[10px] cursor-pointer"
+          (click)="deleteBand(ub.id)"
+          >close</span
+        >
+      </span>
+    }
+    <button
+      (click)="openModal()"
+      class="px-3 py-1 bg-transparent text-slate-500 border border-white/10 border-dashed rounded-full text-sm hover:border-primary hover:text-primary transition-colors flex items-center gap-1"
+    >
+      <span class="material-symbols-outlined text-xs">add</span> Add Band
+    </button>
+  </div>
+  <p class="text-xs text-slate-600">List bands you like.</p>
+</div>
+
+@if (userBandsService.isModalOpen()) {
+  <div
+    class="fixed inset-0 z-9999 flex items-center justify-center p-4"
+    style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
+    (click)="closeModal()"
+  >
+    <div
+      class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-auto"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
+        <h3 class="font-bold text-slate-100">Add Band</h3>
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="text-slate-500 hover:text-slate-200 transition-colors"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="px-4 py-3 border-b border-white/10">
+        <div
+          class="flex items-center gap-2 px-3 py-2 bg-black/30 border border-white/10 rounded-xl focus-within:border-primary transition-colors"
+        >
+          <span class="material-symbols-outlined text-slate-500 text-base">search</span>
+          <input
+            type="text"
+            [value]="userBandsService.searchQuery()"
+            (input)="onSearch($event)"
+            placeholder="Search band..."
+            class="flex-1 bg-transparent border-none text-slate-200 text-sm focus:outline-none focus:ring-0 placeholder-slate-500"
+          />
+        </div>
+      </div>
+      <ul class="max-h-64 overflow-y-auto">
+        @if (userBandsService.filteredBands().length === 0) {
+          <li class="px-5 py-8 text-center text-slate-500 text-sm">No bands found.</li>
+        }
+        @for (band of userBandsService.filteredBands(); track band.id) {
+          <li
+            class="flex items-center px-5 py-3 hover:bg-primary/10 cursor-pointer transition-colors border-b border-white/5 last:border-0"
+            (click)="selectBand(band)"
+          >
+            <span class="text-slate-200 font-medium">{{ band.name }}</span>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+}

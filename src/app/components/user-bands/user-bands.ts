@@ -1,24 +1,32 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, effect } from '@angular/core';
 import { UserBandsService } from '../../services/user-bands';
-import { OnInit } from '@angular/core';
 import { Band } from '../../models/Band';
 
 @Component({
   selector: 'app-user-bands',
-  imports: [],
   templateUrl: './user-bands.html',
-  styleUrl: './user-bands.css',
+  styleUrls: ['./user-bands.css'],
 })
-export class UserBands implements OnInit {
+export class UserBands {
   readonly userBandsService = inject(UserBandsService);
+  readonly searchQuery = signal('');
+  private searchTimeout: any;
 
-  ngOnInit() {
-    this.userBandsService.loadUserBands();
-  }
+  private searchEffect = effect(() => {
+    const query = this.searchQuery();
+    if (this.searchTimeout) clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+      if (query.trim()) {
+        this.userBandsService.onSearch(query);
+      } else {
+        this.userBandsService.loadUserBands();
+      }
+    }, 400);
+  });
 
   onSearch(event: Event): void {
-    const query = (event.target as HTMLInputElement).value;
-    this.userBandsService.onSearch(query);
+    const value = (event.target as HTMLInputElement).value;
+    this.searchQuery.set(value);
   }
 
   selectBand(band: Band): void {

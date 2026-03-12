@@ -1,7 +1,5 @@
 <body class="bg-background-dark font-display text-slate-100 min-h-screen">
   <div class="max-w-5xl mx-auto px-4 py-8 md:px-8">
-
-
     <form [formGroup]="form" class="space-y-6">
       <!-- 1. Profile Media -->
       <section class="glass-card rounded-3xl p-6 md:p-8">
@@ -37,8 +35,7 @@
                   (click)="profileFileInput.click()"
                   type="button"
                   class="absolute bottom-2 right-2 size-10 bg-primary text-white rounded-full flex items-center justify-center shadow-xl hover:bg-primary/90 transition-colors"
-                >
-                </button>
+                ></button>
               }
               <input
                 type="file"
@@ -109,20 +106,25 @@
             >
             <app-user-instruments></app-user-instruments>
           </div>
-<div class="mt-6 pt-6 relative">
-  <div class="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent"></div>
+          <div class="mt-6 pt-6 relative">
+            <div
+              class="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent"
+            ></div>
             <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3"
               >Genres</label
             >
             <app-user-genres></app-user-genres>
           </div>
-         <div class="mt-6 pt-6 relative">
-  <div class="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent"></div>
+          <div class="mt-6 pt-6 relative">
+            <div
+              class="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent"
+            ></div>
             <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3"
               >Influence Bands</label
             >
           </div>
         </div>
+        <app-user-bands></app-user-bands>
       </section>
 
       <!-- 4. Gear & Space -->
