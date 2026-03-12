@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-reset-pass',
-  standalone: true,
   imports: [FormsModule],
   templateUrl: './reset-pass.html',
 })

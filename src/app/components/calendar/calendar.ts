@@ -1,4 +1,4 @@
-import { Component, signal, inject, ViewChild, effect, AfterViewInit } from '@angular/core';
+import { Component, signal, inject, viewChild, effect } from '@angular/core';
 import { FullCalendarModule, FullCalendarComponent } from '@fullcalendar/angular';
 import { CalendarOptions } from '@fullcalendar/core/index.js';
 import { CalendarService } from '../../services/calendar-service';
@@ -12,8 +12,8 @@ import { UserEvent } from '../../models/UserEvent';
   templateUrl: './calendar.html',
   styleUrl: './calendar.css',
 })
-export class Calendar implements AfterViewInit {
-  @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
+export class Calendar {
+  calendarComponent = viewChild<FullCalendarComponent>('calendar');
 
   private readonly calendarService = inject(CalendarService);
 
@@ -37,19 +37,17 @@ export class Calendar implements AfterViewInit {
 
   constructor() {
     effect(() => {
-      console.log('EVENTS SIGNAL:', this.calendarService.eventsSignal());
+      const calendar = this.calendarComponent();
       const events = this.calendarService.eventsSignal();
-      const api = this.calendarApi();
 
+      if (!calendar) return;
+
+      const api = calendar.getApi();
       if (!api) return;
 
       api.removeAllEvents();
       events.forEach((event) => api.addEvent({ ...event, id: event.id }));
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.calendarApi.set(this.calendarComponent.getApi());
   }
 
   handleDateClick(arg: any): void {

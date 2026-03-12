@@ -1,6 +1,6 @@
 import {
   Component,
-  ViewChild,
+  viewChild,
   AfterViewInit,
   ElementRef,
   inject,
@@ -18,8 +18,8 @@ Chart.register(...registerables);
   styleUrls: ['./charts.css'],
 })
 export class Charts implements AfterViewInit {
-  @ViewChild('barChart') barChart!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('lineChart') lineChart!: ElementRef<HTMLCanvasElement>;
+  barChart = viewChild<ElementRef<HTMLCanvasElement>>('barChart');
+  lineChart = viewChild<ElementRef<HTMLCanvasElement>>('lineChart');
 
   private readonly calendarService = inject(CalendarService);
 
@@ -53,19 +53,29 @@ export class Charts implements AfterViewInit {
   ngAfterViewInit(): void {
     const initialData = Array(12).fill(0);
 
-    this.barChartInstance = new Chart(this.barChart.nativeElement, {
+    const barCanvas = this.barChart()?.nativeElement;
+    const lineCanvas = this.lineChart()?.nativeElement;
+
+    if (!barCanvas || !lineCanvas) return;
+
+    this.barChartInstance = new Chart(barCanvas, {
       type: 'bar',
-      data: { labels: this.months, datasets: [{ label: 'Events', data: [...initialData] }] },
+      data: {
+        labels: this.months,
+        datasets: [{ label: 'Events', data: [...initialData] }],
+      },
     });
 
-    this.lineChartInstance = new Chart(this.lineChart.nativeElement, {
+    this.lineChartInstance = new Chart(lineCanvas, {
       type: 'line',
-      data: { labels: this.months, datasets: [{ label: 'Events', data: [...initialData] }] },
+      data: {
+        labels: this.months,
+        datasets: [{ label: 'Events', data: [...initialData] }],
+      },
     });
 
     this.chartsReady.set(true);
   }
-
   private updateCharts(): void {
     const events = this.calendarService.eventsSignal();
     const eventsByMonth = events.reduce<Record<number, number>>((acc, event) => {
