@@ -31,28 +31,20 @@ export class Map implements AfterViewInit {
 
   constructor() {
     effect(() => {
-      console.log('Effect ejecutándose...');
-      console.log('Mapa existe?', !!this.map);
-      console.log('Locations:', this.locationService.locationsSignal());
-      console.log('Filters:', this.locationService.activeFilters());
+      this.locationService.locationsSignal();
 
       if (!this.map) {
-        console.log('Mapa no está listo, saliendo...');
         return;
       }
 
       const locations = this.locationService.locationsSignal();
       const filters = this.locationService.activeFilters();
 
-      console.log('Limpiando layer...');
       this.savedMarkersLayer.clearLayers();
 
-      console.log('Agregando markers...');
       locations
         .filter((loc) => filters.includes(loc.category))
         .forEach((loc) => {
-          console.log('Agregando marker para:', loc.name, loc.lat, loc.lng);
-
           const marker = L.marker([loc.lat, loc.lng], { icon: this.iconSavedMarker });
 
           marker.bindTooltip(
@@ -71,26 +63,18 @@ export class Map implements AfterViewInit {
 
           marker.addTo(this.savedMarkersLayer);
         });
-
-      console.log('Markers agregados al layer');
     });
   }
 
   ngAfterViewInit(): void {
-    console.log('ngAfterViewInit iniciado');
-
     navigator.geolocation.getCurrentPosition((position) => {
-      console.log('Posición obtenida:', position.coords);
-
       const { latitude: myLat, longitude: myLng } = position.coords;
 
       this.map = L.map('map', { center: [myLat, myLng], zoom: 13 });
-      console.log('Mapa creado');
 
       L.tileLayer(`${environment.leafletTileLayer}`).addTo(this.map);
       L.marker([myLat, myLng], { icon: this.iconUser }).addTo(this.map);
       this.savedMarkersLayer.addTo(this.map);
-      console.log('Layer agregada al mapa');
 
       this.map.on('click', (selectedCoords) => {
         this.locationService.openAddModal(selectedCoords.latlng.lat, selectedCoords.latlng.lng);
@@ -98,7 +82,6 @@ export class Map implements AfterViewInit {
 
       setTimeout(() => this.map!.invalidateSize(), 0);
 
-      console.log('Cargando locations...');
       this.locationService.loadLocations();
     });
   }
