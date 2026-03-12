@@ -10,6 +10,9 @@ export class UserTheoryService {
 
   readonly userTheorySignal = signal<UserTheory | null>(null);
   readonly loadingSignal = signal(false);
+  readonly knowsTheory = signal(false);
+  readonly selectedTheoryLevel = signal<string | null>(null);
+  readonly theoryLevels = ['Basic', 'Composition', 'Advanced Orchestration'];
 
   private readonly BASE_URL = environment.apiUserTheoryUrl;
   private readonly ME_URL = `${environment.apiUserTheoryUrl}${environment.apiMeUrl}`;
@@ -20,33 +23,56 @@ export class UserTheoryService {
       .get<UserTheory>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (theory) => this.userTheorySignal.set(theory),
+        next: (theory) => this.setTheoryData(theory),
         error: (err) => {
           console.error('Error loading theory:', err);
-          this.userTheorySignal.set({ knows_theory: false, theory_level: null } as UserTheory);
+          this.setTheoryData({ knows_theory: false, theory_level: null } as UserTheory);
         },
       });
   }
 
-  saveUserTheory(knowsTheory: boolean, theoryLevel: string | null): void {
+  saveUserTheory(): void {
     this.loadingSignal.set(true);
     this.api
-      .post<UserTheory>(this.BASE_URL, { knows_theory: knowsTheory, theory_level: theoryLevel })
+      .post<UserTheory>(this.BASE_URL, {
+        knows_theory: this.knowsTheory(),
+        theory_level: this.selectedTheoryLevel(),
+      })
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (created) => this.userTheorySignal.set(created),
+        next: (created) => this.setTheoryData(created),
         error: (err) => console.error('Error saving theory:', err),
       });
   }
 
-  updateUserTheory(knowsTheory: boolean, theoryLevel: string | null): void {
+  updateUserTheory(): void {
     this.loadingSignal.set(true);
     this.api
-      .patch<UserTheory>(this.ME_URL, { knows_theory: knowsTheory, theory_level: theoryLevel })
+      .patch<UserTheory>(this.ME_URL, {
+        knows_theory: this.knowsTheory(),
+        theory_level: this.selectedTheoryLevel(),
+      })
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (updated) => this.userTheorySignal.set(updated),
+        next: (updated) => this.setTheoryData(updated),
         error: (err) => console.error('Error updating theory:', err),
       });
+  }
+
+  onTheoryChange(): void {
+    if (!this.knowsTheory()) {
+      this.selectedTheoryLevel.set(null);
+    }
+    this.updateUserTheory();
+  }
+
+  onTheoryLevelChange(): void {
+    this.updateUserTheory();
+  }
+
+  private setTheoryData(theory: UserTheory): void {
+    this.userTheorySignal.set(theory);
+    this.knowsTheory.set(theory.knows_theory);
+    this.selectedTheoryLevel.set(theory.theory_level);
   }
 }

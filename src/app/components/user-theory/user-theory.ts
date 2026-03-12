@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit, effect } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserTheoryService } from '../../services/theory-service';
 
@@ -9,39 +9,17 @@ import { UserTheoryService } from '../../services/theory-service';
   styleUrl: './user-theory.css',
 })
 export class UserTheory implements OnInit {
-  private readonly userTheoryService = inject(UserTheoryService);
-
-  knowsTheory = signal(false);
-  selectedTheoryLevel = signal<string | null>(null);
-  theoryLevels = ['Basic', 'Composition', 'Advanced Orchestration'];
-  userTheory = this.userTheoryService.userTheorySignal;
-
-  constructor() {
-    effect(() => {
-      const theory = this.userTheory();
-      if (theory) {
-        this.knowsTheory.set(theory.knows_theory);
-        this.selectedTheoryLevel.set(theory.theory_level);
-      }
-    });
-  }
+  readonly userTheoryService = inject(UserTheoryService);
 
   ngOnInit() {
     this.userTheoryService.loadUserTheory();
   }
 
-  private updateTheory() {
-    this.userTheoryService.updateUserTheory(this.knowsTheory(), this.selectedTheoryLevel());
-  }
-
   onTheoryChange() {
-    if (!this.knowsTheory()) {
-      this.selectedTheoryLevel.set(null);
-    }
-    this.updateTheory();
+    this.userTheoryService.onTheoryChange();
   }
 
   onTheoryLevelChange() {
-    this.updateTheory();
+    this.userTheoryService.onTheoryLevelChange();
   }
 }
