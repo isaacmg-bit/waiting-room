@@ -4,6 +4,7 @@ import { ApiServiceBack } from './apiservice-back';
 import { GalleryPhoto } from '../models/GalleryPhoto';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { firstValueFrom } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {
@@ -14,6 +15,7 @@ export class UploadService {
   readonly galleryPhotosSignal = signal<GalleryPhoto[]>([]);
   readonly selectedPhoto = signal<string | null>(null);
 
+  private readonly BASE_URL = environment.apiGalleryUrl;
   private readonly profilePicUrl = '/profilepicture.jpg';
 
   private async getSession() {
@@ -106,6 +108,10 @@ export class UploadService {
     for (const [i, file] of Array.from(files).entries()) {
       await this.uploadGalleryPhoto(file, i + 1);
     }
+  }
+
+  getGalleryByUserId(userId: string) {
+    return this.api.get<GalleryPhoto[]>(`${this.BASE_URL}/${userId}`);
   }
 
   isPhotoTemporary(photoId: string): boolean {

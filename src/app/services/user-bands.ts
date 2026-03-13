@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 import { ApiServiceBack } from './apiservice-back';
 import { MusicBrainzService } from './bands-service';
 import { UserBand } from '../models/UserBand';
-import { finalize } from 'rxjs';
+import { finalize, Observable } from 'rxjs';
 import { Band } from '../models/Band';
 
 @Injectable({
@@ -73,6 +73,14 @@ export class UserBandsService {
   onSearch(query: string): void {
     this.searchQuery.set(query);
     this.bandsService.searchArtists(query);
+  }
+
+  getBands() {
+    return this.api.get<UserBand[]>('/user-bands/me');
+  }
+
+  getBandsByUserId(userId: string): Observable<UserBand[]> {
+    return this.api.get<UserBand[]>(`${this.BASE_URL}/${userId}`);
   }
 
   selectBand(band: Band): void {

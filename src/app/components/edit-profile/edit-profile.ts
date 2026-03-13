@@ -1,4 +1,13 @@
-import { Component, inject, OnInit, OnDestroy, signal, computed } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  OnDestroy,
+  signal,
+  computed,
+  viewChild,
+  ElementRef,
+} from '@angular/core';
 import { UserService } from '../../services/user-service';
 import { FormBuilder, ReactiveFormsModule, FormArray, Validators } from '@angular/forms';
 import { UploadService } from '../../services/upload-service';
@@ -51,6 +60,7 @@ export class EditProfile implements OnInit, OnDestroy {
   });
 
   socialLinksControls = computed(() => (this.form.get('social_links') as FormArray).controls);
+  profileFileInput = viewChild.required<ElementRef<HTMLInputElement>>('profileFileInput');
 
   ngOnInit() {
     this.userService
@@ -156,6 +166,10 @@ export class EditProfile implements OnInit, OnDestroy {
 
   canSave(): boolean {
     return this.form.valid && !this.hasIncompleteLinks();
+  }
+
+  triggerProfileFileInput(): void {
+    this.profileFileInput().nativeElement.click();
   }
 
   saveProfile(): void {

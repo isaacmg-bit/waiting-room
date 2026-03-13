@@ -2,7 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { ApiServiceBack } from './apiservice-back';
 import { UserTheory } from '../models/UserTheory';
 import { environment } from '../../environments/environment';
-import { finalize } from 'rxjs';
+import { finalize, Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class UserTheoryService {
@@ -68,6 +68,14 @@ export class UserTheoryService {
 
   onTheoryLevelChange(): void {
     this.updateUserTheory();
+  }
+
+  getTheory() {
+    return this.api.get<UserTheory[]>('/user-theory/me');
+  }
+
+  getTheoryByUserId(userId: string): Observable<UserTheory[]> {
+    return this.api.get<UserTheory[]>(`${this.BASE_URL}/${userId}`);
   }
 
   private setTheoryData(theory: UserTheory): void {

@@ -3,7 +3,7 @@ import { ApiServiceBack } from './apiservice-back';
 import { UserGenre } from '../models/UserGenre';
 import { Genre } from '../models/Genre';
 import { GenresService } from './genres-service';
-import { finalize } from 'rxjs';
+import { finalize, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -71,6 +71,14 @@ export class UserGenresService {
   selectGenre(genre: Genre): void {
     this.addUserGenre(genre.id, genre);
     this.closeModal();
+  }
+
+  getGenres() {
+    return this.api.get<UserGenre[]>('/user-genres/me');
+  }
+
+  getGenresByUserId(userId: string): Observable<UserGenre[]> {
+    return this.api.get<UserGenre[]>(`${this.BASE_URL}/${userId}`);
   }
 
   openModal(): void {

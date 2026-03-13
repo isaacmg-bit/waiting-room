@@ -80,6 +80,10 @@ export class UserService {
     this.editingUserId.set(null);
   }
 
+  getUserById(id: string): Observable<User> {
+    return this.api.get<User>(`${this.USERS_URL}/${id}`);
+  }
+
   getMe(): Observable<User> {
     return this.api.get<User>(this.ME_URL);
   }

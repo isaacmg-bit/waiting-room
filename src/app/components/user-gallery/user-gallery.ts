@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, inject, viewChild, ElementRef } from '@angular/core';
 import { UploadService } from '../../services/upload-service';
 import { GalleryPhoto } from '../../models/GalleryPhoto';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -14,7 +14,7 @@ import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
 export class UserGallery {
   readonly uploadService = inject(UploadService);
 
-  @ViewChild('galleryFileInput') galleryFileInput!: ElementRef<HTMLInputElement>;
+  galleryFileInput = viewChild.required<ElementRef<HTMLInputElement>>('galleryFileInput');
 
   async onGallerySelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
@@ -34,6 +34,6 @@ export class UserGallery {
   }
 
   triggerFileInput(): void {
-    this.galleryFileInput.nativeElement.click();
+    this.galleryFileInput().nativeElement.click();
   }
 }

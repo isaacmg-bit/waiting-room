@@ -1,0 +1,211 @@
+<body class="bg-background-dark font-display text-slate-100 min-h-screen dark">
+  <div class="max-w-5xl mx-auto px-4 py-8 md:px-8">
+    <div class="space-y-6">
+      <!-- 1. Hero Section -->
+      <section class="glass-card p-6 md:p-8 flex flex-col items-center text-center gap-6">
+        <div class="relative group">
+          <div
+            class="absolute -inset-1 bg-linear-to-r from-primary to-accent-purple rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000"
+          ></div>
+          <img
+            [src]="user()?.profile_photo_url"
+            alt="Profile photo"
+            class="relative w-40 h-40 rounded-full object-cover border-4 border-background-dark"
+          />
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <h1 class="text-4xl md:text-5xl font-extrabold">{{ user()?.name }}</h1>
+          <div class="flex items-center gap-2 text-primary font-medium">
+            <span class="material-symbols-outlined text-sm">location_on</span>
+            <p class="text-lg">{{ user()?.location }}</p>
+          </div>
+        </div>
+        <a
+          [href]="'mailto:' + user()?.email + '?subject=Collaboration on Waiting Room'"
+          class="px-10 py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
+        >
+          <span class="material-symbols-outlined mr-2">mail</span>
+          Contact {{ user()?.name }}
+        </a>
+      </section>
+
+      <!-- 2. Profile Media -->
+      <section class="glass-card p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-primary">photo_camera</span>
+          <h2 class="text-xl font-bold">Showcase Gallery</h2>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          @for (photo of galleryPhotos(); track photo.id) {
+            <div
+              class="aspect-square rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-transform"
+            >
+              <img [src]="photo.url" alt="Gallery" class="w-full h-full object-cover" />
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- 3. Bio -->
+      <section class="glass-card p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-primary">person</span>
+          <h2 class="text-xl font-bold">Bio</h2>
+        </div>
+        <p class="text-slate-300 leading-relaxed">
+          {{ user()?.bio }}
+        </p>
+      </section>
+
+      <!-- 4. Musical DNA -->
+      <section class="glass-card p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-purple-400">music_note</span>
+          <h2 class="text-xl font-bold">Musical DNA</h2>
+        </div>
+        <div class="space-y-6">
+          <!-- Instruments -->
+          <div>
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3"
+              >Music theory</label
+            >
+            @if (userTheory()?.knows_theory) {
+              <span
+                class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-lg text-sm font-medium"
+              >
+                {{ userTheory()?.theory_level }}
+              </span>
+            } @else {
+              <span
+                class="px-3 py-1 bg-slate-800/40 text-slate-300 border border-slate-700 rounded-lg text-sm font-medium"
+              >
+                No music theory
+              </span>
+            }
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3"
+              >Instruments</label
+            >
+            @for (instrument of userInstruments(); track instrument.id) {
+              <span
+                class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-lg text-sm font-medium"
+              >
+                {{ instrument.instruments?.instrument_name }}
+              </span>
+            }
+          </div>
+
+          <div class="h-px bg-linear-to-r from-transparent via-white/10 to-transparent"></div>
+
+          <!-- Genres -->
+          <div>
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3"
+              >Genres</label
+            >
+            <div class="flex flex-wrap gap-2">
+              @for (genre of userGenres(); track genre.id) {
+                <span
+                  class="px-3 py-1 bg-accent-purple/10 text-accent-purple border border-accent-purple/20 rounded-lg text-sm font-medium"
+                >
+                  {{ genre.genres?.genre }}
+                </span>
+              }
+            </div>
+          </div>
+
+          <div class="h-px bg-linear-to-r from-transparent via-white/10 to-transparent"></div>
+
+          <!-- Influence Bands -->
+          <div>
+            <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3"
+              >Influence Bands</label
+            >
+            <div class="flex flex-wrap gap-2">
+              @for (band of userBands(); track band.id) {
+                <span
+                  class="px-3 py-1 bg-accent-purple/10 text-accent-purple border border-accent-purple/20 rounded-lg text-sm font-medium"
+                >
+                  {{ band.name }}
+                </span>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Gear & Rehearsal -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="glass-card p-6 md:p-8">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="material-symbols-outlined text-primary">speaker</span>
+            <h2 class="text-xl font-bold">Gear &amp; Equipment</h2>
+          </div>
+          <p class="text-slate-300 leading-relaxed">
+            {{ user()?.gear }}
+          </p>
+        </div>
+
+        <div class="glass-card p-6 md:p-8">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="material-symbols-outlined text-cyan-400">room_preferences</span>
+            <h2 class="text-xl font-bold">Rehearsal Space</h2>
+          </div>
+          <p class="text-slate-300 leading-relaxed">
+            {{ user()?.rehearsal_space }}
+          </p>
+        </div>
+      </section>
+
+      <!-- 6. Presence (Social Links) -->
+      <section class="glass-card p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-purple-400">language</span>
+          <h2 class="text-xl font-bold">Presence</h2>
+        </div>
+        <div class="flex flex-wrap gap-6 justify-center">
+          @for (link of filteredSocialLinks(); track link.platform) {
+            <a
+              [href]="link.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group flex flex-col items-center gap-2"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group flex flex-col items-center gap-2"
+            >
+              <div
+                [ngClass]="{
+                  'size-14 rounded-full bg-primary/10 flex items-center justify-center text-slate-200 transition-all': true,
+                  'group-hover:bg-green-500 group-hover:text-white': link.platform === 'spotify',
+                  'group-hover:bg-pink-500 group-hover:text-white': link.platform === 'instagram',
+                  'group-hover:bg-orange-500 group-hover:text-white':
+                    link.platform === 'soundcloud',
+                  'group-hover:bg-red-600 group-hover:text-white': link.platform === 'youtube',
+                }"
+              >
+                <span class="material-symbols-outlined text-2xl">
+                  @switch (link.platform) {
+                    @case ('spotify') {
+                      music_note
+                    }
+                    @case ('instagram') {
+                      photo_camera
+                    }
+                    @case ('soundcloud') {
+                      cloud
+                    }
+                    @case ('youtube') {
+                      play_circle
+                    }
+                  }
+                </span>
+              </div>
+              <span class="text-xs font-bold">{{ link.platform | titlecase }}</span>
+            </a>
+          }
+        </div>
+      </section>
+    </div>
+  </div>
+</body>

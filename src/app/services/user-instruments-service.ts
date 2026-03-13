@@ -3,7 +3,8 @@ import { UserInstrument } from '../models/UserInstrument';
 import { ApiServiceBack } from './apiservice-back';
 import { InstrumentsService } from './instruments-service';
 import { environment } from '../../environments/environment';
-import { finalize } from 'rxjs';
+import { finalize, Observable } from 'rxjs';
+import { Instrument } from '../models/Instrument';
 
 @Injectable({
   providedIn: 'root',
@@ -87,6 +88,14 @@ export class UserInstrumentsService {
   selectInstrument(instrumentId: string): void {
     this.addUserInstrument(instrumentId, 'Beginner');
     this.closeModal();
+  }
+
+  getInstruments() {
+    return this.api.get<UserInstrument[]>('/user-instruments/me');
+  }
+
+  getInstrumentsByUserId(userId: string): Observable<UserInstrument[]> {
+    return this.api.get<UserInstrument[]>(`${this.BASE_URL}/${userId}`);
   }
 
   openModal(): void {
