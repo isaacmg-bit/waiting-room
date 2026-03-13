@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 
@@ -8,6 +8,8 @@ export class SupabaseService {
     environment.supabaseUrl,
     environment.supabaseAnonKey,
   );
+
+  userRole = signal<'user' | 'admin' | null>(null);
 
   getClient() {
     return this.supabase;
@@ -26,6 +28,7 @@ export class SupabaseService {
   }
 
   signOut() {
+    this.userRole.set(null);
     return this.supabase.auth.signOut();
   }
 
@@ -42,6 +45,22 @@ export class SupabaseService {
     this.setSession(access_token, refresh_token ?? '');
   }
 
+  async loadUserRole(userId: string) {
+    const { data, error } = await this.supabase
+      .from('user_profile')
+      .select('*')
+      .eq('id', userId);
+
+    if (error) {
+      console.error('Error loading user role:', error);
+      this.userRole.set('user');
+      return;
+    }
+
+    const userProfile = data?.[0];
+    this.userRole.set(userProfile?.role || 'user');
+  }
+
   updatePassword(password: string) {
     return this.supabase.auth.updateUser({ password });
   }
@@ -51,5 +70,4 @@ export class SupabaseService {
       redirectTo: `${environment.appUrl}${environment.apiResetPass}`,
     });
   }
-  
 }

@@ -34,6 +34,11 @@ export class LoginComponent {
       const { error } = await this.supabase.signIn(email!, password!);
       if (error) throw error;
 
+      const { data } = await this.supabase.getSession();
+      if (data.session) {
+        await this.supabase.loadUserRole(data.session.user.id);
+      }
+
       const user = await firstValueFrom(this.userService.getMe());
       this.router.navigate([user.name ? '/' : '/post-login']);
     } catch (err) {

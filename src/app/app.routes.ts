@@ -14,6 +14,7 @@ import { EditProfile } from './components/edit-profile/edit-profile';
 import { postLoginGuard } from './guards/post-login-guard';
 import { PublicProfile } from './components/public-profile/public-profile';
 import { UserSearch } from './components/user-search/user-search';
+import { adminGuard } from './guards/admin-guard';
 
 export const routes: Routes = [
   {
@@ -44,7 +45,7 @@ export const routes: Routes = [
   {
     path: 'users',
     component: Users,
-    canActivate: [profileGuard],
+    canActivate: [adminGuard],
   },
   {
     path: 'register',
