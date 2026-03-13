@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, effect } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { SupabaseService } from '../../services/supabase-service';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
@@ -20,10 +20,16 @@ export class Header {
   readonly userId = signal<string | null>(null);
 
   constructor() {
-    this.supabase.getSession().then(({ data: { session } }) => {
-      if (session?.user.id) {
-        this.userId.set(session.user.id);
-      }
+    effect(() => {
+      this.supabase.userRole();
+
+      this.supabase.getSession().then(({ data: { session } }) => {
+        if (session?.user.id) {
+          this.userId.set(session.user.id);
+        } else {
+          this.userId.set(null);
+        }
+      });
     });
   }
 
@@ -38,6 +44,7 @@ export class Header {
   async logout(): Promise<void> {
     try {
       await this.supabase.signOut();
+      this.userId.set(null);
       this.router.navigate(['/login']);
     } catch (err) {
       console.error('Error signing out:', err);

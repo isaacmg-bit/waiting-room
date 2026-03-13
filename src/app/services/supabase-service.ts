@@ -10,6 +10,7 @@ export class SupabaseService {
   );
 
   userRole = signal<'user' | 'admin' | null>(null);
+  userId = signal<string | null>(null);
 
   getClient() {
     return this.supabase;
@@ -46,10 +47,8 @@ export class SupabaseService {
   }
 
   async loadUserRole(userId: string) {
-    const { data, error } = await this.supabase
-      .from('user_profile')
-      .select('*')
-      .eq('id', userId);
+    this.userId.set(userId);
+    const { data, error } = await this.supabase.from('user_profile').select('*').eq('id', userId);
 
     if (error) {
       console.error('Error loading user role:', error);

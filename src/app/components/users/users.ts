@@ -3,11 +3,10 @@ import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user-service';
-import { UserLocation } from '../user-location/user-location';
 
 @Component({
   selector: 'app-users',
-  imports: [RouterModule, ReactiveFormsModule, UserLocation],
+  imports: [RouterModule, ReactiveFormsModule],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
