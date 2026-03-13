@@ -13,6 +13,7 @@ import { authGuard } from './guards/auth-guard';
 import { EditProfile } from './components/edit-profile/edit-profile';
 import { postLoginGuard } from './guards/post-login-guard';
 import { PublicProfile } from './components/public-profile/public-profile';
+import { UserSearch } from './components/user-search/user-search';
 
 export const routes: Routes = [
   {
@@ -73,5 +74,10 @@ export const routes: Routes = [
     path: 'public-profile/:userId',
     component: PublicProfile,
     canActivate: [profileGuard],
+  },
+  {
+    path: 'user-search',
+    component: UserSearch,
+    // canActivate: [profileGuard],
   },
 ];
