@@ -3,10 +3,11 @@ import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user-service';
+import { UserLocation } from '../user-location/user-location';
 
 @Component({
   selector: 'app-users',
-  imports: [RouterModule, ReactiveFormsModule],
+  imports: [RouterModule, ReactiveFormsModule, UserLocation],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
@@ -18,6 +19,7 @@ export class Users {
     name: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
     location: ['', [Validators.required, Validators.minLength(2)]],
+    role: ['user'],
   });
 
   loadUserForEdit(user: User): void {
@@ -26,6 +28,7 @@ export class Users {
       name: user.name,
       email: user.email,
       location: user.location,
+      role: user.role,
     });
   }
 

@@ -44,56 +44,58 @@
           Charts
         </a>
         <a
-          routerLink="/users"
-          routerLinkActive="text-white bg-white/5"
-          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
+        routerLink="/register"
+        routerLinkActive="text-white bg-white/5"
+        class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
         >
-          Users
-        </a>
-        <a
-          routerLink="/register"
-          routerLinkActive="text-white bg-white/5"
-          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
-        >
-          Register
-        </a>
-        <a
-          routerLink="/login"
-          routerLinkActive="text-white bg-white/5"
-          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
-        >
-          Login
-        </a>
-      </nav>
-    </div>
-    <div class="flex items-center gap-3">
-      <div class="relative hidden sm:block">
-        <span
-          class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-lg"
-          >search</span
-        >
-        <input
-          class="bg-black/30 border border-white/10 text-slate-200 text-sm rounded-xl pl-10 pr-4 py-2 w-56 focus:ring-1 focus:ring-primary focus:border-primary/50 outline-none transition-all placeholder-slate-600"
-          placeholder="Search musicians..."
-          type="text"
-        />
-      </div>
-      <button
-        class="p-2 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+        Register
+      </a>
+      <a
+      routerLink="/login"
+      routerLinkActive="text-white bg-white/5"
+      class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
       >
-        <span class="material-symbols-outlined">notifications</span>
-      </button>
+      Login
+    </a>
+    @if (supabase.userRole() === 'admin') {
+      <a
+        routerLink="/users"
+        routerLinkActive="text-white bg-white/5"
+        class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
+      >
+        Users
+      </a>
+    }
+  </nav>
+</div>
+<div class="flex items-center gap-3">
+  <div class="relative hidden sm:block">
+    <span
+    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-lg"
+    >search</span
+    >
+    <input
+    class="bg-black/30 border border-white/10 text-slate-200 text-sm rounded-xl pl-10 pr-4 py-2 w-56 focus:ring-1 focus:ring-primary focus:border-primary/50 outline-none transition-all placeholder-slate-600"
+    placeholder="Search musicians..."
+    type="text"
+    />
+  </div>
+  <button
+  class="p-2 text-slate-500 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+  >
+  <span class="material-symbols-outlined">notifications</span>
+</button>
 
-      <!-- User menu -->
-      <div class="relative user-menu">
-        <button
-          (click)="isUserMenuOpen = !isUserMenuOpen"
-          class="size-9 rounded-full border-2 border-primary/30 hover:border-primary overflow-hidden block transition-all"
-        >
-          <img
-            #img
-            class="w-full h-full object-cover"
-            [src]="
+<!-- User menu -->
+<div class="relative user-menu">
+  <button
+  (click)="isUserMenuOpen = !isUserMenuOpen"
+  class="size-9 rounded-full border-2 border-primary/30 hover:border-primary overflow-hidden block transition-all"
+  >
+  <img
+  #img
+  class="w-full h-full object-cover"
+  [src]="
               'https://otfzbljpjqojoiojfvrq.supabase.co/storage/v1/object/public/profiles/' +
               userId() +
               '/profilepicture.jpg'

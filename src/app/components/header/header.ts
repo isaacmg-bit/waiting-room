@@ -13,7 +13,7 @@ import { HostListener } from '@angular/core';
   styleUrl: './header.css',
 })
 export class Header {
-  private readonly supabase = inject(SupabaseService);
+  readonly supabase = inject(SupabaseService);
   private readonly router = inject(Router);
 
   isUserMenuOpen = false;

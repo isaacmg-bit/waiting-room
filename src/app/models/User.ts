@@ -10,4 +10,5 @@ export interface User {
   location_point?: string;
   profile_photo_url?: string | null;
   gallery_photo_urls: string[];
+  role: 'user' | 'admin';
 }
