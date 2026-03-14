@@ -36,6 +36,8 @@ export class UserSearch {
   readonly isGenresOpen = signal(false);
   readonly isBandsOpen = signal(false);
 
+  readonly searchResults = signal<any[]>([]);
+
   search(): void {
     const params = new URLSearchParams();
 
@@ -49,14 +51,15 @@ export class UserSearch {
       params.append('genres', this.selectedGenres().join(','));
     }
     if (this.selectedMusicTheory()) {
-      params.append('theory', this.selectedMusicTheory()!);
+      params.append('theoryLevels', this.selectedMusicTheory()!);
     }
     if (this.selectedBands().length > 0) {
       params.append('bands', this.selectedBands().join(','));
     }
 
     const url = `${environment.apiSearchMusicians}?${params.toString()}`;
-    this.api.get(url).subscribe((results) => {
+    this.api.get(url).subscribe((results: any) => {
+      this.searchResults.set(results);
       console.log(results);
     });
   }
@@ -68,12 +71,13 @@ export class UserSearch {
 
   selectInstrument(instrument: { id: string; instrument_name: string }): void {
     const current = this.selectedInstruments();
-    if (!current.includes(instrument.instrument_name)) {
+    if (current.includes(instrument.instrument_name)) {
+      this.selectedInstruments.set(current.filter((i) => i !== instrument.instrument_name));
+    } else {
       this.selectedInstruments.set([...current, instrument.instrument_name]);
     }
     console.log(this.selectedInstruments());
   }
-
   selectMusicTheory(theory: string): void {
     this.selectedMusicTheory.set(theory);
     console.log(this.selectedMusicTheory());
@@ -81,7 +85,9 @@ export class UserSearch {
 
   selectGenre(genre: { id: string; genre: string }): void {
     const current = this.selectedGenres();
-    if (!current.includes(genre.genre)) {
+    if (current.includes(genre.genre)) {
+      this.selectedGenres.set(current.filter((g) => g !== genre.genre));
+    } else {
       this.selectedGenres.set([...current, genre.genre]);
     }
     console.log(this.selectedGenres());
@@ -89,7 +95,11 @@ export class UserSearch {
 
   selectBand(band: { id: string; name: string }): void {
     const current = this.selectedBands();
-    this.selectedBands.set([...current, band.name]);
+    if (current.includes(band.name)) {
+      this.selectedBands.set(current.filter((b) => b !== band.name));
+    } else {
+      this.selectedBands.set([...current, band.name]);
+    }
     console.log(this.selectedBands());
   }
 
