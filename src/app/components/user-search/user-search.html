@@ -1,32 +1,178 @@
 <div class="bg-background-dark font-display text-slate-100 min-h-screen">
-  <!-- Header -->
   <div class="max-w-7xl mx-auto px-4 py-8 md:px-8">
-    <!-- Filtros -->
-    <div class="flex flex-col md:flex-row gap-4 mb-8">
-      <button
-        class="px-6 py-3 bg-primary text-white font-bold rounded-xl hover:scale-105 transition-transform"
-      >
-        All Artists
-      </button>
-      <button
-        class="px-6 py-3 bg-surface-dark border border-border-dark text-slate-100 font-semibold rounded-xl hover:border-primary transition"
-      >
-        Guitarists
-        <span class="material-symbols-outlined text-sm ml-2 align-text-bottom">unfold_more</span>
-      </button>
-      <button
-        class="px-6 py-3 bg-surface-dark border border-border-dark text-slate-100 font-semibold rounded-xl hover:border-primary transition"
-      >
-        Drummers
-        <span class="material-symbols-outlined text-sm ml-2 align-text-bottom">unfold_more</span>
-      </button>
-      <button
-        class="px-6 py-3 bg-surface-dark border border-border-dark text-slate-100 font-semibold rounded-xl hover:border-primary transition"
-      >
-        Vocalists
-        <span class="material-symbols-outlined text-sm ml-2 align-text-bottom">unfold_more</span>
-      </button>
+    <div class="flex flex-col md:flex-row gap-4 mb-8 justify-center">
+      <div class="relative" appClickOutside (clickOutside)="closeDistance()">
+        <div
+          class="flex w-50 items-center gap-2 px-3 py-2 bg-black/30 border border-white/10 rounded-xl focus-within:border-primary transition-colors"
+        >
+          <span class="material-symbols-outlined text-slate-500 text-base">location_on</span>
+          <button
+            (click)="toggleDistance()"
+            class="flex-1 text-left bg-transparent border-none text-slate-500 text-sm focus:outline-none focus:ring-0 cursor-pointer"
+          >
+            {{ selectedDistance() ? selectedDistance() + ' km' : 'Distance' }}
+          </button>
+        </div>
+
+        @if (isDistanceOpen()) {
+          <div
+            class="absolute top-full left-0 right-0 mt-2 bg-white border border-border-dark rounded max-h-64 overflow-y-auto z-50"
+          >
+            <ul class="space-y-1 p-2">
+              @for (distance of distanceOptions; track distance) {
+                <li
+                  (click)="selectDistance(distance); closeDistance()"
+                  [class.bg-gray-300]="selectedDistance() === distance"
+                  class="px-3 py-2 text-slate-500 hover:bg-primary/20 rounded cursor-pointer transition"
+                >
+                  {{ distance }} km
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+
+      <div class="relative" appClickOutside (clickOutside)="closeInstruments()">
+        <div
+          class="flex w-50 items-center gap-2 px-3 py-2 bg-black/30 border border-white/10 rounded-xl focus-within:border-primary transition-colors"
+        >
+          <span class="material-symbols-outlined text-slate-500 text-base">piano</span>
+          <input
+            type="text"
+            (input)="onSearchInstrument($event)"
+            (focus)="openInstruments()"
+            placeholder="Instrument"
+            class="flex-1 bg-transparent border-none text-slate-200 text-sm focus:outline-none focus:ring-0 placeholder-slate-500"
+          />
+        </div>
+
+        @if (isInstrumentsOpen() && userInstrumentService.searchQuery().length > 0) {
+          <div
+            class="absolute top-full left-0 right-0 mt-2 bg-white border border-border-dark rounded max-h-64 overflow-y-auto z-50"
+          >
+            <ul class="space-y-1 p-2">
+              @for (
+                instrument of userInstrumentService.filteredInstruments();
+                track instrument.id
+              ) {
+                <li
+                  (click)="selectInstrument(instrument)"
+                  [class.bg-gray-300]="isSelectedInstrument(instrument.instrument_name)"
+                  class="px-3 py-2 text-slate-500 hover:bg-primary/20 rounded cursor-pointer transition"
+                >
+                  {{ instrument.instrument_name }}
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+
+      <div class="relative" appClickOutside (clickOutside)="closeMusicTheory()">
+        <div
+          class="flex w-50 items-center gap-2 px-3 py-2 bg-black/30 border border-white/10 rounded-xl focus-within:border-primary transition-colors"
+        >
+          <span class="material-symbols-outlined text-slate-500 text-base">school</span>
+          <button
+            (click)="toggleMusicTheory()"
+            class="flex-1 text-left bg-transparent border-none text-slate-500 text-sm focus:outline-none focus:ring-0 cursor-pointer"
+          >
+            {{ selectedMusicTheory() || 'Music theory' }}
+          </button>
+        </div>
+
+        @if (isMusicTheoryOpen()) {
+          <div
+            class="absolute top-full left-0 right-0 mt-2 bg-white border border-border-dark rounded max-h-64 overflow-y-auto z-50"
+          >
+            <ul class="space-y-1 p-2">
+              @for (theory of musicTheoryOptions; track theory) {
+                <li
+                  (click)="selectMusicTheory(theory); closeMusicTheory()"
+                  [class.bg-gray-300]="selectedMusicTheory() === theory"
+                  class="px-3 py-2 text-slate-500 hover:bg-primary/20 rounded cursor-pointer transition"
+                >
+                  {{ theory }}
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+
+      <div class="relative" appClickOutside (clickOutside)="closeGenres()">
+        <div
+          class="flex w-50 items-center gap-2 px-3 py-2 bg-black/30 border border-white/10 rounded-xl focus-within:border-primary transition-colors"
+        >
+          <span class="material-symbols-outlined text-slate-500 text-base">music_note</span>
+          <input
+            type="text"
+            (input)="onSearchGenre($event)"
+            (focus)="openGenres()"
+            placeholder="Genre"
+            class="flex-1 bg-transparent border-none text-slate-200 text-sm focus:outline-none focus:ring-0 placeholder-slate-500"
+          />
+        </div>
+
+        @if (isGenresOpen() && userGenresService.searchQuery().length > 0) {
+          <div
+            class="absolute top-full left-0 right-0 mt-2 bg-white border border-border-dark rounded max-h-64 overflow-y-auto z-50"
+          >
+            <ul class="space-y-1 p-2">
+              @for (genre of userGenresService.filteredGenres(); track genre.id) {
+                <li
+                  (click)="selectGenre(genre)"
+                  [class.bg-gray-300]="isSelectedGenre(genre.genre)"
+                  class="px-3 py-2 text-slate-500 hover:bg-primary/20 rounded cursor-pointer transition"
+                >
+                  {{ genre.genre }}
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+
+      <div class="relative" appClickOutside (clickOutside)="closeBands()">
+        <div
+          class="flex w-50 items-center gap-2 px-3 py-2 bg-black/30 border border-white/10 rounded-xl focus-within:border-primary transition-colors"
+        >
+          <span class="material-symbols-outlined text-slate-500 text-base">speaker</span>
+          <input
+            type="text"
+            (input)="onSearchBand($event)"
+            (focus)="openBands()"
+            placeholder="Band"
+            class="flex-1 bg-transparent border-none text-slate-200 text-sm focus:outline-none focus:ring-0 placeholder-slate-500"
+          />
+        </div>
+
+        @if (isBandsOpen() && musicBrainzService.bandsSignal().length > 0) {
+          <div
+            class="absolute top-full left-0 right-0 mt-2 bg-white border border-border-dark rounded max-h-64 overflow-y-auto z-50"
+          >
+            <ul class="space-y-1 p-2">
+              @for (band of musicBrainzService.bandsSignal(); track band.id) {
+                <li
+                  (click)="selectBand(band)"
+                  [class.bg-gray-300]="isSelectedBand(band.name)"
+                  class="px-3 py-2 text-slate-500 hover:bg-primary/20 rounded cursor-pointer transition"
+                >
+                  {{ band.name }}
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
     </div>
-    <app-user-card></app-user-card>
+
+    <div class="grid grid-cols-4 gap-6">
+      <app-user-card></app-user-card>
+      <app-user-card></app-user-card>
+      <app-user-card></app-user-card>
+      <app-user-card></app-user-card>
+    </div>
   </div>
 </div>

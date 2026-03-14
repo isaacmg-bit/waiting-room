@@ -4,7 +4,6 @@ import { ApiServiceBack } from './apiservice-back';
 import { InstrumentsService } from './instruments-service';
 import { environment } from '../../environments/environment';
 import { finalize, Observable } from 'rxjs';
-import { Instrument } from '../models/Instrument';
 
 @Injectable({
   providedIn: 'root',
