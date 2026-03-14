@@ -1,10 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { UserCard } from '../user-card/user-card';
 import { UserBandsService } from '../../services/user-bands';
 import { MusicBrainzService } from '../../services/bands-service';
 import { UserInstrumentsService } from '../../services/user-instruments-service';
 import { UserGenresService } from '../../services/user-genres-service';
 import { ClickOutsideDirective } from '../../directives/click-outside.directive';
+import { ApiServiceBack } from '../../services/apiservice-back';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-user-search',
@@ -17,6 +19,7 @@ export class UserSearch {
   userInstrumentService = inject(UserInstrumentsService);
   musicBrainzService = inject(MusicBrainzService);
   userGenresService = inject(UserGenresService);
+  api = inject(ApiServiceBack);
 
   readonly distanceOptions = [5, 10, 20, 50];
   readonly musicTheoryOptions = ['Basic', 'Composition', 'Advanced Orchestration'];
@@ -32,6 +35,31 @@ export class UserSearch {
   readonly isMusicTheoryOpen = signal(false);
   readonly isGenresOpen = signal(false);
   readonly isBandsOpen = signal(false);
+
+  search(): void {
+    const params = new URLSearchParams();
+
+    if (this.selectedDistance()) {
+      params.append('radiusKm', this.selectedDistance()!.toString());
+    }
+    if (this.selectedInstruments().length > 0) {
+      params.append('instruments', this.selectedInstruments().join(','));
+    }
+    if (this.selectedGenres().length > 0) {
+      params.append('genres', this.selectedGenres().join(','));
+    }
+    if (this.selectedMusicTheory()) {
+      params.append('theory', this.selectedMusicTheory()!);
+    }
+    if (this.selectedBands().length > 0) {
+      params.append('bands', this.selectedBands().join(','));
+    }
+
+    const url = `${environment.apiSearchMusicians}?${params.toString()}`;
+    this.api.get(url).subscribe((results) => {
+      console.log(results);
+    });
+  }
 
   selectDistance(distance: number): void {
     this.selectedDistance.set(distance);
@@ -123,7 +151,7 @@ export class UserSearch {
   openMusicTheory(): void {
     this.isMusicTheoryOpen.set(true);
   }
-  
+
   openGenres(): void {
     this.isGenresOpen.set(true);
   }
@@ -135,9 +163,8 @@ export class UserSearch {
   toggleDistance(): void {
     this.isDistanceOpen.set(!this.isDistanceOpen());
   }
-  
+
   toggleMusicTheory(): void {
     this.isMusicTheoryOpen.set(!this.isMusicTheoryOpen());
   }
-
 }
