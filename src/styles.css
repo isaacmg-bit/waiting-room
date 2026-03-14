@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import "tailwindcss";
+@import 'tailwindcss';
+@import 'ngx-toastr/toastr';
 
 body {
   font-family: 'Spline Sans', sans-serif;
@@ -12,13 +13,32 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-input, textarea, select {
-  border-color: #2A2A35 !important;
+input,
+textarea,
+select {
+  border-color: #2a2a35 !important;
   border-radius: 0.75rem !important;
 }
 
-input:focus, textarea:focus, select:focus {
-  border-color: #C084FC !important;
-  box-shadow: 0 0 0 1px #C084FC33 !important;
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #c084fc !important;
+  box-shadow: 0 0 0 1px #c084fc33 !important;
   outline: none !important;
+}
+
+.custom-toast {
+  background-color: #0a0e27;
+  color: #00d4ff;
+  border: 1px solid #920909;
+}
+
+.custom-toast.ngx-toastr.ng-trigger-flyInOut {
+  background-color: #1a1a2e;
+}
+
+.toast-top-right {
+  top: 20px;
+  right: 20px;
 }

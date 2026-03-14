@@ -5,9 +5,18 @@ import { routes } from './app.routes';
 import { AuthInterceptor } from './interceptors/auth-interceptor';
 import { provideIcons } from '@ng-icons/core';
 import { heroHome, heroUser } from '@ng-icons/heroicons/outline';
+import { provideToastr } from 'ngx-toastr';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideToastr({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+      progressBar: true,
+      progressAnimation: 'increasing',
+      toastClass: 'ngx-toastr custom-toast',
+    }),
     provideIcons({ heroHome, heroUser }),
     provideRouter(routes),
     provideHttpClient(withInterceptors([AuthInterceptor])),
