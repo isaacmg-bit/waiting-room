@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { UserCard } from '../user-card/user-card';
 import { UserBandsService } from '../../services/user-bands';
 import { MusicBrainzService } from '../../services/bands-service';
@@ -8,8 +8,6 @@ import { ClickOutsideDirective } from '../../directives/click-outside.directive'
 import { ApiServiceBack } from '../../services/apiservice-back';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../services/user-service';
-import { takeUntil } from 'rxjs';
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-user-search',
@@ -17,14 +15,15 @@ import { Subject } from 'rxjs';
   templateUrl: './user-search.html',
   styleUrl: './user-search.css',
 })
-export class UserSearch implements OnInit, OnDestroy {
+export class UserSearch implements OnInit {
   userBandsService = inject(UserBandsService);
   userInstrumentService = inject(UserInstrumentsService);
   musicBrainzService = inject(MusicBrainzService);
   userGenresService = inject(UserGenresService);
   userService = inject(UserService);
   api = inject(ApiServiceBack);
-  private destroy$ = new Subject<void>();
+
+  readonly currentPage = signal(0);
 
   readonly distanceOptions = [5, 10, 20, 50];
   readonly musicTheoryOptions = ['Basic', 'Composition', 'Advanced Orchestration'];
@@ -45,22 +44,15 @@ export class UserSearch implements OnInit, OnDestroy {
   readonly randomUsers = signal<any[]>([]);
 
   ngOnInit() {
-    this.userService
-      .getRandomUsers()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((results) => {
-        const transformed = results.map((user: any) => ({
-          ...user,
-          instruments: user.instruments ? user.instruments.split(', ') : [],
-          genres: user.genres ? user.genres.split(', ') : [],
-          bands: user.bands ? user.bands.split(', ') : [],
-        }));
-        this.randomUsers.set(transformed);
-      });
-  }
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.userService.getRandomUsers().subscribe((results) => {
+      const transformed = results.map((user: any) => ({
+        ...user,
+        instruments: user.instruments ? user.instruments.split(', ') : [],
+        genres: user.genres ? user.genres.split(', ') : [],
+        bands: user.bands ? user.bands.split(', ') : [],
+      }));
+      this.randomUsers.set(transformed);
+    });
   }
 
   search(): void {
@@ -85,8 +77,39 @@ export class UserSearch implements OnInit, OnDestroy {
     const url = `${environment.apiSearchMusicians}?${params.toString()}`;
     this.api.get(url).subscribe((results: any) => {
       this.searchResults.set(results);
+      this.currentPage.set(0);
       console.log(results);
     });
+  }
+
+  paginatedResults = computed(() => {
+    const page = this.currentPage();
+    const results = this.searchResults();
+    const itemsPerPage = 8;
+
+    const start = page * itemsPerPage;
+    const end = start + itemsPerPage;
+
+    return results.slice(start, end);
+  });
+
+  totalPages = computed(() => {
+    const total = this.searchResults().length;
+    return Math.ceil(total / 8);
+  });
+
+  nextPage(): void {
+    // Si no estás en la última página, suma 1
+    if (this.currentPage() < this.totalPages() - 1) {
+      this.currentPage.set(this.currentPage() + 1);
+    }
+  }
+
+  previousPage(): void {
+    // Si no estás en la primera página (página 0), resta 1
+    if (this.currentPage() > 0) {
+      this.currentPage.set(this.currentPage() - 1);
+    }
   }
 
   selectDistance(distance: number): void {

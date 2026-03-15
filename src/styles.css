@@ -39,6 +39,6 @@ select:focus {
 }
 
 .toast-top-right {
-  top: 20px;
-  right: 20px;
+  top: 80px;
+  right: 15px;
 }

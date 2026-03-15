@@ -180,25 +180,51 @@
         <h2 class="text-2xl text-center font-bold mb-6 text-slate-100">Find your new bandmates!</h2>
 
         <!-- Grid de resultados -->
-        @for (user of searchResults(); track user.id) {
+        @if (searchResults().length > 0) {
           <div class="glass-card rounded-3xl p-6 border border-border-dark bg-surface-dark">
-            <div class="grid grid-cols-4 gap-6">
-              <app-user-card [user]="user"></app-user-card>
+            <!-- Contenedor flex con flechas a los lados -->
+            <div class="flex items-center justify-between gap-4">
+              <!-- Flecha izquierda -->
+              <button
+                (click)="previousPage()"
+                [disabled]="currentPage() === 0"
+                class="px-3 py-3 bg-primary text-white rounded-lg disabled:opacity-30 cursor-pointer hover:scale-110 transition-transform shrink-0"
+              >
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+
+              <!-- Grid en el centro -->
+              <div class="grid grid-cols-4 gap-6 flex-1">
+                @for (user of paginatedResults(); track user.id) {
+                  <div class="h-162.5">
+                    <app-user-card [user]="user"></app-user-card>
+                  </div>
+                }
+              </div>
+
+              <!-- Flecha derecha -->
+              <button
+                (click)="nextPage()"
+                [disabled]="currentPage() === totalPages() - 1"
+                class="px-3 py-3 bg-primary text-white rounded-lg disabled:opacity-30 cursor-pointer hover:scale-110 transition-transform shrink-0"
+              >
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
             </div>
           </div>
         }
       </div>
     </div>
+  </div>
 
-    <div class="bg-background-dark font-display text-slate-100">
-      <div class="max-w-7xl mx-auto px-4 py-8 md:px-8">
-        <h2 class="text-2xl font-bold mb-6 text-slate-100">Random musicians</h2>
-        <div class="glass-card rounded-3xl p-6 border border-border-dark bg-surface-dark">
-          <div class="grid grid-cols-4 gap-6">
-            @for (user of randomUsers(); track user.id) {
-              <app-user-card [randomUser]="user"></app-user-card>
-            }
-          </div>
+  <div class="bg-background-dark font-display text-slate-100">
+    <div class="max-w-7xl mx-auto px-4 py-8 md:px-8">
+      <h2 class="text-2xl font-bold mb-6 text-slate-100">Random musicians</h2>
+      <div class="glass-card rounded-3xl p-6 border border-border-dark bg-surface-dark">
+        <div class="grid grid-cols-4 gap-6">
+          @for (user of randomUsers(); track user.id) {
+            <app-user-card [randomUser]="user"></app-user-card>
+          }
         </div>
       </div>
     </div>

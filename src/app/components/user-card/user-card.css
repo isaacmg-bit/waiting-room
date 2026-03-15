@@ -1,0 +1,26 @@
+/* Estilo del scrollbar */
+.flex-1 {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(139, 92, 246) rgb(0, 0, 0, 0.1);
+}
+
+/* Para navegadores Webkit (Chrome, Safari, Edge) */
+.flex-1::-webkit-scrollbar {
+  width: 6px;
+}
+
+.flex-1::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.flex-1::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgb(139, 92, 246) 0%, rgb(168, 85, 247) 100%);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.flex-1::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgb(168, 85, 247) 0%, rgb(192, 132, 250) 100%);
+  background-clip: padding-box;
+}
