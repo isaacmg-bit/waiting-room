@@ -1,15 +1,12 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { City } from '../models/City';
-import { firstValueFrom, Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class CityService {
   private readonly http = inject(HttpClient);
-  private destroy$ = new Subject<void>();
-  private searchSubject$ = new Subject<string>();
 
   readonly filteredCities = signal<City[]>([]);
   readonly isLoading = signal(false);
@@ -19,30 +16,29 @@ export class CityService {
 
   private readonly nominatimUrl = environment.nominatimUrl;
 
+  private readonly searchCache = new Map<string, City[]>();
+
   constructor() {
-    this.initSearchListener();
-  }
+    effect(async () => {
+      const query = this.searchInput();
 
-  private initSearchListener(): void {
-    this.searchSubject$
-      .pipe(debounceTime(500), takeUntil(this.destroy$))
-      .subscribe(async (query) => {
-        if (!query.trim()) {
-          this.filteredCities.set([]);
-          this.isLoading.set(false);
-          return;
-        }
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-        this.isLoading.set(true);
-        const cities = await this.searchCitiesInternal(query);
-        this.filteredCities.set(cities.slice(0, 8));
+      if (!query.trim()) {
+        this.filteredCities.set([]);
         this.isLoading.set(false);
-      });
+        return;
+      }
+
+      this.isLoading.set(true);
+      const cities = await this.searchCitiesInternal(query);
+      this.filteredCities.set(cities.slice(0, 8));
+      this.isLoading.set(false);
+    });
   }
 
   onSearch(query: string): void {
     this.searchInput.set(query);
-    this.searchSubject$.next(query);
   }
 
   openModal(): void {
@@ -64,6 +60,11 @@ export class CityService {
     this.selectedCity.set(city);
   }
 
+  async getCityCoords(cityName: string): Promise<City | undefined> {
+    const cities = await this.searchCitiesInternal(cityName);
+    return cities.find((c) => c.city.toLowerCase() === cityName.toLowerCase());
+  }
+
   private resetSearch(): void {
     this.searchInput.set('');
     this.filteredCities.set([]);
@@ -71,6 +72,11 @@ export class CityService {
 
   private async searchCitiesInternal(query: string): Promise<City[]> {
     if (!query.trim() || query.length < 2) return [];
+
+    const cacheKey = query.toLowerCase();
+    if (this.searchCache.has(cacheKey)) {
+      return this.searchCache.get(cacheKey)!;
+    }
 
     try {
       const response = await firstValueFrom(
@@ -86,45 +92,49 @@ export class CityService {
         }),
       );
 
-      const qLower = query.toLowerCase();
+      const cities = this.processCitiesResponse(response, query);
 
-      return response
-        .map((item) => {
-          const address = item.address || {};
-          const cityName = address.city || address.town || address.village || address.hamlet;
-          if (!cityName || !item.lat || !item.lon) return null;
-          return {
-            city: cityName,
-            province: address.state || address.province || '',
-            lat: parseFloat(item.lat),
-            lng: parseFloat(item.lon),
-          };
-        })
-        .filter((city): city is City => city !== null)
-        .filter(
-          (city, index, self) =>
-            index === self.findIndex((c) => c.city.toLowerCase() === city.city.toLowerCase()),
-        )
-        .sort((a, b) => {
-          const aStarts = a.city.toLowerCase().startsWith(qLower);
-          const bStarts = b.city.toLowerCase().startsWith(qLower);
-          if (aStarts && !bStarts) return -1;
-          if (!aStarts && bStarts) return 1;
-          return a.city.localeCompare(b.city);
-        });
+      this.searchCache.set(cacheKey, cities);
+
+      return cities;
     } catch (err) {
       console.error('Error searching cities:', err);
       return [];
     }
   }
 
-  async getCityCoords(cityName: string): Promise<City | undefined> {
-    const cities = await this.searchCitiesInternal(cityName);
-    return cities.find((c) => c.city.toLowerCase() === cityName.toLowerCase());
+  private processCitiesResponse(response: any[], query: string): City[] {
+    const qLower = query.toLowerCase();
+
+    return response
+      .map((item) => {
+        const address = item.address || {};
+        const cityName = address.city || address.town || address.village || address.hamlet;
+
+        if (!cityName || !item.lat || !item.lon) return null;
+
+        return {
+          city: cityName,
+          province: address.state || address.province || '',
+          lat: parseFloat(item.lat),
+          lng: parseFloat(item.lon),
+        };
+      })
+      .filter((city): city is City => city !== null)
+      .filter(
+        (city, index, self) =>
+          index === self.findIndex((c) => c.city.toLowerCase() === city.city.toLowerCase()),
+      )
+      .sort((a, b) => {
+        const aStarts = a.city.toLowerCase().startsWith(qLower);
+        const bStarts = b.city.toLowerCase().startsWith(qLower);
+        if (aStarts && !bStarts) return -1;
+        if (!aStarts && bStarts) return 1;
+        return a.city.localeCompare(b.city);
+      });
   }
 
-  destroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  clearCache(): void {
+    this.searchCache.clear();
   }
 }

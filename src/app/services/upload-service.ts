@@ -56,13 +56,15 @@ export class UploadService {
     const tempId = `temp-${Date.now()}`;
     this.galleryPhotosSignal.update((photos) => [...photos, { id: tempId, url, position }]);
 
-    this.api.post<GalleryPhoto>('/gallery', { url, position }).subscribe({
-      next: (createdPhoto) =>
-        this.galleryPhotosSignal.update((photos) =>
-          photos.map((p) => (p.id === tempId ? (createdPhoto ?? p) : p)),
-        ),
-      error: (err) => console.error('Error adding gallery photo:', err),
-    });
+    this.api
+      .post<GalleryPhoto>('/gallery', { url, position })
+      .subscribe({
+        next: (createdPhoto) =>
+          this.galleryPhotosSignal.update((photos) =>
+            photos.map((p) => (p.id === tempId ? (createdPhoto ?? p) : p)),
+          ),
+        error: (err) => console.error('Error adding gallery photo:', err),
+      });
 
     return url;
   }

@@ -1,27 +1,76 @@
-<main class="min-h-screen flex mt-10 justify-center bg-slate-950">
-  <div class="w-full max-w-md">
-    <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-xl overflow-hidden">
-      <div class="px-6 py-5 border-b border-slate-800">
-        <h1 class="text-xl font-semibold text-slate-200">Reset Password</h1>
-        <p class="text-sm text-slate-500">Set your new password</p>
-      </div>
+<main class="flex min-h-screen justify-center bg-slate-950 pt-20">
+  <div class="w-full max-w-md px-4">
+    <div
+      class="overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500"
+    >
+      <header class="border-b border-white/10 px-6 py-5">
+        <h1 id="reset-heading" class="text-xl font-bold text-slate-100">Reset Password</h1>
+        <p class="text-sm text-slate-500">Set your new password to regain access.</p>
+      </header>
 
-      <div class="p-6 flex flex-col gap-4">
-        <div>
-          <input
-            type="password"
-            [(ngModel)]="password"
-            placeholder="Enter new password"
-            class="w-full px-4 py-2 rounded-md bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
-          />
-        </div>
+      <div class="flex flex-col gap-5 p-6">
+        <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()" class="space-y-5" novalidate>
+          <div class="space-y-2">
+            <label
+              for="new-password"
+              class="text-xs font-semibold uppercase tracking-widest text-slate-500"
+            >
+              New Password
+            </label>
+            <input
+              type="password"
+              id="new-password"
+              formControlName="password"
+              placeholder="Enter new password (min. 8 characters)"
+              aria-describedby="password-error password-hint"
+              class="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-slate-200 transition-all focus-visible:border-emerald-500/50 focus-visible:ring-2 focus-visible:ring-emerald-500/20 focus-visible:outline-hidden"
+            />
+            <p id="password-hint" class="text-xs text-slate-500">
+              Password must be at least 8 characters long
+            </p>
+            @if (passwordControl?.touched && passwordControl?.hasError('required')) {
+              <p id="password-error" class="text-xs text-red-400" role="alert">
+                Password is required
+              </p>
+            }
+            @if (passwordControl?.touched && passwordControl?.hasError('minlength')) {
+              <p id="password-error" class="text-xs text-red-400" role="alert">
+                Password must be at least 8 characters
+              </p>
+            }
+          </div>
 
-        <button
-          (click)="updatePassword()"
-          class="mt-2 w-full py-2 rounded-md bg-emerald-600 hover:bg-emerald-500 transition font-medium text-sm"
-        >
-          Update password
-        </button>
+          @if (errorMessage) {
+            <div
+              class="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400"
+              role="alert"
+            >
+              {{ errorMessage }}
+            </div>
+          }
+
+          @if (successMessage) {
+            <div
+              class="rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 text-sm text-emerald-400"
+              role="status"
+            >
+              {{ successMessage }}
+            </div>
+          }
+
+          <button
+            type="submit"
+            [disabled]="passwordForm.invalid || isLoading"
+            class="mt-2 w-full cursor-pointer rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-900/20 transition-all hover:bg-emerald-500 hover:scale-105 active:scale-95 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-hidden disabled:opacity-50  disabled:hover:scale-100"
+          >
+            @if (isLoading) {
+              <span class="inline-block animate-spin mr-2">⟳</span>
+              Updating...
+            } @else {
+              Update Password
+            }
+          </button>
+        </form>
       </div>
     </div>
   </div>

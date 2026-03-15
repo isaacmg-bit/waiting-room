@@ -1,4 +1,3 @@
-// calendar.service.ts
 import { Injectable, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { UserEvent } from '../models/UserEvent';
@@ -26,7 +25,9 @@ export class CalendarService {
     this.loadingSignal.set(true);
     this.api
       .get<UserEvent[]>(this.getEventsUrl())
-      .pipe(finalize(() => this.loadingSignal.set(false)))
+      .pipe(
+        finalize(() => this.loadingSignal.set(false)),
+      )
       .subscribe({
         next: (events) => {
           this.eventsSignal.set(events);
@@ -36,30 +37,36 @@ export class CalendarService {
   }
 
   addEvent(event: UserEvent): void {
-    this.api.post<UserEvent>(this.getEventsUrl(), event).subscribe({
-      next: (created) => {
-        this.eventsSignal.update((events) => [...events, created]);
-      },
-      error: (err) => console.error('Error adding event:', err),
-    });
+    this.api
+      .post<UserEvent>(this.getEventsUrl(), event)
+      .subscribe({
+        next: (created) => {
+          this.eventsSignal.update((events) => [...events, created]);
+        },
+        error: (err) => console.error('Error adding event:', err),
+      });
   }
 
   deleteEvent(id: string): void {
-    this.api.delete(`${this.getEventsUrl()}${id}`).subscribe({
-      next: () => {
-        this.eventsSignal.update((events) => events.filter((e) => e.id !== id));
-      },
-      error: (err) => console.error('Error deleting event:', err),
-    });
+    this.api
+      .delete(`${this.getEventsUrl()}${id}`)
+      .subscribe({
+        next: () => {
+          this.eventsSignal.update((events) => events.filter((e) => e.id !== id));
+        },
+        error: (err) => console.error('Error deleting event:', err),
+      });
   }
 
   editEvent(id: string, body: Partial<UserEvent>): void {
-    this.api.patch<UserEvent>(`${this.getEventsUrl()}${id}`, body).subscribe({
-      next: (updated) => {
-        this.eventsSignal.update((events) => events.map((e) => (e.id === id ? updated : e)));
-      },
-      error: (err) => console.error('Error updating event:', err),
-    });
+    this.api
+      .patch<UserEvent>(`${this.getEventsUrl()}${id}`, body)
+      .subscribe({
+        next: (updated) => {
+          this.eventsSignal.update((events) => events.map((e) => (e.id === id ? updated : e)));
+        },
+        error: (err) => console.error('Error updating event:', err),
+      });
   }
 
   openAddModal(dateStr: string): void {

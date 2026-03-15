@@ -1,17 +1,18 @@
-<body class="bg-background-dark font-display text-slate-100 min-h-screen">
-  <div class="max-w-5xl mx-auto px-4 py-8 md:px-8">
+<main class="min-h-screen bg-slate-950 font-display text-slate-100">
+  <div class="mx-auto max-w-5xl px-4 py-8 md:px-8">
     <form [formGroup]="form" class="space-y-6">
-      <!-- 1. Profile Media -->
       <section class="glass-card rounded-3xl p-6 md:p-8">
         <div class="flex items-center gap-3 mb-6">
           <span class="material-symbols-outlined text-primary">photo_camera</span>
           <h2 class="text-xl font-bold">Profile Media</h2>
         </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div class="flex flex-col items-center gap-4">
             <div class="relative group">
-              <div
-                class="size-48 rounded-full overflow-hidden border-4 border-primary/20 p-1 cursor-pointer"
+              <button
+                type="button"
+                class="size-48 rounded-full overflow-hidden border-4 border-primary/20 p-1 cursor-pointer focus:outline-none"
                 (click)="profileFileInput.click()"
               >
                 <img
@@ -21,21 +22,18 @@
                   (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
                   alt="Profile photo"
                 />
-              </div>
+              </button>
+
               @if (profilePhotoUrl()) {
                 <button
+                  type="button"
                   (click)="removeProfilePhoto()"
                   class="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-600 z-10 flex items-center justify-center"
                 >
                   <ng-icon name="heroTrash" size="16" />
                 </button>
-              } @else {
-                <button
-                  (click)="profileFileInput.click()"
-                  class="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-600 z-10 flex items-center justify-center"
-                  [hidden]="profilePhotoUrl()"
-                ></button>
               }
+
               <input
                 type="file"
                 #profileFileInput
@@ -45,59 +43,68 @@
               />
             </div>
           </div>
+
           <div class="lg:col-span-2">
-            <label class="block text-xs font-semibold mb-3 text-slate-400 uppercase tracking-widest"
-              >Showcase Gallery</label
-            >
+            <p class="block text-xs font-semibold mb-3 text-slate-400 uppercase tracking-widest">
+              Showcase Gallery
+            </p>
             <app-user-gallery></app-user-gallery>
           </div>
         </div>
       </section>
 
-      <!-- 2. Identity -->
       <section class="glass-card rounded-3xl p-6 md:p-8">
         <div class="flex items-center gap-3 mb-6">
           <span class="material-symbols-outlined text-cyan-400">badge</span>
           <h2 class="text-xl font-bold">Identity</h2>
         </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-2">
-            <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest"
-              >Full Name</label
+            <label for="name" class="text-xs font-semibold text-slate-500 uppercase tracking-widest"
+              >User name</label
             >
             <input
+              id="name"
               formControlName="name"
-              class="w-full bg-black/30 border border-border-dark rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-200"
+              class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none text-slate-200"
               type="text"
               placeholder="Stage or real name"
             />
           </div>
+
           <div class="space-y-2">
-            <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest"
+            <label
+              for="email"
+              class="text-xs font-semibold text-slate-500 uppercase tracking-widest"
               >Email Address</label
             >
             <input
+              id="email"
               formControlName="email"
-              class="w-full bg-black/30 border border-border-dark rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-200"
+              class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none text-slate-200"
               type="email"
               placeholder="hello@musician.com"
             />
           </div>
+
           <div class="md:col-span-2">
             <app-user-location
               [control]="form.controls.location"
               (citySelected)="selectedCity = $event"
             ></app-user-location>
           </div>
+
           <div class="md:col-span-2">
             <div class="flex items-center gap-3 mb-6">
               <span class="material-symbols-outlined text-primary">person</span>
               <h2 class="text-xl font-bold">Bio</h2>
             </div>
             <textarea
+              id="bio"
               formControlName="bio"
               maxlength="350"
-              class="w-full bg-black/30 border border-border-dark rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-none text-slate-200"
+              class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none resize-none text-slate-200"
               placeholder="Describe yourself"
               rows="4"
             ></textarea>
@@ -105,7 +112,6 @@
         </div>
       </section>
 
-      <!-- 3. Musical DNA -->
       <section class="glass-card rounded-3xl p-6 md:p-8">
         <div class="flex items-center gap-3 mb-6">
           <span class="material-symbols-outlined text-purple-400">music_note</span>
@@ -113,33 +119,26 @@
         </div>
         <div class="space-y-6">
           <div>
-            <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3"
-              >Instruments</label
-            >
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3">
+              Instruments
+            </p>
             <app-user-instruments></app-user-instruments>
           </div>
-          <div class="mt-6 pt-6 relative">
-            <div
-              class="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent"
-            ></div>
-            <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3"
-              >Genres</label
-            >
+          <div class="mt-6 pt-6 relative border-t border-white/5">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3">
+              Genres
+            </p>
             <app-user-genres></app-user-genres>
           </div>
-          <div class="mt-6 pt-6 relative">
-            <div
-              class="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent"
-            ></div>
-            <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3"
-              >Influence Bands</label
-            >
+          <div class="mt-6 pt-6 relative border-t border-white/5">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3">
+              Influence Bands
+            </p>
+            <app-user-bands></app-user-bands>
           </div>
         </div>
-        <app-user-bands></app-user-bands>
       </section>
 
-      <!-- 4. Gear & Space -->
       <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="glass-card rounded-3xl p-6 md:p-8">
           <div class="flex items-center gap-3 mb-6">
@@ -149,9 +148,9 @@
           <textarea
             formControlName="gear"
             maxlength="350"
-            placeholder="Describe your instruments, amps, pedals..."
+            placeholder="Describe your gear..."
             rows="4"
-            class="w-full bg-black/30 border border-border-dark rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-none text-slate-200"
+            class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none resize-none text-slate-200"
           ></textarea>
         </div>
 
@@ -163,13 +162,13 @@
           <textarea
             formControlName="rehearsal_space"
             maxlength="350"
-            placeholder="Details about your studio or practice room..."
+            placeholder="Details about your space..."
             rows="4"
-            class="w-full bg-black/30 border border-border-dark rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-none text-slate-200"
+            class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none resize-none text-slate-200"
           ></textarea>
         </div>
       </section>
-      <!-- 5. Presence -->
+
       <section class="glass-card rounded-3xl p-6 md:p-8">
         <div class="flex items-center gap-3 mb-6">
           <span class="material-symbols-outlined text-purple-400">language</span>
@@ -177,75 +176,76 @@
         </div>
 
         <div formArrayName="social_links" class="space-y-3">
-          @for (link of socialLinksControls(); track link.value?.url) {
+          @for (link of socialLinksControls(); track $index) {
             <div
               [formGroupName]="$index"
               class="flex flex-col md:flex-row gap-4 items-end md:items-center"
             >
-              <!-- Platform Select -->
               <div class="w-full md:w-1/4">
-                <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
+                <label
+                  [for]="'platform-' + $index"
+                  class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
                   >Platform</label
                 >
-                <select
-                  formControlName="platform"
-                  class="w-full bg-black/30 border border-border-dark rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none text-slate-200 appearance-none cursor-pointer"
-                  style="
-                    background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2394a3b8%22 stroke-width=%222%22><polyline points=%226 9 12 15 18 9%22></polyline></svg>');
-                    background-repeat: no-repeat;
-                    background-position: right 0.5rem center;
-                    background-size: 1.5em 1.5em;
-                    padding-right: 2.5rem;
-                  "
-                >
-                  <option value="" disabled selected>Select platform</option>
-                  <option value="instagram">Instagram</option>
-                  <option value="soundcloud">SoundCloud</option>
-                  <option value="spotify">Spotify</option>
-                  <option value="youtube">YouTube</option>
-                </select>
+                <div class="relative">
+                  <select
+                    [id]="'platform-' + $index"
+                    formControlName="platform"
+                    class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-primary outline-none text-slate-200 appearance-none cursor-pointer"
+                  >
+                    <option value="" disabled selected>Select platform</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="soundcloud">SoundCloud</option>
+                    <option value="spotify">Spotify</option>
+                    <option value="youtube">YouTube</option>
+                  </select>
+
+                  <span
+                    class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                  >
+                    expand_more
+                  </span>
+                </div>
               </div>
 
-              <!-- URL Input -->
               <div class="flex-1 w-full">
-                <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-                  >URL / Handle</label
+                <label
+                  [for]="'url-' + $index"
+                  class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
+                  >Handle</label
                 >
                 <input
+                  input
+                  [id]="'url-' + $index"
                   formControlName="url"
-                  placeholder="https://..."
+                  placeholder="username"
                   type="text"
-                  class="w-full bg-black/30 border border-border-dark rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none text-slate-200"
+                  class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none text-slate-200"
                 />
               </div>
 
-              <!-- Delete Button -->
               <button
                 type="button"
                 (click)="removeLink($index)"
-                class="p-3 text-red-500 hover:bg-red-500/10 rounded-xl transition-colors disabled:opacity-50"
+                class="p-3 text-red-500 hover:bg-red-500/10 rounded-xl transition-colors"
               >
                 <span class="material-symbols-outlined">delete</span>
               </button>
             </div>
-          } @empty {
-            <p class="text-slate-500 italic">No social links added.</p>
           }
         </div>
 
-        <!-- Botón Add Link -->
         <button
           type="button"
           (click)="addLink()"
           [disabled]="hasIncompleteLinks()"
-          class="mt-4 px-4 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="mt-4 px-4 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 flex items-center gap-2 disabled:opacity-50"
         >
           <span class="material-symbols-outlined">add</span>
           Add Link
         </button>
       </section>
 
-      <!-- Sticky bottom bar -->
       <div class="sticky bottom-6 z-20 flex justify-center pb-8">
         <div
           class="bg-black/50 backdrop-blur-2xl border border-white/10 p-2 rounded-2xl shadow-2xl flex items-center gap-4"
@@ -256,11 +256,10 @@
           >
             Discard
           </button>
-          <!-- Save Button -->
           <button
             type="button"
             (click)="saveProfile()"
-            class="px-10 py-3 bg-primary text-white font-black rounded-xl shadow-lg shadow-primary/30 hover:scale-[1.05] transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            class="px-10 py-3 bg-primary text-white font-black rounded-xl shadow-lg shadow-primary/30 hover:scale-[1.05] transition-transform"
           >
             Save Profile Changes
           </button>
@@ -268,4 +267,4 @@
       </div>
     </form>
   </div>
-</body>
+</main>

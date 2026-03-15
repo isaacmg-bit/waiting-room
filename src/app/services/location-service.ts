@@ -1,4 +1,3 @@
-// location.service.ts
 import { Injectable, inject, signal } from '@angular/core';
 import { UserLocation } from '../models/UserLocation';
 import { ApiService } from './apiservice';
@@ -26,30 +25,39 @@ export class LocationService {
 
   loadLocations(): void {
     this.loadingSignal.set(true);
-    this.api.get<UserLocation[]>(this.getLocationsUrl()).subscribe({
-      next: (locations) => {
-        this.locationsSignal.set(locations);
-        this.loadingSignal.set(false);
-      },
-      error: (err) => {
-        console.error('Error loading locations:', err);
-        this.loadingSignal.set(false);
-      },
-    });
+    this.api
+      .get<UserLocation[]>(this.getLocationsUrl())
+
+      .subscribe({
+        next: (locations) => {
+          this.locationsSignal.set(locations);
+          this.loadingSignal.set(false);
+        },
+        error: (err) => {
+          console.error('Error loading locations:', err);
+          this.loadingSignal.set(false);
+        },
+      });
   }
 
   addLocation(location: UserLocation): void {
-    this.api.post<UserLocation>(this.getLocationsUrl(), location).subscribe({
-      next: (created) => this.locationsSignal.update((locs) => [...locs, created]),
-      error: (err) => console.error('Error adding location:', err),
-    });
+    this.api
+      .post<UserLocation>(this.getLocationsUrl(), location)
+
+      .subscribe({
+        next: (created) => this.locationsSignal.update((locs) => [...locs, created]),
+        error: (err) => console.error('Error adding location:', err),
+      });
   }
 
   deleteLocation(id: string): void {
-    this.api.delete<UserLocation>(`${this.getLocationsUrl()}/${id}`).subscribe({
-      next: () => this.locationsSignal.update((locs) => locs.filter((l) => l.id !== id)),
-      error: (err) => console.error('Error deleting location:', err),
-    });
+    this.api
+      .delete<UserLocation>(`${this.getLocationsUrl()}/${id}`)
+
+      .subscribe({
+        next: () => this.locationsSignal.update((locs) => locs.filter((l) => l.id !== id)),
+        error: (err) => console.error('Error deleting location:', err),
+      });
   }
 
   editLocation(body: Partial<UserLocation>): void {
@@ -58,11 +66,16 @@ export class LocationService {
       return;
     }
 
-    this.api.patch<UserLocation>(`${this.getLocationsUrl()}/${body.id}`, body).subscribe({
-      next: (updated) =>
-        this.locationsSignal.update((locs) => locs.map((l) => (l.id === updated.id ? updated : l))),
-      error: (err) => console.error('Error updating location:', err),
-    });
+    this.api
+      .patch<UserLocation>(`${this.getLocationsUrl()}/${body.id}`, body)
+
+      .subscribe({
+        next: (updated) =>
+          this.locationsSignal.update((locs) =>
+            locs.map((l) => (l.id === updated.id ? updated : l)),
+          ),
+        error: (err) => console.error('Error updating location:', err),
+      });
   }
 
   toggleFilter(category: string): void {

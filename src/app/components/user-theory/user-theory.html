@@ -1,47 +1,79 @@
-<div class="mt-6 pt-6 relative">
+<section class="mt-6 pt-6 relative" aria-labelledby="theory-heading">
   <div
     class="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent"
+    aria-hidden="true"
   ></div>
-  <div class="flex items-center gap-3">
-    <input
-      class="size-5 bg-black/30 border border-white/10 rounded text-primary focus:ring-primary cursor-pointer"
-      id="theory"
-      type="checkbox"
-      [(ngModel)]="userTheoryService.knowsTheory"
-      (change)="onTheoryChange()"
-    />
-    <label class="text-slate-300 font-medium cursor-pointer" for="theory">
-      Do you know music theory?
-    </label>
-  </div>
+
+  <fieldset class="space-y-4 border-none p-0 m-0">
+    <legend class="block w-full text-xs font-semibold text-slate-500 uppercase tracking-widest">
+      Music Theory Knowledge
+    </legend>
+
+    <div class="flex items-center gap-3">
+      <input
+        id="knows-theory"
+        type="checkbox"
+        [checked]="userTheoryService.knowsTheory()"
+        (change)="onTheoryChange($event)"
+        class="size-5 bg-black/30 border border-white/10 rounded cursor-pointer transition-all accent-primary hover:border-primary/50 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-primary"
+        aria-describedby="theory-description"
+      />
+      <label for="knows-theory" class="text-slate-300 font-medium cursor-pointer select-none">
+        Do you know music theory?
+      </label>
+    </div>
+
+  </fieldset>
 
   @if (userTheoryService.knowsTheory()) {
-    <div class="mt-4 pl-8">
-      <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest block mb-3"
-        >Theory Level</label
+    <fieldset
+      class="mt-6 pt-6 space-y-4 border-none p-0 m-0"
+      role="group"
+      aria-labelledby="theory-level-heading"
+    >
+      <legend
+        id="theory-level-heading"
+        class="block w-full text-xs font-semibold text-slate-500 uppercase tracking-widest"
       >
-      <div class="flex gap-3">
+        Theory Level
+      </legend>
+      <p id="theory-level-description" class="text-xs text-slate-400">
+        Select your proficiency level
+      </p>
+
+      <div
+        class="flex flex-col sm:flex-row gap-3"
+        role="radiogroup"
+        aria-labelledby="theory-level-heading"
+        aria-describedby="theory-level-description"
+      >
         @for (level of userTheoryService.theoryLevels; track level) {
-          <label
-            [class]="
-              'flex-1 text-center py-2 px-4 rounded-xl text-sm cursor-pointer transition-all border ' +
-              (userTheoryService.selectedTheoryLevel() === level
-                ? 'bg-primary/10 border-primary text-primary'
-                : 'bg-black/20 border-white/10 text-slate-400 hover:border-primary/50')
-            "
-          >
+          <div class="flex-1">
             <input
+              [id]="'theory-level-' + level"
               type="radio"
               name="theoryLevel"
               [value]="level"
-              [(ngModel)]="userTheoryService.selectedTheoryLevel"
-              (change)="onTheoryLevelChange()"
-              class="hidden"
+              [checked]="userTheoryService.selectedTheoryLevel() === level"
+              (change)="onTheoryLevelChange(level)"
+              class="hidden peer"
+              [attr.aria-label]="'Select ' + level + ' theory level'"
             />
-            {{ level }}
-          </label>
+            <label
+              [for]="'theory-level-' + level"
+              [class]="
+                'block w-full py-3 px-4 rounded-xl text-sm font-medium cursor-pointer transition-all border text-center ' +
+                (userTheoryService.selectedTheoryLevel() === level
+                  ? 'bg-primary/10 border-primary text-primary shadow-lg shadow-primary/20 scale-[1.02]'
+                  : 'bg-black/20 border-white/10 text-slate-400 hover:border-primary/50 hover:bg-black/30 hover:scale-[1.01]')
+              "
+              [attr.aria-pressed]="userTheoryService.selectedTheoryLevel() === level"
+            >
+              {{ level }}
+            </label>
+          </div>
         }
       </div>
-    </div>
+    </fieldset>
   }
-</div>
+</section>

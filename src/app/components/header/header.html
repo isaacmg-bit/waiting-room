@@ -1,9 +1,9 @@
 <header
-  class="sticky top-0 z-50 w-full border-b border-white/5 bg-background-dark/80 backdrop-blur-md px-4 md:px-10 py-3"
+  class="sticky top-0 z-50 w-full border-b border-white/5 bg-slate-950/80 backdrop-blur-md px-4 md:px-10 py-3"
 >
   <div class="max-w-7xl mx-auto flex items-center justify-between">
     <div class="flex items-center gap-8">
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3 select-none">
         <div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
           <ng-icon name="lucideDrum" class="text-primary"></ng-icon>
         </div>
@@ -13,42 +13,41 @@
           Waiting Room
         </h2>
       </div>
-      <nav class="hidden md:flex items-center gap-1">
+
+      <nav class="hidden md:flex items-center gap-1" aria-label="Main navigation">
         <a
           routerLink="/"
           routerLinkActive="text-white bg-white/5"
           [routerLinkActiveOptions]="{ exact: true }"
-          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50"
         >
           Home
         </a>
-
         <a
           routerLink="/user-search"
           routerLinkActive="text-white bg-white/5"
-          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50"
         >
           Search
         </a>
         <a
           routerLink="/calendar"
           routerLinkActive="text-white bg-white/5"
-          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50"
         >
           Events
         </a>
-
         <a
           routerLink="/register"
           routerLinkActive="text-white bg-white/5"
-          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50"
         >
           Register
         </a>
         <a
           routerLink="/login"
           routerLinkActive="text-white bg-white/5"
-          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50"
         >
           Login
         </a>
@@ -56,54 +55,100 @@
           <a
             routerLink="/users"
             routerLinkActive="text-white bg-white/5"
-            class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
+            class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50"
           >
             Users
           </a>
         }
       </nav>
     </div>
-    <div class="flex items-center gap-3">
 
-      <!-- User menu -->
-      <p>Hello, PLACEHOLDER!</p>
-      <div class="relative user-menu">
+    <div class="flex items-center gap-3">
+      @if (userId()) {
+        <p class="hidden sm:block text-sm font-medium text-slate-400">Hello, {{ userName() }}!</p>
+      } @else {
+        <p class="hidden sm:block text-sm font-medium text-slate-400">Hello, stranger!</p>
+      }
+      <div class="relative">
         <button
-          (click)="isUserMenuOpen = !isUserMenuOpen"
-          class="size-9 rounded-full border-2 border-primary/30 hover:border-primary overflow-hidden block transition-all"
+          type="button"
+          (click)="isUserMenuOpen.set(!isUserMenuOpen()); $event.stopPropagation()"
+          class="size-9 rounded-full border-2 border-primary/30 hover:border-primary overflow-hidden block transition-all cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
+          [attr.aria-expanded]="isUserMenuOpen()"
         >
           <img
             #img
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover pointer-events-none"
             [src]="
               'https://otfzbljpjqojoiojfvrq.supabase.co/storage/v1/object/public/profiles/' +
               userId() +
               '/profilepicture.jpg'
             "
             (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
+            alt="User profile"
           />
         </button>
 
-        @if (isUserMenuOpen) {
+        @if (isUserMenuOpen() && userId()) {
           <div
-            class="absolute top-12 w-35 glass-card rounded-2xl shadow-2xl overflow-hidden z-50"
+            class="absolute top-12 right-0 w-48 glass-card rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-100 origin-top-right border border-white/10"
+            role="menu"
+            tabindex="0"
+            (click)="$event.stopPropagation()"
+            (keydown.escape)="isUserMenuOpen.set(false)"
           >
             <a
               routerLink="/edit-profile"
-              (click)="isUserMenuOpen = false"
-              class="flex items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all"
+              (click)="isUserMenuOpen.set(false); $event.stopPropagation()"
+              class="flex items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-hidden"
+              role="menuitem"
             >
               <span class="material-symbols-outlined text-base text-primary">manage_accounts</span>
               Edit Profile
             </a>
+
             <div class="h-px bg-linear-to-r from-transparent via-white/10 to-transparent"></div>
+
             <button
-              (click)="logout(); isUserMenuOpen = false"
-              class="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-red-500/10 hover:text-red-400 transition-all"
+              type="button"
+              (click)="logout(); isUserMenuOpen.set(false); $event.stopPropagation()"
+              class="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-red-500/10 hover:text-red-400 transition-all cursor-pointer focus:bg-red-500/10 focus:outline-hidden"
+              role="menuitem"
             >
               <span class="material-symbols-outlined text-base">logout</span>
               Logout
             </button>
+          </div>
+        }
+
+        @if (isUserMenuOpen() && !userId()) {
+          <div
+            class="absolute top-12 right-0 w-48 glass-card rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-100 origin-top-right border border-white/10"
+            role="menu"
+            tabindex="0"
+            (click)="$event.stopPropagation()"
+            (keydown.escape)="isUserMenuOpen.set(false)"
+          >
+            <a
+              routerLink="/login"
+              (click)="isUserMenuOpen.set(false); $event.stopPropagation()"
+              class="flex items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-hidden"
+              role="menuitem"
+            >
+              <span class="material-symbols-outlined text-base text-primary">manage_accounts</span>
+              Login
+            </a>
+            <a
+              routerLink="/register"
+              (click)="isUserMenuOpen.set(false); $event.stopPropagation()"
+              class="flex items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-hidden"
+              role="menuitem"
+            >
+              <span class="material-symbols-outlined text-base text-primary">manage_accounts</span>
+              Register
+            </a>
+
+            <div class="h-px bg-linear-to-r from-transparent via-white/10 to-transparent"></div>
           </div>
         }
       </div>

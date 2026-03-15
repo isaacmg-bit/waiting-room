@@ -6,6 +6,7 @@ import { UserBand } from '../models/UserBand';
 import { finalize, Observable } from 'rxjs';
 import { Band } from '../models/Band';
 
+
 @Injectable({
   providedIn: 'root',
 })
@@ -31,7 +32,9 @@ export class UserBandsService {
     this.loadingSignal.set(true);
     this.api
       .get<UserBand[]>(this.ME_URL)
-      .pipe(finalize(() => this.loadingSignal.set(false)))
+      .pipe(
+        finalize(() => this.loadingSignal.set(false)),
+      )
       .subscribe({
         next: (bands) => this.userBandsSignal.set(bands),
         error: (err) => console.error('Error loading user bands:', err),
@@ -48,6 +51,7 @@ export class UserBandsService {
         band_id: bandId,
         name: bandName,
       })
+
       .subscribe({
         next: (created) => {
           this.userBandsSignal.update((list) => list.map((i) => (i.id === tempId ? created : i)));
@@ -62,12 +66,15 @@ export class UserBandsService {
   deleteUserBand(id: string): void {
     this.userBandsSignal.update((list) => list.filter((g) => g.id !== id));
 
-    this.api.delete<UserBand>(`${this.BASE_URL}/${id}`).subscribe({
-      error: (err) => {
-        console.error('Error deleting band:', err);
-        this.loadUserBands();
-      },
-    });
+    this.api
+      .delete<UserBand>(`${this.BASE_URL}/${id}`)
+
+      .subscribe({
+        error: (err) => {
+          console.error('Error deleting band:', err);
+          this.loadUserBands();
+        },
+      });
   }
 
   onSearch(query: string): void {

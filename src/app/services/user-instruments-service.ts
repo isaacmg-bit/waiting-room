@@ -46,38 +46,47 @@ export class UserInstrumentsService {
       { id: tempId, instrument_id: instrumentId, level, instruments: null as any },
     ]);
 
-    this.api.post<UserInstrument>(this.BASE_URL, { instrument_id: instrumentId, level }).subscribe({
-      next: (created) =>
-        this.userInstrumentSignal.update((list) =>
-          list.map((i) => (i.id === tempId ? created : i)),
-        ),
-      error: (err) => {
-        console.error('Error adding instrument:', err);
-        this.userInstrumentSignal.update((list) => list.filter((i) => i.id !== tempId));
-      },
-    });
+    this.api
+      .post<UserInstrument>(this.BASE_URL, { instrument_id: instrumentId, level })
+
+      .subscribe({
+        next: (created) =>
+          this.userInstrumentSignal.update((list) =>
+            list.map((i) => (i.id === tempId ? created : i)),
+          ),
+        error: (err) => {
+          console.error('Error adding instrument:', err);
+          this.userInstrumentSignal.update((list) => list.filter((i) => i.id !== tempId));
+        },
+      });
   }
 
   updateInstrumentLevel(userInstrumentId: string, level: string): void {
-    this.api.patch(`${this.BASE_URL}/${userInstrumentId}`, { level }).subscribe({
-      next: () => {
-        this.userInstrumentSignal.update((list) =>
-          list.map((i) => (i.id === userInstrumentId ? { ...i, level } : i)),
-        );
-      },
-      error: (err) => console.error('Error updating instrument level:', err),
-    });
+    this.api
+      .patch(`${this.BASE_URL}/${userInstrumentId}`, { level })
+
+      .subscribe({
+        next: () => {
+          this.userInstrumentSignal.update((list) =>
+            list.map((i) => (i.id === userInstrumentId ? { ...i, level } : i)),
+          );
+        },
+        error: (err) => console.error('Error updating instrument level:', err),
+      });
   }
 
   deleteUserInstrument(id: string): void {
     this.userInstrumentSignal.update((list) => list.filter((i) => i.id !== id));
 
-    this.api.delete<UserInstrument>(`${this.BASE_URL}/${id}`).subscribe({
-      error: (err) => {
-        console.error('Error deleting instrument:', err);
-        this.loadUserInstruments();
-      },
-    });
+    this.api
+      .delete<UserInstrument>(`${this.BASE_URL}/${id}`)
+
+      .subscribe({
+        error: (err) => {
+          console.error('Error deleting instrument:', err);
+          this.loadUserInstruments();
+        },
+      });
   }
 
   onSearch(query: string): void {

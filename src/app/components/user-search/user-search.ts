@@ -78,7 +78,6 @@ export class UserSearch implements OnInit {
     this.api.get(url).subscribe((results: any) => {
       this.searchResults.set(results);
       this.currentPage.set(0);
-      console.log(results);
     });
   }
 
@@ -99,14 +98,12 @@ export class UserSearch implements OnInit {
   });
 
   nextPage(): void {
-    // Si no estás en la última página, suma 1
     if (this.currentPage() < this.totalPages() - 1) {
       this.currentPage.set(this.currentPage() + 1);
     }
   }
 
   previousPage(): void {
-    // Si no estás en la primera página (página 0), resta 1
     if (this.currentPage() > 0) {
       this.currentPage.set(this.currentPage() - 1);
     }
@@ -114,7 +111,6 @@ export class UserSearch implements OnInit {
 
   selectDistance(distance: number): void {
     this.selectedDistance.set(distance);
-    console.log(this.selectedDistance());
   }
 
   selectInstrument(instrument: { id: string; instrument_name: string }): void {
@@ -124,11 +120,9 @@ export class UserSearch implements OnInit {
     } else {
       this.selectedInstruments.set([...current, instrument.instrument_name]);
     }
-    console.log(this.selectedInstruments());
   }
   selectMusicTheory(theory: string): void {
     this.selectedMusicTheory.set(theory);
-    console.log(this.selectedMusicTheory());
   }
 
   selectGenre(genre: { id: string; genre: string }): void {
@@ -138,7 +132,6 @@ export class UserSearch implements OnInit {
     } else {
       this.selectedGenres.set([...current, genre.genre]);
     }
-    console.log(this.selectedGenres());
   }
 
   selectBand(band: { id: string; name: string }): void {
@@ -148,7 +141,6 @@ export class UserSearch implements OnInit {
     } else {
       this.selectedBands.set([...current, band.name]);
     }
-    console.log(this.selectedBands());
   }
 
   onSearchInstrument(event: Event): void {

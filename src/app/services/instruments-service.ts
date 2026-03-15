@@ -21,7 +21,10 @@ export class InstrumentsService {
     this.loadingSignal.set(true);
     this.api
       .get<Instrument[]>(this.BASE_URL)
-      .pipe(finalize(() => this.loadingSignal.set(false)))
+      .pipe(
+        finalize(() => this.loadingSignal.set(false)),
+
+      )
       .subscribe({
         next: (instruments) => this.instrumentsSignal.set(instruments),
         error: (err) => console.error('Error loading instruments:', err),

@@ -1,40 +1,74 @@
-<main class="bg-background-dark min-h-screen">
-  <div class="max-w-7xl mx-auto px-6 py-8">
-    <h1 class="text-3xl font-black tracking-tight text-slate-100 mb-2">Charts</h1>
-    <p class="text-slate-500 text-sm mb-8">Visual overview of your musical activity.</p>
-  </div>
+<main class="bg-slate-950 min-h-screen font-display selection:bg-primary/30">
+  <header class="max-w-7xl mx-auto px-6 py-12">
+    <h1
+      class="text-4xl font-black tracking-tighter text-slate-100 mb-2 bg-linear-to-r from-white to-slate-500 bg-clip-text"
+    >
+      Charts
+    </h1>
+    <p class="text-slate-500 text-sm font-medium uppercase tracking-[0.2em]">
+      Visual overview of your musical activity
+    </p>
+  </header>
 
   <div class="max-w-7xl mx-auto px-6 pb-12">
-    <div class="grid gap-6 md:grid-cols-2">
-      <div class="glass-card rounded-3xl overflow-hidden shadow-xl">
-        <div class="px-6 py-4 border-b border-white/5 flex justify-between items-center">
-          <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">Bar Chart</h2>
-          <span class="text-xs text-slate-600">Overview</span>
+    <div class="grid gap-8 md:grid-cols-2">
+      <section
+        class="glass-card rounded-3xl overflow-hidden border border-white/10 bg-white/2 shadow-2xl transition-all hover:border-white/20"
+      >
+        <div class="px-6 py-5 border-b border-white/5 flex justify-between items-center bg-white/1">
+          <h2
+            id="bar-chart-title"
+            class="text-xs font-bold uppercase tracking-widest text-slate-400"
+          >
+            Bar Chart
+          </h2>
+          <span
+            class="px-2 py-1 rounded-md bg-slate-800/50 text-[10px] font-bold text-slate-500 uppercase tracking-tighter"
+          >
+            Overview
+          </span>
         </div>
-        <div class="p-6">
-          <canvas
-            #barChart
-            role="img"
-            aria-labelledby="bar-chart-title"
-            class="w-full h-100"
-          ></canvas>
-        </div>
-      </div>
 
-      <div class="glass-card rounded-3xl overflow-hidden shadow-xl">
-        <div class="px-6 py-4 border-b border-white/5 flex justify-between items-center">
-          <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">Line Chart</h2>
-          <span class="text-xs text-slate-600">Trends</span>
+        <div class="p-8">
+          <div class="relative h-80 w-full">
+            <canvas
+              #barChart
+              role="img"
+              aria-labelledby="bar-chart-title"
+              class="w-full h-full"
+            ></canvas>
+          </div>
         </div>
-        <div class="p-6">
-          <canvas
-            #lineChart
-            role="img"
-            aria-labelledby="line-chart-title"
-            class="w-full h-100"
-          ></canvas>
+      </section>
+
+      <section
+        class="glass-card rounded-3xl overflow-hidden border border-white/10 bg-white/2 shadow-2xl transition-all hover:border-white/20"
+      >
+        <div class="px-6 py-5 border-b border-white/5 flex justify-between items-center bg-white/1">
+          <h2
+            id="line-chart-title"
+            class="text-xs font-bold uppercase tracking-widest text-slate-400"
+          >
+            Line Chart
+          </h2>
+          <span
+            class="px-2 py-1 rounded-md bg-slate-800/50 text-[10px] font-bold text-slate-500 uppercase tracking-tighter"
+          >
+            Trends
+          </span>
         </div>
-      </div>
+
+        <div class="p-8">
+          <div class="relative h-80 w-full">
+            <canvas
+              #lineChart
+              role="img"
+              aria-labelledby="line-chart-title"
+              class="w-full h-full"
+            ></canvas>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </main>

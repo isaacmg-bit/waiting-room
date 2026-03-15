@@ -1,15 +1,6 @@
-import {
-  Component,
-  inject,
-  OnInit,
-  OnDestroy,
-  signal,
-  computed,
-  viewChild,
-  ElementRef,
-} from '@angular/core';
+import { Component, inject, signal, viewChild, ElementRef, computed } from '@angular/core';
 import { UserService } from '../../services/user-service';
-import { FormBuilder, ReactiveFormsModule, FormArray, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, FormArray, Validators, FormGroup } from '@angular/forms';
 import { UploadService } from '../../services/upload-service';
 import { UserGallery } from '../user-gallery/user-gallery';
 import { UserLocation } from '../user-location/user-location';
@@ -20,8 +11,9 @@ import { CityService } from '../../services/city-service';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
 import { UserGenres } from '../user-genres/user-genres';
-import { Subject, takeUntil } from 'rxjs';
 import { UserBands } from '../user-bands/user-bands';
+import { environment } from '../../../environments/environment';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-edit-profile',
@@ -38,12 +30,11 @@ import { UserBands } from '../user-bands/user-bands';
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.css',
 })
-export class EditProfile implements OnInit, OnDestroy {
+export class EditProfile {
   private readonly userService = inject(UserService);
   private readonly cityService = inject(CityService);
   private readonly fb = inject(FormBuilder);
   private readonly uploadService = inject(UploadService);
-  private readonly destroy$ = new Subject<void>();
 
   private currentUser: User | null = null;
   selectedCity: City | null = null;
@@ -56,16 +47,23 @@ export class EditProfile implements OnInit, OnDestroy {
     bio: [''],
     gear: [''],
     rehearsal_space: [''],
-    social_links: this.fb.array([]),
+    social_links: this.fb.array<FormGroup>([]),
   });
 
-  socialLinksControls = computed(() => (this.form.get('social_links') as FormArray).controls);
+  socialLinksControls = computed(() => {
+    const arr = this.form.get('social_links');
+    if (arr instanceof FormArray) {
+      return arr.controls;
+    }
+    return [];
+  });
+
   profileFileInput = viewChild.required<ElementRef<HTMLInputElement>>('profileFileInput');
 
-  ngOnInit() {
+  constructor() {
     this.userService
       .getMe()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed())
       .subscribe(async (user) => {
         this.currentUser = user;
         this.form.patchValue({
@@ -77,15 +75,18 @@ export class EditProfile implements OnInit, OnDestroy {
         });
 
         if (user.social_links && Array.isArray(user.social_links)) {
-          const arr = this.form.get('social_links') as FormArray;
-          user.social_links.forEach((link) => {
-            arr.push(
-              this.fb.group({
-                platform: [link.platform, Validators.required],
-                url: [link.url, Validators.required],
-              }),
-            );
-          });
+          const socialLinksArray = this.fb.array<FormGroup>(
+            user.social_links
+              .filter((link) => link.platform && link.url)
+              .map((link) =>
+                this.fb.group({
+                  platform: [link.platform, Validators.required],
+                  url: [link.url, Validators.required],
+                }),
+              ),
+          );
+
+          this.form.setControl('social_links', socialLinksArray);
         }
 
         if (user.location) {
@@ -100,17 +101,11 @@ export class EditProfile implements OnInit, OnDestroy {
 
     this.uploadService
       .getGallery()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed())
       .subscribe({
         next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
         error: (err) => console.error('Error loading gallery photos:', err),
       });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-    this.cityService.destroy();
   }
 
   async onProfileSelected(event: Event) {
@@ -175,12 +170,18 @@ export class EditProfile implements OnInit, OnDestroy {
   saveProfile(): void {
     if (!this.currentUser) return;
 
+    const rawLinks = (this.form.get('social_links') as FormArray).value;
+    const transformedLinks = rawLinks.map((link: any) => ({
+      platform: link.platform,
+      url: this.buildSocialUrl(link.platform, link.url),
+    }));
+
     const payload: Partial<User> = {
       name: this.form.value.name ?? undefined,
       bio: this.form.value.bio ?? undefined,
       gear: this.form.value.gear ?? undefined,
       rehearsal_space: this.form.value.rehearsal_space ?? undefined,
-      social_links: (this.form.get('social_links') as FormArray).value,
+      social_links: transformedLinks,
     };
 
     if (this.selectedCity) {
@@ -189,5 +190,9 @@ export class EditProfile implements OnInit, OnDestroy {
     }
 
     this.userService.editUser(this.currentUser.id, payload);
+  }
+
+  private buildSocialUrl(platform: string, username: string): string {
+    return environment[platform as keyof typeof environment] + username;
   }
 }

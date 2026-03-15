@@ -6,7 +6,6 @@ import {
   inject,
   effect,
   signal,
-  OnDestroy,
 } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { CalendarService } from '../../services/calendar-service';
@@ -18,7 +17,7 @@ Chart.register(...registerables);
   templateUrl: './charts.html',
   styleUrls: ['./charts.css'],
 })
-export class Charts implements AfterViewInit, OnDestroy {
+export class Charts implements AfterViewInit {
   barChart = viewChild<ElementRef<HTMLCanvasElement>>('barChart');
   lineChart = viewChild<ElementRef<HTMLCanvasElement>>('lineChart');
 
@@ -118,10 +117,5 @@ export class Charts implements AfterViewInit, OnDestroy {
         chart.update();
       }
     });
-  }
-
-  ngOnDestroy(): void {
-    this.barChartInstance?.destroy();
-    this.lineChartInstance?.destroy();
   }
 }

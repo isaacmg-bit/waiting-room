@@ -1,54 +1,73 @@
-<main class="bg-background-dark min-h-screen">
-  <div class="max-w-7xl mx-auto px-6 py-8">
+<main class="min-h-screen bg-slate-950 font-display">
+  <header class="max-w-7xl mx-auto px-6 py-8">
     <h1 class="text-3xl font-black tracking-tight text-slate-100 mb-2">Calendar</h1>
-    <p class="text-slate-500 text-sm mb-8">Plan your gigs, rehearsals and sessions.</p>
-  </div>
+    <p class="text-slate-500 text-sm mb-8 uppercase tracking-widest font-medium">
+      Plan your gigs, rehearsals and sessions
+    </p>
+  </header>
 
   <div class="max-w-7xl mx-auto px-6 pb-12">
-    <div class="glass-card rounded-3xl shadow-xl p-6">
+    <div class="glass-card rounded-3xl shadow-2xl p-6 border border-white/10 bg-white/2">
       <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     </div>
 
-    <!-- Add Event Modal -->
     @if (calendarService.calendarModalActive()) {
       <div
-        class="fixed inset-0 z-50 flex items-center justify-center p-4"
-        style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
         role="dialog"
         aria-modal="true"
+        aria-labelledby="modal-add-title"
       >
-        <div class="w-full max-w-sm glass-card rounded-2xl shadow-2xl overflow-hidden">
+        <div
+          class="w-full max-w-sm glass-card rounded-2xl shadow-2xl overflow-hidden border border-white/10 bg-slate-900"
+        >
           <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
-            <h2 class="font-bold text-slate-100">Add Event</h2>
+            <h2 id="modal-add-title" class="font-bold text-slate-100">Add Event</h2>
             <button
               type="button"
               (click)="closeModals()"
-              class="text-slate-500 hover:text-slate-200 transition-colors"
+              class="text-slate-500 hover:text-slate-200 transition-colors flex items-center justify-center"
             >
               <span class="material-symbols-outlined">close</span>
             </button>
           </div>
-          <form class="flex flex-col gap-4 p-5">
+
+          <form class="flex flex-col gap-5 p-5">
             <div class="space-y-2">
-              <label class="text-xs font-semibold uppercase tracking-widest text-slate-500"
-                >Event name</label
+              <label
+                for="add-event-name"
+                class="text-xs font-semibold uppercase tracking-widest text-slate-500 block"
               >
+                Event name
+              </label>
               <input
+                id="add-event-name"
                 type="text"
                 placeholder="Balm show @ Palau St. Jordi"
                 [value]="calendarService.eventTitle()"
                 (input)="onTitleInput($event)"
-                class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
+                class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
               />
             </div>
+
             <div class="space-y-2">
-              <label class="text-xs font-semibold uppercase tracking-widest text-slate-500"
-                >Event color</label
+              <label
+                for="add-event-color"
+                class="text-xs font-semibold uppercase tracking-widest text-slate-500 block"
               >
+                Event color
+              </label>
               <select
+                id="add-event-color"
                 [value]="calendarService.eventColor()"
                 (change)="onColorChange($event)"
-                class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary text-slate-200 transition-all"
+                class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-primary/50 text-slate-200 cursor-pointer appearance-none transition-all"
+                style="
+                  background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2364748b%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><polyline points=%226 9 12 15 18 9%22></polyline></svg>');
+                  background-repeat: no-repeat;
+                  background-position: right 0.75rem center;
+                  background-size: 1.25rem;
+                "
               >
                 <option value="">-- Choose color --</option>
                 <option value="red">Red</option>
@@ -60,18 +79,19 @@
                 <option value="purple">Purple</option>
               </select>
             </div>
-            <div class="flex justify-end gap-2 pt-2">
+
+            <div class="flex justify-end gap-3 pt-2">
               <button
                 type="button"
                 (click)="closeModals()"
-                class="px-4 py-2 text-sm rounded-xl border border-white/10 text-slate-400 hover:bg-white/5 transition-all"
+                class="px-4 py-2 text-sm font-medium rounded-xl border border-white/10 text-slate-400 hover:bg-white/5 transition-all"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 (click)="saveEvent()"
-                class="px-6 py-2 text-sm rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
+                class="px-6 py-2 text-sm rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
               >
                 Save
               </button>
@@ -81,46 +101,63 @@
       </div>
     }
 
-    <!-- Edit Event Modal -->
     @if (calendarService.editCalendarModalActive()) {
       <div
-        class="fixed inset-0 z-50 flex items-center justify-center p-4"
-        style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
         role="dialog"
         aria-modal="true"
+        aria-labelledby="modal-edit-title"
       >
-        <div class="w-full max-w-sm glass-card rounded-2xl shadow-2xl overflow-hidden">
+        <div
+          class="w-full max-w-sm glass-card rounded-2xl shadow-2xl overflow-hidden border border-white/10 bg-slate-900"
+        >
           <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
-            <h2 class="font-bold text-slate-100">Edit Event</h2>
+            <h2 id="modal-edit-title" class="font-bold text-slate-100">Edit Event</h2>
             <button
               type="button"
               (click)="closeModals()"
-              class="text-slate-500 hover:text-slate-200 transition-colors"
+              class="text-slate-500 hover:text-slate-200 transition-colors flex items-center justify-center"
             >
               <span class="material-symbols-outlined">close</span>
             </button>
           </div>
-          <form class="flex flex-col gap-4 p-5">
+
+          <form class="flex flex-col gap-5 p-5">
             <div class="space-y-2">
-              <label class="text-xs font-semibold uppercase tracking-widest text-slate-500"
-                >Event name</label
+              <label
+                for="edit-event-name"
+                class="text-xs font-semibold uppercase tracking-widest text-slate-500 block"
               >
+                Event name
+              </label>
               <input
+                id="edit-event-name"
                 type="text"
                 placeholder="Your mom's birthday"
                 [value]="calendarService.eventTitle()"
                 (input)="onTitleInput($event)"
-                class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
+                class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-primary/50 text-slate-200 placeholder:text-slate-600 transition-all"
               />
             </div>
+
             <div class="space-y-2">
-              <label class="text-xs font-semibold uppercase tracking-widest text-slate-500"
-                >Event color</label
+              <label
+                for="edit-event-color"
+                class="text-xs font-semibold uppercase tracking-widest text-slate-500 block"
               >
+                Event color
+              </label>
               <select
+                id="edit-event-color"
                 [value]="calendarService.eventColor()"
                 (change)="onColorChange($event)"
-                class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary text-slate-200 transition-all"
+                class="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-primary/50 text-slate-200 cursor-pointer appearance-none transition-all"
+                style="
+                  background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2364748b%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><polyline points=%226 9 12 15 18 9%22></polyline></svg>');
+                  background-repeat: no-repeat;
+                  background-position: right 0.75rem center;
+                  background-size: 1.25rem;
+                "
               >
                 <option value="">-- Choose color --</option>
                 <option value="red">Red</option>
@@ -132,25 +169,26 @@
                 <option value="purple">Purple</option>
               </select>
             </div>
+
             <div class="flex justify-end gap-2 pt-2">
               <button
                 type="button"
                 (click)="closeModals()"
-                class="px-4 py-2 text-sm rounded-xl border border-white/10 text-slate-400 hover:bg-white/5 transition-all"
+                class="px-4 py-2 text-sm font-medium rounded-xl border border-white/10 text-slate-400 hover:bg-white/5 transition-all"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 (click)="deleteEvent()"
-                class="px-4 py-2 text-sm rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all"
+                class="px-4 py-2 text-sm font-bold rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all"
               >
                 Delete
               </button>
               <button
                 type="button"
                 (click)="editEvent()"
-                class="px-6 py-2 text-sm rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
+                class="px-6 py-2 text-sm rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
               >
                 Save
               </button>

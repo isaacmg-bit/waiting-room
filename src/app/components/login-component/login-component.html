@@ -1,81 +1,124 @@
-<main class="min-h-screen flex items-center justify-center p-4 bg-background-dark">
+<main
+  class="min-h-screen flex items-center justify-center p-4 bg-slate-950 font-display text-slate-100 selection:bg-primary/30"
+>
   <div class="relative w-full max-w-md z-10">
+    <div
+      class="absolute -top-20 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-[120px] pointer-events-none"
+      aria-hidden="true"
+    ></div>
+    <div
+      class="absolute -bottom-20 -right-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"
+      aria-hidden="true"
+    ></div>
 
-    <!-- Background blobs -->
-    <div class="absolute -top-20 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
-    <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-
-    <div class="glass-card rounded-3xl overflow-hidden shadow-2xl">
-
-      <!-- Header -->
-      <div class="h-1 w-full bg-white/5">
+    <div
+      class="glass-card rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-500"
+    >
+      <div class="h-1 w-full bg-white/5" role="none">
         <div class="h-full bg-linear-to-r from-primary to-purple-400 w-full"></div>
       </div>
-      <div class="p-8 text-center">
-        <div class="inline-flex items-center justify-center size-14 rounded-2xl bg-primary/10 text-primary mb-6">
-          <span class="material-symbols-outlined text-3xl">login</span>
+
+      <header class="p-8 text-center">
+        <div
+          class="inline-flex items-center justify-center size-14 rounded-2xl bg-primary/10 text-primary mb-6 shadow-inner"
+        >
+          <span class="material-symbols-outlined text-3xl" aria-hidden="true">login</span>
         </div>
-        <h1 class="text-2xl font-black tracking-tight bg-linear-to-r from-primary via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+        <h1
+          class="text-2xl font-black tracking-tight bg-linear-to-r from-primary via-purple-400 to-cyan-400 bg-clip-text text-transparent"
+        >
           Login
         </h1>
-      </div>
+      </header>
 
-      <!-- Form -->
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="px-8 pb-8 space-y-5">
-
-        <!-- Email -->
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="px-8 pb-8 space-y-5" novalidate>
         <div class="space-y-2">
-          <label class="text-xs font-semibold uppercase tracking-widest text-slate-500">Email</label>
+          <label
+            for="login-email"
+            class="text-xs font-semibold uppercase tracking-widest text-slate-500 ml-1"
+          >
+            Email
+          </label>
           <div class="relative group">
-            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors">
+            <span
+              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors"
+              aria-hidden="true"
+            >
               email
             </span>
             <input
+              id="login-email"
               type="email"
-              placeholder="Enter your email"
               formControlName="email"
-              class="w-full pl-12 pr-4 py-3 bg-black/30 border border-white/10 rounded-xl focus:ring-1 focus:ring-primary focus:border-primary/50 outline-none transition-all placeholder:text-slate-600 text-slate-200"
+              placeholder="Enter your email"
+              [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+              class="w-full pl-12 pr-4 py-3 bg-black/30 border border-white/10 rounded-xl focus:ring-1 focus:ring-primary focus:border-primary/50 outline-hidden transition-all placeholder:text-slate-600 text-slate-200"
             />
           </div>
         </div>
 
-        <!-- Password -->
         <div class="space-y-2">
-          <label class="text-xs font-semibold uppercase tracking-widest text-slate-500">Password</label>
+          <label
+            for="login-password"
+            class="text-xs font-semibold uppercase tracking-widest text-slate-500 ml-1"
+          >
+            Password
+          </label>
           <div class="relative group">
-            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors">
+            <span
+              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors"
+              aria-hidden="true"
+            >
               lock
             </span>
             <input
+              id="login-password"
               type="password"
-              placeholder="Enter password"
               formControlName="password"
-              class="w-full pl-12 pr-4 py-3 bg-black/30 border border-white/10 rounded-xl focus:ring-1 focus:ring-primary focus:border-primary/50 outline-none transition-all placeholder:text-slate-600 text-slate-200"
+              placeholder="Enter password"
+              [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
+              class="w-full pl-12 pr-4 py-3 bg-black/30 border border-white/10 rounded-xl focus:ring-1 focus:ring-primary focus:border-primary/50 outline-hidden transition-all placeholder:text-slate-600 text-slate-200"
             />
           </div>
         </div>
 
-        <!-- Actions -->
         <div class="space-y-3 pt-2">
           <button
             type="submit"
-            [disabled]="loading"
-            class="w-full py-3 bg-primary hover:bg-primary/90 text-white font-black rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
+            [disabled]="loading() || form.invalid"
+            class="group w-full py-3 bg-primary hover:bg-primary/90 text-white font-black rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
           >
-            {{ loading ? 'Logging in...' : 'Login' }}
-            <span class="material-symbols-outlined">arrow_forward</span>
+            <span>{{ loading() ? 'Logging in...' : 'Login' }}</span>
+            <span
+              class="material-symbols-outlined transition-transform group-hover:translate-x-1"
+              aria-hidden="true"
+            >
+              arrow_forward
+            </span>
           </button>
 
-          <div class="flex flex-col gap-2 text-center text-sm pt-1">
-            <button type="button" class="text-primary hover:opacity-80 transition font-medium" (click)="resetPassword()">
+          <nav
+            class="flex flex-col gap-2 text-center text-sm pt-1"
+            aria-label="Login secondary actions"
+          >
+            <button
+              type="button"
+              [disabled]="loading()"
+              class="text-primary hover:text-primary/80 transition-colors font-medium focus-visible:outline-primary disabled:opacity-50"
+              (click)="resetPassword()"
+            >
               Reset password
             </button>
-            <button type="button" routerLink="/register" class="text-slate-500 hover:text-primary transition">
+            <button
+              type="button"
+              [disabled]="loading()"
+              routerLink="/register"
+              class="text-slate-500 hover:text-primary transition-colors focus-visible:outline-primary disabled:opacity-50"
+            >
               Not a user? Click here to register
             </button>
-          </div>
+          </nav>
         </div>
-
       </form>
     </div>
   </div>

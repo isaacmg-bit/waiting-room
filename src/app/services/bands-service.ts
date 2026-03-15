@@ -26,7 +26,9 @@ export class MusicBrainzService {
 
     this.http
       .get<{ artists: { id: string; name: string }[] }>(url)
-      .pipe(finalize(() => this.loadingSignal.set(false)))
+      .pipe(
+        finalize(() => this.loadingSignal.set(false)),
+      )
       .subscribe({
         next: (res) =>
           this.bandsSignal.set(

@@ -3,7 +3,8 @@ import { RouterModule, Router } from '@angular/router';
 import { SupabaseService } from '../../services/supabase-service';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideDrum } from '@ng-icons/lucide';
-import { HostListener } from '@angular/core';
+import { UserService } from '../../services/user-service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-header',
@@ -14,12 +15,21 @@ import { HostListener } from '@angular/core';
 })
 export class Header {
   readonly supabase = inject(SupabaseService);
+  readonly userService = inject(UserService);
   private readonly router = inject(Router);
 
-  isUserMenuOpen = false;
+  isUserMenuOpen = signal(false);
   readonly userId = signal<string | null>(null);
+  readonly userName = signal<string | null>(null);
 
   constructor() {
+    this.userService
+      .getMe()
+      .pipe(takeUntilDestroyed())
+      .subscribe((user) => {
+        this.userName.set(user.name);
+      });
+
     effect(() => {
       this.supabase.userRole();
 
@@ -31,14 +41,6 @@ export class Header {
         }
       });
     });
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.user-menu')) {
-      this.isUserMenuOpen = false;
-    }
   }
 
   async logout(): Promise<void> {

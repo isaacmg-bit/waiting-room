@@ -20,7 +20,7 @@ export class UserTheoryService {
   loadUserTheory(): void {
     this.loadingSignal.set(true);
     this.api
-      .get<UserTheory>(this.ME_URL)
+      .get<UserTheory | UserTheory[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
         next: (theory) => this.setTheoryData(theory),
@@ -34,7 +34,7 @@ export class UserTheoryService {
   saveUserTheory(): void {
     this.loadingSignal.set(true);
     this.api
-      .post<UserTheory>(this.BASE_URL, {
+      .post<UserTheory | UserTheory[]>(this.BASE_URL, {
         knows_theory: this.knowsTheory(),
         theory_level: this.selectedTheoryLevel(),
       })
@@ -48,7 +48,7 @@ export class UserTheoryService {
   updateUserTheory(): void {
     this.loadingSignal.set(true);
     this.api
-      .patch<UserTheory>(this.ME_URL, {
+      .patch<UserTheory | UserTheory[]>(this.ME_URL, {
         knows_theory: this.knowsTheory(),
         theory_level: this.selectedTheoryLevel(),
       })
@@ -78,9 +78,25 @@ export class UserTheoryService {
     return this.api.get<UserTheory[]>(`${this.BASE_URL}/${userId}`);
   }
 
-  private setTheoryData(theory: UserTheory): void {
+  private setTheoryData(data: UserTheory | UserTheory[] | null): void {
+    if (!data) {
+      this.userTheorySignal.set(null);
+      this.knowsTheory.set(false);
+      this.selectedTheoryLevel.set(null);
+      return;
+    }
+
+    const theory = Array.isArray(data) ? data[0] : data;
+
+    if (!theory) {
+      this.userTheorySignal.set(null);
+      this.knowsTheory.set(false);
+      this.selectedTheoryLevel.set(null);
+      return;
+    }
+
     this.userTheorySignal.set(theory);
-    this.knowsTheory.set(theory.knows_theory);
-    this.selectedTheoryLevel.set(theory.theory_level);
+    this.knowsTheory.set(theory.knows_theory ?? false);
+    this.selectedTheoryLevel.set(theory.theory_level ?? null);
   }
 }

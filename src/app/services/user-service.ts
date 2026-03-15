@@ -1,14 +1,15 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-
 import { User } from '../models/User';
 import { ApiService } from './apiservice';
+import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private readonly api = inject(ApiService);
+  private readonly toast = inject(ToastrService);
 
   readonly usersSignal = signal<User[]>([]);
   readonly loadingSignal = signal(false);
@@ -29,30 +30,50 @@ export class UserService {
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
         next: (users) => this.usersSignal.set(users),
-        error: (err) => console.error('Error loading users:', err),
+        error: (err) => {
+          console.error('Error loading users:', err);
+          this.toast.error('Error loading users');
+        },
       });
   }
 
   addUser(user: User): void {
     this.api.post<User>(this.USERS_URL, user).subscribe({
-      next: (createdUser) => this.usersSignal.update((users) => [...users, createdUser]),
-      error: (err) => console.error('Error adding user:', err),
+      next: (createdUser) => {
+        this.usersSignal.update((users) => [...users, createdUser]);
+        this.toast.success('User created successfully');
+      },
+      error: (err) => {
+        console.error('Error adding user:', err);
+        this.toast.error('Error creating user');
+      },
     });
   }
 
   editUser(id: string, body: Partial<User>): void {
     this.api.patch<User>(`${this.USERS_URL}/${id}`, body).subscribe({
-      next: (updatedUser) =>
-        this.usersSignal.update((users) => users.map((u) => (u.id === id ? updatedUser : u))),
-      error: (err) => console.error('Error updating user:', err),
+      next: (updatedUser) => {
+        this.usersSignal.update((users) => users.map((u) => (u.id === id ? updatedUser : u)));
+        this.toast.success('User updated successfully');
+      },
+      error: (err) => {
+        console.error('Error updating user:', err);
+        this.toast.error('Error updating user');
+      },
     });
   }
 
   deleteUser(id: string): void {
-    if (confirm('Are you sure you wanna delete the user?')) {
+    if (confirm('Are you sure you want to delete this user?')) {
       this.api.delete<void>(`${this.USERS_URL}/${id}`).subscribe({
-        next: () => this.usersSignal.update((users) => users.filter((u) => u.id !== id)),
-        error: (err) => console.error('Error deleting user:', err),
+        next: () => {
+          this.usersSignal.update((users) => users.filter((u) => u.id !== id));
+          this.toast.success('User deleted successfully');
+        },
+        error: (err) => {
+          console.error('Error deleting user:', err);
+          this.toast.error('Error deleting user');
+        },
       });
     }
   }

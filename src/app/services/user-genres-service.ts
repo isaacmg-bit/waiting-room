@@ -43,25 +43,31 @@ export class UserGenresService {
       { id: tempId, genre_id: genreId, genres: genre },
     ]);
 
-    this.api.post<UserGenre>(this.BASE_URL, { genre_id: genreId }).subscribe({
-      next: (created) =>
-        this.userGenreSignal.update((list) => list.map((i) => (i.id === tempId ? created : i))),
-      error: (err) => {
-        console.error('Error adding genre:', err);
-        this.userGenreSignal.update((list) => list.filter((i) => i.id !== tempId));
-      },
-    });
+    this.api
+      .post<UserGenre>(this.BASE_URL, { genre_id: genreId })
+
+      .subscribe({
+        next: (created) =>
+          this.userGenreSignal.update((list) => list.map((i) => (i.id === tempId ? created : i))),
+        error: (err) => {
+          console.error('Error adding genre:', err);
+          this.userGenreSignal.update((list) => list.filter((i) => i.id !== tempId));
+        },
+      });
   }
 
   deleteUserGenre(id: string): void {
     this.userGenreSignal.update((list) => list.filter((g) => g.id !== id));
 
-    this.api.delete<UserGenre>(`${this.BASE_URL}/${id}`).subscribe({
-      error: (err) => {
-        console.error('Error deleting genre:', err);
-        this.loadUserGenres();
-      },
-    });
+    this.api
+      .delete<UserGenre>(`${this.BASE_URL}/${id}`)
+
+      .subscribe({
+        error: (err) => {
+          console.error('Error deleting genre:', err);
+          this.loadUserGenres();
+        },
+      });
   }
 
   onSearch(query: string): void {

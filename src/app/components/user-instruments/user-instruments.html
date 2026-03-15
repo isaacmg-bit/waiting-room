@@ -1,32 +1,45 @@
 <div class="space-y-4">
-  <div class="flex flex-wrap gap-2">
+  <div class="flex flex-wrap gap-2" role="list" aria-label="Selected instruments">
     @for (ui of userInstrumentService.userInstrumentSignal(); track ui.id) {
       <span
-        class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-sm flex items-center gap-2"
+        role="listitem"
+        class="flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm text-primary"
       >
         {{ ui.instruments?.instrument_name }}
-        <span
-          class="material-symbols-outlined text-xs cursor-pointer"
+        <button
+          type="button"
           (click)="deleteInstrument(ui.id)"
-          >close</span
+          class="material-symbols-outlined cursor-pointer text-xs transition-colors hover:text-red-400 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+          aria-label="Remove instrument"
         >
+          close
+        </button>
       </span>
     }
+
     <button
+      type="button"
       (click)="openModal()"
-      class="px-3 py-1 bg-transparent text-slate-500 border border-white/10 border-dashed rounded-full text-sm hover:border-primary hover:text-primary transition-colors flex items-center gap-1"
+      class="flex items-center gap-1 rounded-full border border-dashed border-white/10 bg-transparent px-3 py-1 text-sm text-slate-500 transition-colors hover:border-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+      aria-haspopup="dialog"
+      [aria-expanded]="userInstrumentService.isModalOpen()"
     >
-      <span class="material-symbols-outlined text-xs">add</span> Add Instrument
+      <span class="material-symbols-outlined text-xs" aria-hidden="true">add</span>
+      Add Instrument
     </button>
   </div>
+
   <div class="grid grid-cols-1 gap-2">
     @for (ui of userInstrumentService.userInstrumentSignal(); track ui.id) {
       <div
-        class="flex items-center justify-between px-4 py-3 bg-black/20 rounded-xl border border-white/5"
+        class="flex items-center justify-between rounded-xl border border-white/5 bg-black/20 px-4 py-3"
       >
-        <span class="font-medium text-slate-200">{{ ui.instruments?.instrument_name }}</span>
+        <label [for]="'level-' + ui.id" class="font-medium text-slate-200">
+          {{ ui.instruments?.instrument_name }}
+        </label>
         <select
-          class="bg-black/30 border border-white/10 rounded-lg text-sm text-slate-300 focus:ring-primary px-3 py-1.5"
+          [id]="'level-' + ui.id"
+          class="rounded-lg border border-white/10 bg-black/30 px-3 py-1.5 text-sm text-slate-300 transition-colors focus:ring-2 focus:ring-primary focus:outline-hidden"
           [value]="ui.level"
           (change)="updateInstrumentLevel(ui.id, $event)"
         >
@@ -39,58 +52,79 @@
     }
   </div>
 </div>
+
 <app-user-theory></app-user-theory>
 
 @if (userInstrumentService.isModalOpen()) {
   <div
-    class="fixed inset-0 z-9999 flex items-center justify-center p-4"
-    style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px)"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-instr-title"
+    (keydown.escape)="closeModal()"
     (click)="closeModal()"
+    class="fixed inset-0 z-9999 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm animate-in fade-in duration-200"
   >
-    <div
-      class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-auto"
+    <section
+      tabindex="-1"
       (click)="$event.stopPropagation()"
+      (keydown)="$event.stopPropagation()"
+      class="relative w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl animate-in zoom-in-95 duration-200 focus:outline-hidden"
     >
-      <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
-        <h3 class="font-bold text-slate-100">Add Instrument</h3>
+      <header class="flex items-center justify-between border-b border-white/10 px-5 py-4">
+        <h3 id="modal-instr-title" class="font-bold text-slate-100">Add Instrument</h3>
         <button
           type="button"
           (click)="closeModal()"
-          class="text-slate-500 hover:text-slate-200 transition-colors"
+          class="cursor-pointer text-slate-500 transition-colors hover:text-slate-200 focus-visible:outline-hidden"
+          aria-label="Close modal"
         >
-          <span class="material-symbols-outlined">close</span>
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
         </button>
-      </div>
-      <div class="px-4 py-3 border-b border-white/10">
+      </header>
+
+      <div class="border-b border-white/10 px-4 py-3">
         <div
-          class="flex items-center gap-2 px-3 py-2 bg-black/30 border border-white/10 rounded-xl focus-within:border-primary transition-colors"
+          class="flex items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2 transition-colors focus-within:border-primary"
         >
-          <span class="material-symbols-outlined text-slate-500 text-base">search</span>
+          <label for="modal-search" class="sr-only">Search instrument</label>
+          <span class="material-symbols-outlined text-base text-slate-500" aria-hidden="true"
+            >search</span
+          >
           <input
+            id="modal-search"
             type="text"
             [value]="userInstrumentService.searchQuery()"
             (input)="onSearch($event)"
             placeholder="Search instrument..."
-            class="flex-1 bg-transparent border-none text-slate-200 text-sm focus:outline-none focus:ring-0 placeholder-slate-500"
+            class="flex-1 border-none bg-transparent text-sm text-slate-200 placeholder-slate-500 focus:ring-0 focus:outline-hidden"
           />
         </div>
       </div>
-      <ul class="max-h-64 overflow-y-auto">
+
+      <ul class="max-h-64 overflow-y-auto overflow-x-hidden scrollbar-thin" role="listbox">
         @if (userInstrumentService.filteredInstruments().length === 0) {
-          <li class="px-5 py-8 text-center text-slate-500 text-sm">No instruments found.</li>
+          <li class="px-5 py-8 text-center text-sm text-slate-500" role="status">
+            No instruments found.
+          </li>
         }
+
         @for (instrument of userInstrumentService.filteredInstruments(); track instrument.id) {
-          <li
-            class="flex items-center justify-between px-5 py-3 hover:bg-primary/10 cursor-pointer transition-colors border-b border-white/5 last:border-0"
-            (click)="selectInstrument(instrument)"
-          >
-            <div class="flex flex-col">
-              <span class="text-slate-200 font-medium">{{ instrument.instrument_name }}</span>
-              <span class="text-xs text-slate-500">{{ instrument.instrument_family }}</span>
-            </div>
+          <li role="option" aria-selected="false">
+            <button
+              type="button"
+              (click)="selectInstrument(instrument)"
+              class="group flex w-full items-center justify-between border-b border-white/5 px-5 py-3 text-left transition-colors last:border-0 hover:bg-primary/10 focus-visible:bg-primary/20 focus-visible:outline-hidden"
+            >
+              <span class="flex flex-col">
+                <span class="font-medium text-slate-200 group-hover:text-primary transition-colors">
+                  {{ instrument.instrument_name }}
+                </span>
+                <span class="text-xs text-slate-500">{{ instrument.instrument_family }}</span>
+              </span>
+            </button>
           </li>
         }
       </ul>
-    </div>
+    </section>
   </div>
 }

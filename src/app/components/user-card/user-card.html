@@ -1,149 +1,98 @@
-<!-- CARD 1: Search Results -->
-@if (user) {
-  <div
-    class="glass-card rounded-3xl overflow-hidden hover:border-primary/50 transition-all group h-full flex flex-col"
+@if (user || randomUser) {
+  @let target = user || randomUser;
+  @let instruments = user ? user.instruments : randomUser.instruments;
+
+  <article
+    class="glass-card group flex h-full flex-col overflow-hidden rounded-3xl transition-all hover:border-primary/50"
   >
-    <!-- Imagen -->
     <div
-      class="relative h-40 bg-linear-to-br from-primary/20 to-accent-purple/20 overflow-hidden shrink-0"
+      class="relative h-40 shrink-0 overflow-hidden bg-linear-to-br from-primary/20 to-accent-purple/20"
     >
       <img
-        [src]="user.profile_photo_url || 'assets/img/Portrait_Placeholder.png'"
-        alt="{{ user.name }}"
-        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+        [src]="target.profile_photo_url || 'assets/img/Portrait_Placeholder.png'"
+        alt="Photo of {{ target.name }}"
+        class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
       />
+      <div
+        class="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100"
+      ></div>
     </div>
 
-    <!-- Contenido scrollable -->
-    <div class="p-6 space-y-4 flex-1 overflow-y-auto">
-      <!-- Name & Location -->
-      <div>
-        <h3 class="text-lg font-bold text-slate-100">{{ user.name }}</h3>
-        <div class="flex items-center gap-2 text-primary text-sm mt-2">
-          <span class="material-symbols-outlined text-sm">location_on</span>
-          <p>{{ user.location }}</p>
+    <div class="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin scrollbar-thumb-white/10">
+      <header>
+        <h3 class="text-lg font-bold text-slate-100">{{ target.name }}</h3>
+        <div class="mt-2 flex items-center gap-2 text-sm text-primary">
+          <span class="material-symbols-outlined text-sm" aria-hidden="true">location_on</span>
+          <span>{{ target.location }}</span>
         </div>
-      </div>
+      </header>
 
-      <!-- Instruments -->
-      <div class="flex flex-col gap-2">
-        <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest"
-          >Instruments</label
-        >
+      <section class="flex flex-col gap-2">
+        <h4 class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+          Instruments
+        </h4>
         <div class="flex flex-wrap gap-2">
-          @for (instrument of user.instruments; track instrument.id) {
+          @for (inst of instruments; track user ? inst.id : $index) {
             <span
-              class="px-2 py-1 bg-primary/10 text-primary border border-primary/20 rounded-lg text-xs font-bold uppercase tracking-widest"
+              class="rounded-lg border border-primary/20 bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-primary"
             >
-              {{ instrument.name }}
+              {{ user ? inst.name : inst }}
             </span>
           }
         </div>
-      </div>
+      </section>
 
-      <!-- Genres -->
-      <div class="space-y-2">
-        <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest">Genres</label>
-        @for (genre of user.genres; track genre.id) {
-          <p class="text-slate-300 text-sm">{{ genre.name }}</p>
-        }
-      </div>
+      @if (user) {
+        <section class="space-y-1">
+          <h4 class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Genres</h4>
+          <div class="flex flex-wrap gap-x-2">
+            @for (genre of user.genres; track genre.id) {
+              <span class="text-sm text-slate-300">{{ genre.name }}</span>
+            }
+          </div>
+        </section>
 
-      <!-- Influences -->
-      <div class="space-y-2">
-        <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest"
-          >Influences</label
-        >
-        @for (band of user.bands; track band.band_id) {
-          <p class="text-slate-300 text-sm">{{ band.name }}</p>
-        }
-      </div>
+        <section class="space-y-1">
+          <h4 class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+            Influences
+          </h4>
+          <p class="text-sm text-slate-300">
+            @for (band of user.bands; track $index) {
+              {{ band.name }}{{ $last ? '' : ', ' }}
+            }
+          </p>
+        </section>
 
-      <!-- Music Theory -->
-      <div class="space-y-2">
-        <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest"
-          >Music theory</label
-        >
         @if (user.theory_levels) {
-          <p class="text-slate-300 text-sm">{{ user.theory_levels }}</p>
+          <section class="space-y-1">
+            <h4 class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+              Music Theory
+            </h4>
+            <p class="text-sm text-slate-300">{{ user.theory_levels }}</p>
+          </section>
         }
-      </div>
+      }
     </div>
 
-    <!-- Botones fijos al final -->
-    <div class="flex gap-2 p-6 pt-0 shrink-0">
+    <footer class="flex shrink-0 gap-2 p-6 pt-0">
       <a
-        [routerLink]="['/public-profile', user.id]"
-        class="flex-1 px-4 py-2 bg-primary text-white font-bold rounded-lg hover:scale-[1.02] active:scale-[0.98] transition-all text-center text-sm"
+        [routerLink]="['/public-profile', target.id]"
+        class="flex-1 rounded-lg bg-primary py-2.5 text-center text-sm font-bold text-white transition-all hover:scale-[1.02] hover:brightness-110 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
       >
         View Profile
       </a>
-      <a
-        [href]="
-          userSignal()?.email
-            ? 'mailto:' + userSignal()!.email + '?subject=Collaboration on Waiting Room'
-            : null
-        "
-        class="px-4 py-2 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
-      >
-        <span class="material-symbols-outlined">mail</span>
-      </a>
-    </div>
-  </div>
-}
 
-<!-- CARD 2: Random Users -->
-@if (randomUser) {
-  <div
-    class="glass-card rounded-3xl overflow-hidden hover:border-primary/50 transition-all group h-full flex flex-col"
-  >
-    <!-- Imagen -->
-    <div
-      class="relative h-40 bg-linear-to-br from-primary/20 to-accent-purple/20 overflow-hidden shrink-0"
-    >
-      <img
-        [src]="randomUser.profile_photo_url || 'assets/img/Portrait_Placeholder.png'"
-        alt="{{ randomUser.name }}"
-        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-      />
-    </div>
-
-    <!-- Contenido scrollable -->
-    <div class="p-6 space-y-4 flex-1 overflow-y-auto">
-      <!-- Name & Location -->
-      <div>
-        <h3 class="text-lg font-bold text-slate-100">{{ randomUser.name }}</h3>
-        <div class="flex items-center gap-2 text-primary text-sm mt-2">
-          <span class="material-symbols-outlined text-sm">location_on</span>
-          <p>{{ randomUser.location }}</p>
-        </div>
-      </div>
-
-      <!-- Instruments -->
-      <div class="flex flex-col gap-2">
-        <label class="text-xs font-semibold text-slate-500 uppercase tracking-widest"
-          >Instruments</label
+      @if (user) {
+        <a
+          [href]="
+            userSignal()?.email ? 'mailto:' + userSignal()!.email + '?subject=Collaboration' : null
+          "
+          class="flex items-center justify-center rounded-xl bg-slate-800 px-4 py-2 text-primary shadow-lg ring-1 ring-white/10 transition-all hover:bg-slate-700 hover:text-white active:scale-[0.95] focus-visible:ring-2 focus-visible:ring-primary"
+          [attr.aria-label]="'Send email to ' + target.name"
         >
-        <div class="flex flex-wrap gap-2">
-          @for (instrument of randomUser.instruments; track $index) {
-            <span
-              class="px-2 py-1 bg-primary/10 text-primary border border-primary/20 rounded-lg text-xs font-bold uppercase tracking-widest"
-            >
-              {{ instrument }}
-            </span>
-          }
-        </div>
-      </div>
-    </div>
-
-    <!-- Botones fijos al final -->
-    <div class="flex gap-2 p-6 pt-0 shrink-0">
-      <a
-        [routerLink]="['/public-profile', randomUser.id]"
-        class="flex-1 px-4 py-2 bg-primary text-white font-bold rounded-lg hover:scale-[1.02] active:scale-[0.98] transition-all text-center text-sm"
-      >
-        View Profile
-      </a>
-    </div>
-  </div>
+          <span class="material-symbols-outlined text-xl">mail</span>
+        </a>
+      }
+    </footer>
+  </article>
 }

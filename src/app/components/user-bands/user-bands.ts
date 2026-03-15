@@ -12,17 +12,19 @@ export class UserBands {
   readonly searchQuery = signal('');
   private searchTimeout: any;
 
-  private searchEffect = effect(() => {
-    const query = this.searchQuery();
-    if (this.searchTimeout) clearTimeout(this.searchTimeout);
-    this.searchTimeout = setTimeout(() => {
-      if (query.trim()) {
-        this.userBandsService.onSearch(query);
-      } else {
-        this.userBandsService.loadUserBands();
-      }
-    }, 400);
-  });
+  constructor() {
+    effect(() => {
+      const query = this.searchQuery();
+      if (this.searchTimeout) clearTimeout(this.searchTimeout);
+      this.searchTimeout = setTimeout(() => {
+        if (query.trim()) {
+          this.userBandsService.onSearch(query);
+        } else {
+          this.userBandsService.loadUserBands();
+        }
+      }, 400);
+    });
+  }
 
   onSearch(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
