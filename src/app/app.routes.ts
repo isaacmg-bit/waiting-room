@@ -1,19 +1,7 @@
 import { Routes } from '@angular/router';
-import { Home } from './components/home/home';
-import { Calendar } from './components/calendar/calendar';
-import { Charts } from './components/charts/charts';
-import { Map } from './components/map/map';
-import { Users } from './components/users/users';
-import { RegisterComponent } from './components/register-component/register-component';
-import { LoginComponent } from './components/login-component/login-component';
-import { ResetPass } from './components/reset-pass/reset-pass';
-import { PostLogin } from './components/post-login/post-login';
 import { profileGuard } from './guards/profile-guard';
 import { authGuard } from './guards/auth-guard';
-import { EditProfile } from './components/edit-profile/edit-profile';
 import { postLoginGuard } from './guards/post-login-guard';
-import { PublicProfile } from './components/public-profile/public-profile';
-import { UserSearch } from './components/user-search/user-search';
 import { adminGuard } from './guards/admin-guard';
 
 export const routes: Routes = [
@@ -22,63 +10,73 @@ export const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full',
   },
+
   {
     path: 'home',
-    component: Home,
+    loadComponent: () => import('./components/home/home').then((m) => m.Home),
     canActivate: [profileGuard],
   },
+
   {
     path: 'calendar',
-    component: Calendar,
+    loadComponent: () => import('./components/calendar/calendar').then((m) => m.Calendar),
     canActivate: [profileGuard],
   },
   {
     path: 'charts',
-    component: Charts,
+    loadComponent: () => import('./components/charts/charts').then((m) => m.Charts),
     canActivate: [profileGuard],
   },
   {
     path: 'map',
-    component: Map,
+    loadComponent: () => import('./components/map/map').then((m) => m.Map),
     canActivate: [profileGuard],
   },
-  {
-    path: 'users',
-    component: Users,
-    canActivate: [adminGuard],
-  },
-  {
-    path: 'register',
-    component: RegisterComponent,
-    canActivate: [authGuard],
-  },
-  {
-    path: 'login',
-    component: LoginComponent,
-    canActivate: [authGuard],
-  },
-  {
-    path: 'reset-pass',
-    component: ResetPass,
-  },
-  {
-    path: 'post-login',
-    component: PostLogin,
-    canActivate: [postLoginGuard],
-  },
+
   {
     path: 'edit-profile',
-    component: EditProfile,
+    loadComponent: () =>
+      import('./components/edit-profile/edit-profile').then((m) => m.EditProfile),
     canActivate: [profileGuard],
   },
   {
     path: 'public-profile/:userId',
-    component: PublicProfile,
+    loadComponent: () =>
+      import('./components/public-profile/public-profile').then((m) => m.PublicProfile),
     canActivate: [profileGuard],
   },
+
   {
     path: 'user-search',
-    component: UserSearch,
-    // canActivate: [profileGuard],
+    loadComponent: () => import('./components/user-search/user-search').then((m) => m.UserSearch),
+    canActivate: [profileGuard],
+  },
+
+  {
+    path: 'register',
+    loadComponent: () =>
+      import('./components/register-component/register-component').then((m) => m.RegisterComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./components/login-component/login-component').then((m) => m.LoginComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'reset-pass',
+    loadComponent: () => import('./components/reset-pass/reset-pass').then((m) => m.ResetPass),
+  },
+  {
+    path: 'post-login',
+    loadComponent: () => import('./components/post-login/post-login').then((m) => m.PostLogin),
+    canActivate: [postLoginGuard],
+  },
+
+  {
+    path: 'users',
+    loadComponent: () => import('./components/users/users').then((m) => m.Users),
+    canActivate: [adminGuard],
   },
 ];

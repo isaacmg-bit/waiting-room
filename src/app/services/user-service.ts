@@ -87,4 +87,8 @@ export class UserService {
   getMe(): Observable<User> {
     return this.api.get<User>(this.ME_URL);
   }
+
+  getRandomUsers(): Observable<User[]> {
+    return this.api.get<User[]>(`${environment.apiUrl}${environment.apiSearchRandomMusicians}`);
+  }
 }

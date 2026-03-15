@@ -15,6 +15,7 @@ export class UserCard {
   private readonly route = inject(ActivatedRoute);
 
   @Input() user: any;
+  @Input() randomUser: any;
 
   userSignal = signal<User | null>(null);
 

@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, OnDestroy } from '@angular/core';
 import { UserCard } from '../user-card/user-card';
 import { UserBandsService } from '../../services/user-bands';
 import { MusicBrainzService } from '../../services/bands-service';
@@ -7,6 +7,9 @@ import { UserGenresService } from '../../services/user-genres-service';
 import { ClickOutsideDirective } from '../../directives/click-outside.directive';
 import { ApiServiceBack } from '../../services/apiservice-back';
 import { environment } from '../../../environments/environment';
+import { UserService } from '../../services/user-service';
+import { takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-user-search',
@@ -14,12 +17,14 @@ import { environment } from '../../../environments/environment';
   templateUrl: './user-search.html',
   styleUrl: './user-search.css',
 })
-export class UserSearch {
+export class UserSearch implements OnInit, OnDestroy {
   userBandsService = inject(UserBandsService);
   userInstrumentService = inject(UserInstrumentsService);
   musicBrainzService = inject(MusicBrainzService);
   userGenresService = inject(UserGenresService);
+  userService = inject(UserService);
   api = inject(ApiServiceBack);
+  private destroy$ = new Subject<void>();
 
   readonly distanceOptions = [5, 10, 20, 50];
   readonly musicTheoryOptions = ['Basic', 'Composition', 'Advanced Orchestration'];
@@ -37,6 +42,26 @@ export class UserSearch {
   readonly isBandsOpen = signal(false);
 
   readonly searchResults = signal<any[]>([]);
+  readonly randomUsers = signal<any[]>([]);
+
+  ngOnInit() {
+    this.userService
+      .getRandomUsers()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((results) => {
+        const transformed = results.map((user: any) => ({
+          ...user,
+          instruments: user.instruments ? user.instruments.split(', ') : [],
+          genres: user.genres ? user.genres.split(', ') : [],
+          bands: user.bands ? user.bands.split(', ') : [],
+        }));
+        this.randomUsers.set(transformed);
+      });
+  }
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   search(): void {
     const params = new URLSearchParams();

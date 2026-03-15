@@ -174,10 +174,33 @@
       </button>
     </div>
 
-    <div class="grid grid-cols-4 gap-6">
-      @for (user of searchResults(); track user.id) {
-        <app-user-card [user]="user"></app-user-card>
-      }
+    <div class="bg-background-dark font-display text-slate-100">
+      <div class="max-w-7xl mx-auto px-4 py-8 md:px-8">
+        <!-- Título -->
+        <h2 class="text-2xl text-center font-bold mb-6 text-slate-100">Find your new bandmates!</h2>
+
+        <!-- Grid de resultados -->
+        @for (user of searchResults(); track user.id) {
+          <div class="glass-card rounded-3xl p-6 border border-border-dark bg-surface-dark">
+            <div class="grid grid-cols-4 gap-6">
+              <app-user-card [user]="user"></app-user-card>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="bg-background-dark font-display text-slate-100">
+      <div class="max-w-7xl mx-auto px-4 py-8 md:px-8">
+        <h2 class="text-2xl font-bold mb-6 text-slate-100">Random musicians</h2>
+        <div class="glass-card rounded-3xl p-6 border border-border-dark bg-surface-dark">
+          <div class="grid grid-cols-4 gap-6">
+            @for (user of randomUsers(); track user.id) {
+              <app-user-card [randomUser]="user"></app-user-card>
+            }
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
