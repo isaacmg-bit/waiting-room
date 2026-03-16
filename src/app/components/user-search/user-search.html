@@ -22,7 +22,7 @@
         @if (isDistanceOpen()) {
           <ul
             role="listbox"
-            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded border border-border-dark bg-white p-2 space-y-1 shadow-xl"
+            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded border border-border-dark bg-gray-500 p-2 space-y-1 shadow-xl"
           >
             @for (distance of distanceOptions; track distance) {
               @let isSel = selectedDistance() === distance;
@@ -65,7 +65,7 @@
         @if (isInstrumentsOpen() && userInstrumentService.searchQuery().length > 0) {
           <ul
             role="listbox"
-            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded border border-border-dark bg-white p-2 space-y-1 shadow-xl"
+            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded border border-border-dark bg-gray-500 p-2 space-y-1 shadow-xl"
           >
             @for (instrument of userInstrumentService.filteredInstruments(); track instrument.id) {
               @let isSel = isSelectedInstrument(instrument.instrument_name);
@@ -107,7 +107,7 @@
         @if (isMusicTheoryOpen()) {
           <ul
             role="listbox"
-            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded border border-border-dark bg-white p-2 space-y-1 shadow-xl"
+            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded border border-border-dark bg-gray-500 p-2 space-y-1 shadow-xl"
           >
             @for (theory of musicTheoryOptions; track theory) {
               @let isSel = selectedMusicTheory() === theory;
@@ -149,7 +149,7 @@
         @if (isGenresOpen() && userGenresService.searchQuery().length > 0) {
           <ul
             role="listbox"
-            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded border border-border-dark bg-white p-2 space-y-1 shadow-xl"
+            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded border border-border-dark bg-gray-500 p-2 space-y-1 shadow-xl"
           >
             @for (genre of userGenresService.filteredGenres(); track genre.id) {
               @let isSel = isSelectedGenre(genre.genre);
@@ -191,7 +191,7 @@
         @if (isBandsOpen() && musicBrainzService.bandsSignal().length > 0) {
           <ul
             role="listbox"
-            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded border border-border-dark bg-white p-2 space-y-1 shadow-xl"
+            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded border border-border-dark bg-gray-500 p-2 space-y-1 shadow-xl"
           >
             @for (band of musicBrainzService.bandsSignal(); track band.id) {
               @let isSel = isSelectedBand(band.name);

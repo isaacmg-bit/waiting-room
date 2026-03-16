@@ -14,7 +14,7 @@
         id="knows-theory"
         type="checkbox"
         [checked]="userTheoryService.knowsTheory()"
-        (change)="onTheoryChange($event)"
+        (change)="selectTheory($event)"
         class="size-5 bg-black/30 border border-white/10 rounded cursor-pointer transition-all accent-primary hover:border-primary/50 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-primary"
         aria-describedby="theory-description"
       />
@@ -22,7 +22,6 @@
         Do you know music theory?
       </label>
     </div>
-
   </fieldset>
 
   @if (userTheoryService.knowsTheory()) {
@@ -55,7 +54,7 @@
               name="theoryLevel"
               [value]="level"
               [checked]="userTheoryService.selectedTheoryLevel() === level"
-              (change)="onTheoryLevelChange(level)"
+              (change)="updateTheoryLevel(level)"
               class="hidden peer"
               [attr.aria-label]="'Select ' + level + ' theory level'"
             />

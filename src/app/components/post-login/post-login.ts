@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiServiceBack } from '../../services/apiservice-back';
@@ -14,7 +14,7 @@ import { environment } from '../../../environments/environment';
   templateUrl: './post-login.html',
   styleUrl: './post-login.css',
 })
-export class PostLogin {
+export class PostLogin implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly api = inject(ApiServiceBack);
@@ -27,6 +27,11 @@ export class PostLogin {
     name: ['', [Validators.required, Validators.minLength(2)]],
     location: [null as any, Validators.required],
   });
+
+  ngOnInit(): void {
+    this.form.reset();
+    this.selectedCity = null;
+  }
 
   onCitySelected(city: City): void {
     this.selectedCity = city;

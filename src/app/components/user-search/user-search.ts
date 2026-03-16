@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { UserCard } from '../user-card/user-card';
-import { UserBandsService } from '../../services/user-bands';
+import { UserBandsService } from '../../services/user-bands-service';
 import { MusicBrainzService } from '../../services/bands-service';
 import { UserInstrumentsService } from '../../services/user-instruments-service';
 import { UserGenresService } from '../../services/user-genres-service';

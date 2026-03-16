@@ -86,7 +86,7 @@
           <button
             type="submit"
             [disabled]="loading() || form.invalid"
-            class="group w-full py-3 bg-primary hover:bg-primary/90 text-white font-black rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+            class="group cursor-pointer w-full py-3 bg-primary hover:bg-primary/90 text-white font-black rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
           >
             <span>{{ loading() ? 'Logging in...' : 'Login' }}</span>
             <span
@@ -104,7 +104,7 @@
             <button
               type="button"
               [disabled]="loading()"
-              class="text-primary hover:text-primary/80 transition-colors font-medium focus-visible:outline-primary disabled:opacity-50"
+              class="text-primary cursor-pointer hover:text-primary/80 transition-colors font-medium focus-visible:outline-primary disabled:opacity-50"
               (click)="resetPassword()"
             >
               Reset password
@@ -115,7 +115,7 @@
               routerLink="/register"
               class="text-slate-500 hover:text-primary transition-colors focus-visible:outline-primary disabled:opacity-50"
             >
-              Not a user? Click here to register
+              Not a user? Click <b class="cursor-pointer">here</b> to register
             </button>
           </nav>
         </div>

@@ -7,7 +7,7 @@ import { UploadService } from '../../services/upload-service';
 import { UserInstrumentsService } from '../../services/user-instruments-service';
 import { UserGenresService } from '../../services/user-genres-service';
 import { UserTheoryService } from '../../services/theory-service';
-import { UserBandsService } from '../../services/user-bands';
+import { UserBandsService } from '../../services/user-bands-service';
 import { User } from '../../models/User';
 import { GalleryPhoto } from '../../models/GalleryPhoto';
 import { UserTheory } from '../../models/UserTheory';

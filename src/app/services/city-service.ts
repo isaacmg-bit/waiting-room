@@ -22,7 +22,7 @@ export class CityService {
     effect(async () => {
       const query = this.searchInput();
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       if (!query.trim()) {
         this.filteredCities.set([]);

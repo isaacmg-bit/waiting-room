@@ -12,7 +12,6 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
 import { UserGenres } from '../user-genres/user-genres';
 import { UserBands } from '../user-bands/user-bands';
-import { environment } from '../../../environments/environment';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -36,6 +35,7 @@ export class EditProfile {
   private readonly fb = inject(FormBuilder);
   private readonly uploadService = inject(UploadService);
 
+
   private currentUser: User | null = null;
   selectedCity: City | null = null;
   profilePhotoUrl = signal<string | null>(null);
@@ -47,18 +47,7 @@ export class EditProfile {
     bio: [''],
     gear: [''],
     rehearsal_space: [''],
-    social_links: this.fb.array<FormGroup>([]),
   });
-
-  socialLinksControls = computed(() => {
-    const arr = this.form.get('social_links');
-    if (arr instanceof FormArray) {
-      return arr.controls;
-    }
-    return [];
-  });
-
-  profileFileInput = viewChild.required<ElementRef<HTMLInputElement>>('profileFileInput');
 
   constructor() {
     this.userService
@@ -73,21 +62,6 @@ export class EditProfile {
           gear: user.gear,
           rehearsal_space: user.rehearsal_space,
         });
-
-        if (user.social_links && Array.isArray(user.social_links)) {
-          const socialLinksArray = this.fb.array<FormGroup>(
-            user.social_links
-              .filter((link) => link.platform && link.url)
-              .map((link) =>
-                this.fb.group({
-                  platform: [link.platform, Validators.required],
-                  url: [link.url, Validators.required],
-                }),
-              ),
-          );
-
-          this.form.setControl('social_links', socialLinksArray);
-        }
 
         if (user.location) {
           const city = await this.cityService.getCityCoords(user.location);
@@ -139,49 +113,14 @@ export class EditProfile {
     }
   }
 
-  addLink(): void {
-    const arr = this.form.get('social_links') as FormArray;
-    arr.push(
-      this.fb.group({
-        platform: ['', Validators.required],
-        url: ['', Validators.required],
-      }),
-    );
-  }
-
-  removeLink(index: number): void {
-    const arr = this.form.get('social_links') as FormArray;
-    arr.removeAt(index);
-  }
-
-  hasIncompleteLinks(): boolean {
-    const linksArray = this.form.get('social_links') as FormArray;
-    return linksArray.controls.some((c) => !c.get('platform')?.value);
-  }
-
-  canSave(): boolean {
-    return this.form.valid && !this.hasIncompleteLinks();
-  }
-
-  triggerProfileFileInput(): void {
-    this.profileFileInput().nativeElement.click();
-  }
-
   saveProfile(): void {
     if (!this.currentUser) return;
-
-    const rawLinks = (this.form.get('social_links') as FormArray).value;
-    const transformedLinks = rawLinks.map((link: any) => ({
-      platform: link.platform,
-      url: this.buildSocialUrl(link.platform, link.url),
-    }));
 
     const payload: Partial<User> = {
       name: this.form.value.name ?? undefined,
       bio: this.form.value.bio ?? undefined,
       gear: this.form.value.gear ?? undefined,
       rehearsal_space: this.form.value.rehearsal_space ?? undefined,
-      social_links: transformedLinks,
     };
 
     if (this.selectedCity) {
@@ -192,7 +131,4 @@ export class EditProfile {
     this.userService.editUser(this.currentUser.id, payload);
   }
 
-  private buildSocialUrl(platform: string, username: string): string {
-    return environment[platform as keyof typeof environment] + username;
-  }
 }

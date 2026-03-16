@@ -21,6 +21,7 @@ export class Header {
   isUserMenuOpen = signal(false);
   readonly userId = signal<string | null>(null);
   readonly userName = signal<string | null>(null);
+  readonly userRole = signal<string | null>(null);
 
   constructor() {
     this.userService
@@ -36,6 +37,8 @@ export class Header {
       this.supabase.getSession().then(({ data: { session } }) => {
         if (session?.user.id) {
           this.userId.set(session.user.id);
+          this.supabase.loadUserRole(this.userId()!);
+          this.userRole.set(this.userId());
         } else {
           this.userId.set(null);
         }

@@ -6,7 +6,6 @@ import { UserBand } from '../models/UserBand';
 import { finalize, Observable } from 'rxjs';
 import { Band } from '../models/Band';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -32,9 +31,7 @@ export class UserBandsService {
     this.loadingSignal.set(true);
     this.api
       .get<UserBand[]>(this.ME_URL)
-      .pipe(
-        finalize(() => this.loadingSignal.set(false)),
-      )
+      .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
         next: (bands) => this.userBandsSignal.set(bands),
         error: (err) => console.error('Error loading user bands:', err),
