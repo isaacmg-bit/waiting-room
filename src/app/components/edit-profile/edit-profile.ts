@@ -12,7 +12,6 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
 import { UserGenres } from '../user-genres/user-genres';
 import { UserBands } from '../user-bands/user-bands';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
 import { UserInstrumentsService } from '../../services/user-instruments-service';
 import { UserTheoryService } from '../../services/theory-service';
@@ -59,37 +58,31 @@ export class EditProfile {
   });
 
   constructor() {
-    this.userService
-      .getMe()
-      .pipe(takeUntilDestroyed())
-      .subscribe(async (user) => {
-        this.currentUser = user;
+    this.userService.getMe().subscribe(async (user) => {
+      this.currentUser = user;
 
-        const city = user.location ? await this.cityService.getCityCoords(user.location) : null;
+      const city = user.location ? await this.cityService.getCityCoords(user.location) : null;
 
-        this.initialFormValue = {
-          name: user.name,
-          email: user.email,
-          bio: user.bio,
-          gear: user.gear,
-          rehearsal_space: user.rehearsal_space,
-          location: city,
-        };
+      this.initialFormValue = {
+        name: user.name,
+        email: user.email,
+        bio: user.bio,
+        gear: user.gear,
+        rehearsal_space: user.rehearsal_space,
+        location: city,
+      };
 
-        this.form.patchValue(this.initialFormValue);
-        this.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
-        this.userInstrumentsService.loadUserInstruments();
-        this.userTheoryService.loadUserTheory();
-        this.userBandsService.loadUserBands();
-        this.userGenresService.loadUserGenres();
-        this.uploadService
-          .getGallery()
-          .pipe(takeUntilDestroyed())
-          .subscribe({
-            next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
-            error: () => this.uploadService.galleryPhotosSignal.set([]),
-          });
+      this.form.patchValue(this.initialFormValue);
+      this.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
+      this.userInstrumentsService.loadUserInstruments();
+      this.userTheoryService.loadUserTheory();
+      this.userBandsService.loadUserBands();
+      this.userGenresService.loadUserGenres();
+      this.uploadService.getGallery().subscribe({
+        next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
+        error: () => this.uploadService.galleryPhotosSignal.set([]),
       });
+    });
   }
 
   async onProfileSelected(event: Event) {
