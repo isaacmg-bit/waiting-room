@@ -1,8 +1,8 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { ApiServiceBack } from './apiservice-back';
 import { UserTheory } from '../models/UserTheory';
 import { environment } from '../../environments/environment';
-import { finalize, Observable } from 'rxjs';
+import { finalize, Observable, firstValueFrom } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class UserTheoryService {
@@ -10,9 +10,17 @@ export class UserTheoryService {
 
   readonly userTheorySignal = signal<UserTheory | null>(null);
   readonly loadingSignal = signal(false);
-  readonly knowsTheory = signal(false);
-  readonly selectedTheoryLevel = signal<string | null>(null);
   readonly theoryLevels = ['Basic', 'Composition', 'Advanced Orchestration'];
+
+  readonly pendingKnowsTheory = signal<boolean | null>(null);
+  readonly pendingTheoryLevel = signal<string | null>(null);
+
+  readonly currentKnowsTheory = computed(
+    () => this.pendingKnowsTheory() ?? this.userTheorySignal()?.knows_theory ?? false,
+  );
+  readonly currentTheoryLevel = computed(
+    () => this.pendingTheoryLevel() ?? this.userTheorySignal()?.theory_level ?? null,
+  );
 
   private readonly BASE_URL = environment.apiUserTheoryUrl;
   private readonly ME_URL = `${environment.apiUserTheoryUrl}${environment.apiMeUrl}`;
@@ -31,46 +39,40 @@ export class UserTheoryService {
       });
   }
 
-  saveUserTheory(): void {
-    this.loadingSignal.set(true);
-    this.api
-      .post<UserTheory | UserTheory[]>(this.BASE_URL, {
-        knows_theory: this.knowsTheory(),
-        theory_level: this.selectedTheoryLevel(),
-      })
-      .pipe(finalize(() => this.loadingSignal.set(false)))
-      .subscribe({
-        next: (created) => this.setTheoryData(created),
-        error: (err) => console.error('Error saving theory:', err),
-      });
-  }
-
-  updateUserTheory(): void {
-    this.loadingSignal.set(true);
-    this.api
-      .patch<UserTheory | UserTheory[]>(this.ME_URL, {
-        knows_theory: this.knowsTheory(),
-        theory_level: this.selectedTheoryLevel(),
-      })
-      .pipe(finalize(() => this.loadingSignal.set(false)))
-      .subscribe({
-        next: (updated) => this.setTheoryData(updated),
-        error: (err) => console.error('Error updating theory:', err),
-      });
-  }
-
   onTheoryChange(): void {
-    if (!this.knowsTheory()) {
-      this.selectedTheoryLevel.set(null);
+    const newValue = !this.currentKnowsTheory();
+    this.pendingKnowsTheory.set(newValue);
+    if (!newValue) this.pendingTheoryLevel.set(null);
+  }
+
+  onTheoryLevelChange(level: string): void {
+    this.pendingTheoryLevel.set(level);
+  }
+
+  discardPendingTheory(): void {
+    this.pendingKnowsTheory.set(null);
+    this.pendingTheoryLevel.set(null);
+  }
+
+  async saveUserTheory(): Promise<void> {
+    const knows = this.pendingKnowsTheory() ?? this.userTheorySignal()?.knows_theory ?? false;
+    const level = this.pendingTheoryLevel() ?? this.userTheorySignal()?.theory_level ?? null;
+
+    this.loadingSignal.set(true);
+    try {
+      const created = await firstValueFrom(
+        this.api.post<UserTheory>(this.BASE_URL, { knows_theory: knows, theory_level: level }),
+      );
+      this.setTheoryData(created);
+    } catch (err) {
+      console.error('Error saving theory:', err);
+    } finally {
+      this.loadingSignal.set(false);
+      this.discardPendingTheory();
     }
-    this.updateUserTheory();
   }
 
-  onTheoryLevelChange(): void {
-    this.updateUserTheory();
-  }
-
-  getTheory() {
+  getTheory(): Observable<UserTheory[]> {
     return this.api.get<UserTheory[]>('/user-theory/me');
   }
 
@@ -81,22 +83,12 @@ export class UserTheoryService {
   private setTheoryData(data: UserTheory | UserTheory[] | null): void {
     if (!data) {
       this.userTheorySignal.set(null);
-      this.knowsTheory.set(false);
-      this.selectedTheoryLevel.set(null);
+      this.discardPendingTheory();
       return;
     }
 
     const theory = Array.isArray(data) ? data[0] : data;
-
-    if (!theory) {
-      this.userTheorySignal.set(null);
-      this.knowsTheory.set(false);
-      this.selectedTheoryLevel.set(null);
-      return;
-    }
-
     this.userTheorySignal.set(theory);
-    this.knowsTheory.set(theory.knows_theory ?? false);
-    this.selectedTheoryLevel.set(theory.theory_level ?? null);
+    this.discardPendingTheory();
   }
 }

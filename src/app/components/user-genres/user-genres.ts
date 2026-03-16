@@ -4,7 +4,7 @@ import { Genre } from '../../models/Genre';
 
 @Component({
   selector: 'app-user-genres',
-  imports: [],
+  standalone: true,
   templateUrl: './user-genres.html',
   styleUrl: './user-genres.css',
 })
@@ -34,5 +34,13 @@ export class UserGenres implements OnInit {
 
   closeModal(): void {
     this.userGenresService.closeModal();
+  }
+
+  saveChanges(): void {
+    this.userGenresService.saveUserGenres();
+  }
+
+  discardChanges(): void {
+    this.userGenresService.discardPendingGenres();
   }
 }

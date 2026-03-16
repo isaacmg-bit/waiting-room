@@ -16,14 +16,11 @@ export class UserTheory implements OnInit {
     this.userTheoryService.loadUserTheory();
   }
 
-  selectTheory(event: Event) {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.userTheoryService.knowsTheory.set(checked);
+  selectTheory() {
     this.userTheoryService.onTheoryChange();
   }
 
   updateTheoryLevel(level: string) {
-    this.userTheoryService.selectedTheoryLevel.set(level);
-    this.userTheoryService.onTheoryLevelChange();
+    this.userTheoryService.onTheoryLevelChange(level);
   }
 }

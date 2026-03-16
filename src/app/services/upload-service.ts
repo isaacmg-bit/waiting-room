@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { SupabaseService } from './supabase-service';
 import { ApiServiceBack } from './apiservice-back';
 import { GalleryPhoto } from '../models/GalleryPhoto';
@@ -14,10 +14,12 @@ export class UploadService {
 
   readonly galleryPhotosSignal = signal<GalleryPhoto[]>([]);
   readonly selectedPhoto = signal<string | null>(null);
+  readonly pendingPhotos = signal<GalleryPhoto[]>([]);
 
   private readonly BASE_URL = environment.apiGalleryUrl;
   private readonly profilePicUrl = '/profilepicture.jpg';
 
+  readonly allPhotos = computed(() => [...this.galleryPhotosSignal(), ...this.pendingPhotos()]);
   private async getSession() {
     const {
       data: { session },
@@ -54,19 +56,27 @@ export class UploadService {
     const url = publicUrl.publicUrl;
 
     const tempId = `temp-${Date.now()}`;
-    this.galleryPhotosSignal.update((photos) => [...photos, { id: tempId, url, position }]);
-
-    this.api
-      .post<GalleryPhoto>('/gallery', { url, position })
-      .subscribe({
-        next: (createdPhoto) =>
-          this.galleryPhotosSignal.update((photos) =>
-            photos.map((p) => (p.id === tempId ? (createdPhoto ?? p) : p)),
-          ),
-        error: (err) => console.error('Error adding gallery photo:', err),
-      });
-
+    this.pendingPhotos.update((p) => [...p, { id: tempId, url, position }]);
     return url;
+  }
+
+  async savePendingPhotos(): Promise<void> {
+    for (const photo of this.pendingPhotos()) {
+      const created = await firstValueFrom(
+        this.api.post<GalleryPhoto>('/gallery', { url: photo.url, position: photo.position }),
+      );
+      this.galleryPhotosSignal.update((p) => [...p, created]);
+    }
+    this.pendingPhotos.set([]);
+  }
+
+  async discardPendingPhotos(): Promise<void> {
+    await Promise.all(
+      this.pendingPhotos().map((photo) =>
+        this.deleteFromStorage(photo.url.split('/gallery/')[1]).catch(() => null),
+      ),
+    );
+    this.pendingPhotos.set([]);
   }
 
   getGallery() {
@@ -107,9 +117,7 @@ export class UploadService {
   async onGallerySelected(files: FileList): Promise<void> {
     if (!files?.length) return;
 
-    for (const [i, file] of Array.from(files).entries()) {
-      await this.uploadGalleryPhoto(file, i + 1);
-    }
+    await Promise.all(Array.from(files).map((file, i) => this.uploadGalleryPhoto(file, i + 1)));
   }
 
   getGalleryByUserId(userId: string) {
@@ -121,6 +129,6 @@ export class UploadService {
   }
 
   canAddMorePhotos(): boolean {
-    return this.galleryPhotosSignal().length < 4;
+    return this.allPhotos().length < 4;
   }
 }

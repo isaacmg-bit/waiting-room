@@ -3,12 +3,10 @@ import { environment } from '../../environments/environment';
 import { ApiServiceBack } from './apiservice-back';
 import { MusicBrainzService } from './bands-service';
 import { UserBand } from '../models/UserBand';
-import { finalize, Observable } from 'rxjs';
 import { Band } from '../models/Band';
+import { finalize, Observable, firstValueFrom } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class UserBandsService {
   private readonly api = inject(ApiServiceBack);
   private readonly bandsService = inject(MusicBrainzService);
@@ -18,11 +16,16 @@ export class UserBandsService {
   readonly isModalOpen = signal(false);
   readonly searchQuery = signal('');
 
+  readonly pendingBands = signal<UserBand[]>([]);
+  readonly pendingDeletes = signal<string[]>([]);
+
   readonly filteredBands = computed(() => {
     const q = this.searchQuery().toLowerCase();
     if (!q) return this.bandsService.bandsSignal();
     return this.bandsService.bandsSignal().filter((i) => i.name.toLowerCase().includes(q));
   });
+
+  readonly allBands = computed(() => [...this.userBandsSignal(), ...this.pendingBands()]);
 
   private readonly BASE_URL = environment.apiUserBandsUrl;
   private readonly ME_URL = `${environment.apiUserBandsUrl}${environment.apiMeUrl}`;
@@ -38,40 +41,47 @@ export class UserBandsService {
       });
   }
 
-  addUserBand(bandName: string, bandId: string): void {
+  addPendingBand(bandName: string, bandId: string): void {
     const tempId = `temp-${Date.now()}`;
-
-    this.userBandsSignal.update((list) => [...list, { id: tempId, name: bandName }]);
-
-    this.api
-      .post<UserBand>(this.BASE_URL, {
-        band_id: bandId,
-        name: bandName,
-      })
-
-      .subscribe({
-        next: (created) => {
-          this.userBandsSignal.update((list) => list.map((i) => (i.id === tempId ? created : i)));
-        },
-        error: (err) => {
-          console.error('Error adding band:', err);
-          this.userBandsSignal.update((list) => list.filter((i) => i.id !== tempId));
-        },
-      });
+    this.pendingBands.update((list) => [...list, { id: tempId, name: bandName, band_id: bandId }]);
   }
 
-  deleteUserBand(id: string): void {
-    this.userBandsSignal.update((list) => list.filter((g) => g.id !== id));
+  deleteBand(id: string): void {
+    if (this.pendingBands().some((b) => b.id === id)) {
+      this.pendingBands.update((list) => list.filter((b) => b.id !== id));
+      return;
+    }
+    this.pendingDeletes.update((list) => [...list, id]);
+    this.userBandsSignal.update((list) => list.filter((b) => b.id !== id));
+  }
 
-    this.api
-      .delete<UserBand>(`${this.BASE_URL}/${id}`)
+  discardPendingBands(): void {
+    this.pendingBands.set([]);
+    this.pendingDeletes.set([]);
+  }
 
-      .subscribe({
-        error: (err) => {
-          console.error('Error deleting band:', err);
-          this.loadUserBands();
-        },
-      });
+  async savePendingBands(): Promise<void> {
+    for (const band of this.pendingBands()) {
+      try {
+        const created = await firstValueFrom(
+          this.api.post<UserBand>(this.BASE_URL, { band_id: band.id, name: band.name }),
+        );
+        this.userBandsSignal.update((list) => [...list, created]);
+      } catch (err) {
+        console.error('Error saving band:', err);
+      }
+    }
+
+    for (const id of this.pendingDeletes()) {
+      try {
+        await firstValueFrom(this.api.delete(`${this.BASE_URL}/${id}`));
+      } catch (err) {
+        console.error('Error deleting band:', err);
+      }
+    }
+
+    this.pendingBands.set([]);
+    this.pendingDeletes.set([]);
   }
 
   onSearch(query: string): void {
@@ -79,18 +89,11 @@ export class UserBandsService {
     this.bandsService.searchArtists(query);
   }
 
-  getBands() {
-    return this.api.get<UserBand[]>('/user-bands/me');
-  }
-
-  getBandsByUserId(userId: string): Observable<UserBand[]> {
-    return this.api.get<UserBand[]>(`${this.BASE_URL}/${userId}`);
-  }
-
   selectBand(band: Band): void {
-    this.addUserBand(band.name, band.id);
+    this.addPendingBand(band.name, band.id);
     this.closeModal();
   }
+
   openModal(): void {
     this.searchQuery.set('');
     this.isModalOpen.set(true);
@@ -99,5 +102,13 @@ export class UserBandsService {
   closeModal(): void {
     this.isModalOpen.set(false);
     this.searchQuery.set('');
+  }
+
+  getBands(): Observable<UserBand[]> {
+    return this.api.get<UserBand[]>('/user-bands/me');
+  }
+
+  getBandsByUserId(userId: string): Observable<UserBand[]> {
+    return this.api.get<UserBand[]>(`${this.BASE_URL}/${userId}`);
   }
 }

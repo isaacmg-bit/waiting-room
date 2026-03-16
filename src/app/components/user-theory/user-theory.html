@@ -13,8 +13,8 @@
       <input
         id="knows-theory"
         type="checkbox"
-        [checked]="userTheoryService.knowsTheory()"
-        (change)="selectTheory($event)"
+        [checked]="userTheoryService.currentKnowsTheory()"
+        (change)="selectTheory()"
         class="size-5 bg-black/30 border border-white/10 rounded cursor-pointer transition-all accent-primary hover:border-primary/50 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-primary"
         aria-describedby="theory-description"
       />
@@ -24,7 +24,7 @@
     </div>
   </fieldset>
 
-  @if (userTheoryService.knowsTheory()) {
+  @if (userTheoryService.currentKnowsTheory()) {
     <fieldset
       class="mt-6 pt-6 space-y-4 border-none p-0 m-0"
       role="group"
@@ -53,7 +53,7 @@
               type="radio"
               name="theoryLevel"
               [value]="level"
-              [checked]="userTheoryService.selectedTheoryLevel() === level"
+              [checked]="userTheoryService.currentTheoryLevel() === level"
               (change)="updateTheoryLevel(level)"
               class="hidden peer"
               [attr.aria-label]="'Select ' + level + ' theory level'"
@@ -62,11 +62,11 @@
               [for]="'theory-level-' + level"
               [class]="
                 'block w-full py-3 px-4 rounded-xl text-sm font-medium cursor-pointer transition-all border text-center ' +
-                (userTheoryService.selectedTheoryLevel() === level
+                (userTheoryService.currentTheoryLevel() === level
                   ? 'bg-primary/10 border-primary text-primary shadow-lg shadow-primary/20 scale-[1.02]'
                   : 'bg-black/20 border-white/10 text-slate-400 hover:border-primary/50 hover:bg-black/30 hover:scale-[1.01]')
               "
-              [attr.aria-pressed]="userTheoryService.selectedTheoryLevel() === level"
+              [attr.aria-pressed]="userTheoryService.currentTheoryLevel() === level"
             >
               {{ level }}
             </label>

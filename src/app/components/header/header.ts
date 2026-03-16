@@ -4,7 +4,6 @@ import { SupabaseService } from '../../services/supabase-service';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideDrum } from '@ng-icons/lucide';
 import { UserService } from '../../services/user-service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-header',
@@ -24,13 +23,6 @@ export class Header {
   readonly userRole = signal<string | null>(null);
 
   constructor() {
-    this.userService
-      .getMe()
-      .pipe(takeUntilDestroyed())
-      .subscribe((user) => {
-        this.userName.set(user.name);
-      });
-
     effect(() => {
       this.supabase.userRole();
 
@@ -39,8 +31,13 @@ export class Header {
           this.userId.set(session.user.id);
           this.supabase.loadUserRole(this.userId()!);
           this.userRole.set(this.userId());
+
+          this.userService.getMe().subscribe((user) => {
+            this.userName.set(user.name);
+          });
         } else {
           this.userId.set(null);
+          this.userName.set(null);
         }
       });
     });

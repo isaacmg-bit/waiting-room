@@ -28,7 +28,7 @@
                 <button
                   type="button"
                   (click)="removeProfilePhoto()"
-                  class="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-600 z-10 flex items-center justify-center"
+                  class="absolute cursor-pointer top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-600 z-10 flex items-center justify-center"
                 >
                   <ng-icon name="heroTrash" size="16" />
                 </button>
@@ -48,6 +48,7 @@
             <p class="block text-xs font-semibold mb-3 text-slate-400 uppercase tracking-widest">
               Showcase Gallery
             </p>
+            <p class="mb-3 text-xs text-slate-500">Upload up to 4 photos.</p>
             <app-user-gallery></app-user-gallery>
           </div>
         </div>
@@ -76,13 +77,13 @@
           <div class="space-y-2">
             <label
               for="email"
-              class="text-xs font-semibold text-slate-500 uppercase tracking-widest"
+              class="text-xs font-semibold text-slate-500 bg-gr uppercase tracking-widest"
               >Email Address</label
             >
             <input
               id="email"
               formControlName="email"
-              class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none text-slate-200"
+              class="w-full border border-white/10 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none text-slate-200 bg-gray-800"
               type="email"
               placeholder="hello@musician.com"
             />
@@ -91,7 +92,7 @@
           <div class="md:col-span-2">
             <app-user-location
               [control]="form.controls.location"
-              (citySelected)="selectedCity = $event"
+              (citySelected)="form.controls.location.setValue($event)"
             ></app-user-location>
           </div>
 
@@ -169,8 +170,6 @@
         </div>
       </section>
 
-
-
       <section class="glass-card rounded-3xl p-6 md:p-8">
         <div class="flex items-center gap-3 mb-6">
           <span class="material-symbols-outlined text-purple-400">language</span>
@@ -239,6 +238,7 @@
           <button
             class="px-6 py-3 rounded-xl font-medium hover:bg-white/5 transition-colors text-slate-300"
             type="button"
+            (click)="discardChanges()"
           >
             Discard
           </button>

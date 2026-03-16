@@ -3,7 +3,7 @@ import { ApiServiceBack } from './apiservice-back';
 import { UserGenre } from '../models/UserGenre';
 import { Genre } from '../models/Genre';
 import { GenresService } from './genres-service';
-import { finalize, Observable } from 'rxjs';
+import { finalize, Observable, firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -16,11 +16,16 @@ export class UserGenresService {
   readonly isModalOpen = signal(false);
   readonly searchQuery = signal('');
 
+  readonly pendingGenres = signal<UserGenre[]>([]);
+  readonly pendingDeletes = signal<string[]>([]);
+
   readonly filteredGenres = computed(() => {
     const q = this.searchQuery().toLowerCase();
     if (!q) return this.genresService.genresSignal();
     return this.genresService.genresSignal().filter((i) => i.genre.toLowerCase().includes(q));
   });
+
+  readonly allGenres = computed(() => [...this.userGenreSignal(), ...this.pendingGenres()]);
 
   private readonly BASE_URL = environment.apiUserGenresUrl;
   private readonly ME_URL = `${environment.apiUserGenresUrl}${environment.apiMeUrl}`;
@@ -36,38 +41,58 @@ export class UserGenresService {
       });
   }
 
-  addUserGenre(genreId: string, genre: Genre): void {
+  addPendingGenre(genre: Genre): void {
     const tempId = `temp-${Date.now()}`;
-    this.userGenreSignal.update((list) => [
+    this.pendingGenres.update((list) => [
       ...list,
-      { id: tempId, genre_id: genreId, genres: genre },
+      { id: tempId, genre_id: genre.id, genres: genre },
     ]);
+  }
 
-    this.api
-      .post<UserGenre>(this.BASE_URL, { genre_id: genreId })
-
-      .subscribe({
-        next: (created) =>
-          this.userGenreSignal.update((list) => list.map((i) => (i.id === tempId ? created : i))),
-        error: (err) => {
-          console.error('Error adding genre:', err);
-          this.userGenreSignal.update((list) => list.filter((i) => i.id !== tempId));
-        },
-      });
+  deletePendingGenre(id: string): void {
+    this.pendingGenres.update((list) => list.filter((g) => g.id !== id));
   }
 
   deleteUserGenre(id: string): void {
+    if (this.pendingGenres().some((g) => g.id === id)) {
+      this.deletePendingGenre(id);
+      return;
+    }
+
+    this.pendingDeletes.update((list) => [...list, id]);
     this.userGenreSignal.update((list) => list.filter((g) => g.id !== id));
+  }
 
-    this.api
-      .delete<UserGenre>(`${this.BASE_URL}/${id}`)
+  discardPendingGenres(): void {
+    this.pendingGenres.set([]);
+    this.pendingDeletes.set([]);
+  }
 
-      .subscribe({
-        error: (err) => {
-          console.error('Error deleting genre:', err);
-          this.loadUserGenres();
-        },
-      });
+  async saveUserGenres(): Promise<void> {
+    this.loadingSignal.set(true);
+
+    for (const g of this.pendingGenres()) {
+      try {
+        const created = await firstValueFrom(
+          this.api.post<UserGenre>(this.BASE_URL, { genre_id: g.genre_id }),
+        );
+        this.userGenreSignal.update((list) => [...list, created]);
+      } catch (err) {
+        console.error('Error saving genre:', err);
+      }
+    }
+
+    for (const id of this.pendingDeletes()) {
+      try {
+        await firstValueFrom(this.api.delete(`${this.BASE_URL}/${id}`));
+      } catch (err) {
+        console.error('Error deleting genre:', err);
+      }
+    }
+
+    this.pendingGenres.set([]);
+    this.pendingDeletes.set([]);
+    this.loadingSignal.set(false);
   }
 
   onSearch(query: string): void {
@@ -75,16 +100,8 @@ export class UserGenresService {
   }
 
   selectGenre(genre: Genre): void {
-    this.addUserGenre(genre.id, genre);
+    this.addPendingGenre(genre);
     this.closeModal();
-  }
-
-  getGenres() {
-    return this.api.get<UserGenre[]>('/user-genres/me');
-  }
-
-  getGenresByUserId(userId: string): Observable<UserGenre[]> {
-    return this.api.get<UserGenre[]>(`${this.BASE_URL}/${userId}`);
   }
 
   openModal(): void {
@@ -95,5 +112,13 @@ export class UserGenresService {
   closeModal(): void {
     this.isModalOpen.set(false);
     this.searchQuery.set('');
+  }
+
+  getGenres(): Observable<UserGenre[]> {
+    return this.api.get<UserGenre[]>('/user-genres/me');
+  }
+
+  getGenresByUserId(userId: string): Observable<UserGenre[]> {
+    return this.api.get<UserGenre[]>(`${this.BASE_URL}/${userId}`);
   }
 }

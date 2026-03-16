@@ -9,16 +9,16 @@ import { Band } from '../../models/Band';
 })
 export class UserBands {
   readonly userBandsService = inject(UserBandsService);
+
   readonly searchInput = signal('');
   private searchTimeout: any;
 
   constructor() {
-    effect(async () => {
+    effect(() => {
       const query = this.searchInput();
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
       if (this.searchTimeout) clearTimeout(this.searchTimeout);
+
       this.searchTimeout = setTimeout(() => {
         if (query.trim()) {
           this.userBandsService.onSearch(query);
@@ -39,7 +39,7 @@ export class UserBands {
   }
 
   deleteBand(id: string): void {
-    this.userBandsService.deleteUserBand(id);
+    this.userBandsService.deleteBand(id);
   }
 
   openModal(): void {

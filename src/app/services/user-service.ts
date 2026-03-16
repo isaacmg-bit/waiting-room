@@ -19,10 +19,6 @@ export class UserService {
   private readonly USERS_URL = `${environment.apiUrl}${environment.apiUserUrl}`;
   private readonly ME_URL = `${environment.apiUrl}${environment.apiUserUrl}${environment.apiMeUrl}`;
 
-  constructor() {
-    this.loadUsers();
-  }
-
   loadUsers(): void {
     this.loadingSignal.set(true);
     this.api

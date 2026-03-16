@@ -1,6 +1,6 @@
-import { Component, inject, signal, viewChild, ElementRef, computed } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { UserService } from '../../services/user-service';
-import { FormBuilder, ReactiveFormsModule, FormArray, Validators, FormGroup } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UploadService } from '../../services/upload-service';
 import { UserGallery } from '../user-gallery/user-gallery';
 import { UserLocation } from '../user-location/user-location';
@@ -13,6 +13,11 @@ import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
 import { UserGenres } from '../user-genres/user-genres';
 import { UserBands } from '../user-bands/user-bands';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ToastrService } from 'ngx-toastr';
+import { UserInstrumentsService } from '../../services/user-instruments-service';
+import { UserTheoryService } from '../../services/theory-service';
+import { UserBandsService } from '../../services/user-bands-service';
+import { UserGenresService } from '../../services/user-genres-service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -34,10 +39,14 @@ export class EditProfile {
   private readonly cityService = inject(CityService);
   private readonly fb = inject(FormBuilder);
   private readonly uploadService = inject(UploadService);
-
+  private readonly userInstrumentsService = inject(UserInstrumentsService);
+  private readonly userTheoryService = inject(UserTheoryService);
+  private readonly userBandsService = inject(UserBandsService);
+  private readonly userGenresService = inject(UserGenresService);
+  private readonly toast = inject(ToastrService);
 
   private currentUser: User | null = null;
-  selectedCity: City | null = null;
+  private initialFormValue: any;
   profilePhotoUrl = signal<string | null>(null);
 
   form = this.fb.group({
@@ -55,30 +64,31 @@ export class EditProfile {
       .pipe(takeUntilDestroyed())
       .subscribe(async (user) => {
         this.currentUser = user;
-        this.form.patchValue({
+
+        const city = user.location ? await this.cityService.getCityCoords(user.location) : null;
+
+        this.initialFormValue = {
           name: user.name,
           email: user.email,
           bio: user.bio,
           gear: user.gear,
           rehearsal_space: user.rehearsal_space,
-        });
+          location: city,
+        };
 
-        if (user.location) {
-          const city = await this.cityService.getCityCoords(user.location);
-          if (city) {
-            this.form.get('location')?.setValue(city);
-          }
-        }
-
+        this.form.patchValue(this.initialFormValue);
         this.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
-      });
-
-    this.uploadService
-      .getGallery()
-      .pipe(takeUntilDestroyed())
-      .subscribe({
-        next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
-        error: (err) => console.error('Error loading gallery photos:', err),
+        this.userInstrumentsService.loadUserInstruments();
+        this.userTheoryService.loadUserTheory();
+        this.userBandsService.loadUserBands();
+        this.userGenresService.loadUserGenres();
+        this.uploadService
+          .getGallery()
+          .pipe(takeUntilDestroyed())
+          .subscribe({
+            next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
+            error: () => this.uploadService.galleryPhotosSignal.set([]),
+          });
       });
   }
 
@@ -116,6 +126,12 @@ export class EditProfile {
   saveProfile(): void {
     if (!this.currentUser) return;
 
+    this.uploadService.savePendingPhotos();
+    this.userInstrumentsService.savePendingInstruments();
+    this.userTheoryService.saveUserTheory();
+    this.userBandsService.savePendingBands();
+    this.userGenresService.saveUserGenres();
+
     const payload: Partial<User> = {
       name: this.form.value.name ?? undefined,
       bio: this.form.value.bio ?? undefined,
@@ -123,12 +139,47 @@ export class EditProfile {
       rehearsal_space: this.form.value.rehearsal_space ?? undefined,
     };
 
-    if (this.selectedCity) {
-      payload.location = this.selectedCity.city;
-      payload.location_point = `POINT(${this.selectedCity.lng} ${this.selectedCity.lat})`;
+    const city: City | null = this.form.value.location ?? null;
+
+    if (city) {
+      payload.location = city.city;
+      payload.location_point = `POINT(${city.lng} ${city.lat})`;
     }
 
     this.userService.editUser(this.currentUser.id, payload);
   }
 
+  discardChanges(): void {
+    this.userService.getMe().subscribe(async (user) => {
+      this.currentUser = user;
+
+      const city = user.location ? await this.cityService.getCityCoords(user.location) : null;
+
+      this.initialFormValue = {
+        name: user.name,
+        email: user.email,
+        bio: user.bio,
+        gear: user.gear,
+        rehearsal_space: user.rehearsal_space,
+        location: city,
+      };
+
+      this.form.reset(this.initialFormValue);
+      this.form.markAsPristine();
+      this.form.markAsUntouched();
+
+      this.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
+
+      this.userInstrumentsService.loadUserInstruments();
+      this.userTheoryService.loadUserTheory();
+      this.userBandsService.loadUserBands();
+      this.userGenresService.loadUserGenres();
+      this.uploadService.getGallery().subscribe({
+        next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
+        error: () => this.uploadService.galleryPhotosSignal.set([]),
+      });
+
+      this.toast.success('Changes discarded');
+    });
+  }
 }
