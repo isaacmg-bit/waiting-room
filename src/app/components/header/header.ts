@@ -36,6 +36,9 @@ export class Header {
 
           this.userService.getMe().subscribe((user) => {
             this.userName.set(user.name);
+            this.userProfilePicService.profilePhotoUrl.set(
+              `${user.profile_photo_url}?t=${Date.now()}`,
+            );
           });
         } else {
           this.userId.set(null);
@@ -48,6 +51,7 @@ export class Header {
   async logout(): Promise<void> {
     try {
       await this.supabase.signOut();
+      this.userProfilePicService.clear();
       this.userId.set(null);
       this.router.navigate(['/login']);
     } catch (err) {

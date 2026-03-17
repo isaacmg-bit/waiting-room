@@ -25,7 +25,7 @@ export class UserProfilePicService {
     if (!session) throw new Error('No authenticated session');
     return session;
   }
-  
+
   private async init() {
     const session = await this.getSession().catch(() => null);
 
@@ -77,5 +77,9 @@ export class UserProfilePicService {
     } catch (err) {
       console.error('Error removing profile photo:', err);
     }
+  }
+
+  clear(): void {
+    this.profilePhotoUrl.set(null);
   }
 }
