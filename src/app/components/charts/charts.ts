@@ -9,11 +9,13 @@ import {
 } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { CalendarService } from '../../services/calendar-service';
+import { UserEvent } from '../../models/UserEvent'; // Asegúrate de importar la interfaz
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-charts',
+  standalone: true, // Si es standalone
   templateUrl: './charts.html',
   styleUrls: ['./charts.css'],
 })
@@ -44,7 +46,8 @@ export class Charts implements AfterViewInit {
 
   constructor() {
     effect(() => {
-      this.calendarService.eventsSignal();
+      // CORRECCIÓN: Usar userEventsSignal
+      this.calendarService.userEventsSignal();
       if (!this.chartsReady()) return;
       this.updateCharts();
     });
@@ -52,7 +55,6 @@ export class Charts implements AfterViewInit {
 
   ngAfterViewInit(): void {
     const initialData = Array(12).fill(0);
-
     const barCanvas = this.barChart()?.nativeElement;
     const lineCanvas = this.lineChart()?.nativeElement;
 
@@ -72,10 +74,7 @@ export class Charts implements AfterViewInit {
           },
         ],
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-      },
+      options: { responsive: true, maintainAspectRatio: true },
     });
 
     this.lineChartInstance = new Chart(lineCanvas, {
@@ -92,22 +91,27 @@ export class Charts implements AfterViewInit {
           },
         ],
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-      },
+      options: { responsive: true, maintainAspectRatio: true },
     });
 
     this.chartsReady.set(true);
   }
 
   private updateCharts(): void {
-    const events = this.calendarService.eventsSignal();
-    const eventsByMonth = events.reduce<Record<number, number>>((acc, event) => {
-      const month = new Date(event.date).getMonth();
-      acc[month] = (acc[month] || 0) + 1;
-      return acc;
-    }, {});
+    // CORRECCIÓN: Usar userEventsSignal
+    const events = this.calendarService.userEventsSignal();
+
+    // CORRECCIÓN: Tipado de acc y event, y usar event_date
+    const eventsByMonth = events.reduce<Record<number, number>>(
+      (acc: Record<number, number>, event: UserEvent) => {
+        if (event.event_date) {
+          const month = new Date(event.event_date).getMonth();
+          acc[month] = (acc[month] || 0) + 1;
+        }
+        return acc;
+      },
+      {},
+    );
 
     const data = this.months.map((_, i) => eventsByMonth[i] ?? 0);
 

@@ -13,8 +13,10 @@ import { CalendarService } from '../../services/calendar-service';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
+
 @Component({
   selector: 'app-calendar',
+  standalone: true,
   imports: [FullCalendarModule],
   templateUrl: './calendar.html',
   styleUrl: './calendar.css',
@@ -33,35 +35,32 @@ export class Calendar implements AfterViewInit, OnDestroy {
     dateClick: (arg) => this.calendarService.openAddModal(arg.dateStr),
     eventClick: (arg) => this.calendarService.openEditModal(arg.event),
     events: (info, successCallback) => {
-      const events = this.calendarService.eventsSignal();
-      const formattedEvents = events.map((event) => ({
+      const events = this.calendarService.userEventsSignal().map((event) => ({
         id: event.id,
         title: event.title,
-        start: event.date,
+        start: event.event_date,
         backgroundColor: this.calendarService.getColorCode(event.color),
         borderColor: this.calendarService.getColorCode(event.color),
+        extendedProps: { color: event.color },
       }));
-      successCallback(formattedEvents);
+      successCallback(events);
     },
   };
 
   constructor() {
     effect(() => {
       if (!this.apiReady()) return;
-      this.calendarService.eventsSignal();
-      this.calendarApi?.refetchEvents();
+      this.calendarService.userEventsSignal();
+      this.calendarApi.refetchEvents();
     });
   }
 
   ngAfterViewInit(): void {
     const calendar = this.calendarComponent();
-
     if (calendar) {
       this.calendarApi = calendar.getApi();
-
       this.apiReady.set(true);
     }
-
     this.calendarService.loadEvents();
   }
 
@@ -70,24 +69,28 @@ export class Calendar implements AfterViewInit, OnDestroy {
     this.apiReady.set(false);
   }
 
-  saveEvent(): void {
-    this.calendarService.saveEvent();
+  async saveEvent(): Promise<void> {
+    await this.calendarService.saveEvent();
   }
 
-  editEvent(): void {
-    this.calendarService.saveEditedEvent();
+  async editEvent(): Promise<void> {
+    await this.calendarService.updateEvent();
   }
 
-  deleteEvent(): void {
-    this.calendarService.deleteSelectedEvent();
+  async deleteEvent(id: string): Promise<void> {
+    if (confirm('Are you sure you want to delete this event?')) {
+      await this.calendarService.deleteEvent(id);
+    }
   }
 
   onTitleInput(event: Event): void {
-    this.calendarService.onTitleInput((event.target as HTMLInputElement).value);
+    const value = (event.target as HTMLInputElement).value;
+    this.calendarService.onTitleInput(value);
   }
 
   onColorChange(event: Event): void {
-    this.calendarService.onColorChange((event.target as HTMLSelectElement).value);
+    const value = (event.target as HTMLSelectElement).value;
+    this.calendarService.onColorChange(value);
   }
 
   closeModals(): void {

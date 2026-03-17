@@ -216,7 +216,7 @@
         <span class="material-symbols-outlined text-cyan-400" aria-hidden="true">person</span>
         <h2 class="mb-8 text-xl font-bold">Online Presence</h2>
         <div class="flex flex-wrap justify-center gap-8" role="list">
-          @for (link of filteredSocialLinks(); track link.platform) {
+          @for (link of filteredSocialLinks(); track $index) {
             <a
               [href]="link.url"
               target="_blank"

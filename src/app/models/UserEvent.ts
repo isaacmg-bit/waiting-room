@@ -1,6 +1,7 @@
 export interface UserEvent {
-  id?: string;
-  date: string;
+  id: string;
+  event_id: string;
+  event_date: string;
   title: string;
   color: string;
 }
