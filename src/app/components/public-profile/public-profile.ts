@@ -24,7 +24,7 @@ import { UserBand } from '../../models/UserBand';
 export class PublicProfile {
   private readonly route = inject(ActivatedRoute);
   private readonly userService = inject(UserService);
-  private readonly uploadService = inject(UploadService);
+  readonly uploadService = inject(UploadService);
   private readonly userInstrumentsService = inject(UserInstrumentsService);
   private readonly userGenresService = inject(UserGenresService);
   private readonly userTheoryService = inject(UserTheoryService);
@@ -36,6 +36,7 @@ export class PublicProfile {
   readonly userGenres = signal<UserGenre[]>([]);
   readonly userTheory = signal<UserTheory | null>(null);
   readonly userBands = signal<UserBand[]>([]);
+  readonly selectedPhoto = signal<string | null>(null);
   readonly loading = signal(true);
 
   readonly filteredSocialLinks = computed(() => {
@@ -74,5 +75,13 @@ export class PublicProfile {
         },
         error: (err) => console.error('Error loading profile:', err),
       });
+  }
+
+  openPhoto(url: string): void {
+    this.selectedPhoto.set(url);
+  }
+
+  closePhoto(): void {
+    this.selectedPhoto.set(null);
   }
 }
