@@ -19,6 +19,10 @@ export class UserService {
   private readonly USERS_URL = `${environment.apiUrl}${environment.apiUserUrl}`;
   private readonly ME_URL = `${environment.apiUrl}${environment.apiUserUrl}${environment.apiMeUrl}`;
 
+  constructor() {
+    this.loadUsers();
+  }
+
   loadUsers(): void {
     this.loadingSignal.set(true);
     this.api
@@ -32,7 +36,6 @@ export class UserService {
         },
       });
   }
-
   addUser(user: User): void {
     this.api.post<User>(this.USERS_URL, user).subscribe({
       next: (createdUser) => {

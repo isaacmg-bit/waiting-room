@@ -50,7 +50,7 @@
             @for (photo of galleryPhotos(); track photo.id) {
               <button
                 type="button"
-                (click)="openPhoto(photo.url)"
+                (click)="uploadService.openPhoto(photo.url)"
                 class="group relative aspect-square overflow-hidden rounded-2xl bg-slate-800 transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
                 aria-label="View gallery image"
               >
@@ -66,12 +66,12 @@
               </button>
             }
           </div>
-          @if (selectedPhoto()) {
+          @if (uploadService.selectedPhoto()) {
             <div
               role="dialog"
               aria-modal="true"
-              (click)="closePhoto()"
-              (keydown.escape)="closePhoto()"
+              (click)="uploadService.closePhoto()"
+              (keydown.escape)="uploadService.closePhoto()"
               class="flex mt-10 rounded-xl items-center justify-center bg-blue/90 px-4 py-12 backdrop-blur-sm animate-in fade-in duration-300"
             >
               <section
@@ -82,7 +82,7 @@
               >
                 <img
                   #img
-                  [src]="selectedPhoto() || 'assets/img/Portrait_Placeholder.png'"
+                  [src]="uploadService.selectedPhoto() || 'assets/img/Portrait_Placeholder.png'"
                   (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
                   class="w-full rounded-lg shadow-2xl animate-in zoom-in-95 duration-300"
                   alt="Full size view"
@@ -90,7 +90,7 @@
 
                 <button
                   type="button"
-                  (click)="closePhoto()"
+                  (click)="uploadService.closePhoto()"
                   class="absolute -top-5 -right-8 text-white hover:text-primary cursor-pointer transition-colors flex items-center gap-2"
                 >
                   <span class="material-symbols-outlined">close</span>

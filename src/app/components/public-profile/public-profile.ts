@@ -36,7 +36,6 @@ export class PublicProfile {
   readonly userGenres = signal<UserGenre[]>([]);
   readonly userTheory = signal<UserTheory | null>(null);
   readonly userBands = signal<UserBand[]>([]);
-  readonly selectedPhoto = signal<string | null>(null);
   readonly loading = signal(true);
 
   readonly filteredSocialLinks = computed(() => {
@@ -75,13 +74,5 @@ export class PublicProfile {
         },
         error: (err) => console.error('Error loading profile:', err),
       });
-  }
-
-  openPhoto(url: string): void {
-    this.selectedPhoto.set(url);
-  }
-
-  closePhoto(): void {
-    this.selectedPhoto.set(null);
   }
 }
