@@ -19,8 +19,10 @@ import { UserTheoryService } from '../../services/theory-service';
 import { UserBandsService } from '../../services/user-bands-service';
 import { UserGenresService } from '../../services/user-genres-service';
 import { UserProfilePicService } from '../../services/user-profilepic-service';
-import { UserProfilePicture } from "../user-profilepicture/user-profilepicture";
-import { UserPresence } from "../user-presence/user-presence";
+import { UserProfilePicture } from '../user-profilepicture/user-profilepicture';
+import { UserPresence } from '../user-presence/user-presence';
+import { UserPresenceService } from '../../services/user-presence-service';
+import { SocialLinkHandle } from '../../models/SocialLinkHandle';
 
 @Component({
   selector: 'app-edit-profile',
@@ -32,8 +34,8 @@ import { UserPresence } from "../user-presence/user-presence";
     UserGenres,
     UserBands,
     UserProfilePicture,
-    UserPresence
-],
+    UserPresence,
+  ],
   providers: [provideIcons({ heroTrash, heroArrowDownTray })],
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.css',
@@ -48,11 +50,13 @@ export class EditProfile {
   private readonly userBandsService = inject(UserBandsService);
   private readonly userGenresService = inject(UserGenresService);
   private readonly userProfilePicService = inject(UserProfilePicService);
+  private readonly userPresenceService = inject(UserPresenceService);
   private readonly toast = inject(ToastrService);
 
   profilePhotoUrl = this.userProfilePicService.profilePhotoUrl;
   private currentUser: User | null = null;
   private initialFormValue: any;
+  socialLinks: SocialLinkHandle[] = [];
 
   form = this.fb.group({
     name: [''],
@@ -89,6 +93,7 @@ export class EditProfile {
         this.userTheoryService.loadUserTheory();
         this.userBandsService.loadUserBands();
         this.userGenresService.loadUserGenres();
+        this.userPresenceService.loadUserPresence();
         this.uploadService.getGallery().subscribe({
           next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
           error: () => this.uploadService.galleryPhotosSignal.set([]),
@@ -104,6 +109,7 @@ export class EditProfile {
     this.userTheoryService.saveUserTheory();
     this.userBandsService.savePendingBands();
     this.userGenresService.saveUserGenres();
+    this.userPresenceService.savePendingPresence();
 
     const payload: Partial<User> = {
       name: this.form.value.name ?? undefined,
@@ -147,6 +153,7 @@ export class EditProfile {
       this.userTheoryService.loadUserTheory();
       this.userBandsService.loadUserBands();
       this.userGenresService.loadUserGenres();
+      this.userPresenceService.loadUserPresence();
       this.uploadService.getGallery().subscribe({
         next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
         error: () => this.uploadService.galleryPhotosSignal.set([]),

@@ -1,9 +1,8 @@
-import { Component, inject, signal, computed, effect } from '@angular/core';
-import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, effect, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserPresenceService } from '../../services/user-presence-service';
-import { SocialLink } from '../../models/SocialLink';
 import { SocialLinkHandle } from '../../models/SocialLinkHandle';
-// Definimos la estructura del grupo para que Angular no pierda el tipo
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user-presence',
@@ -11,66 +10,57 @@ import { SocialLinkHandle } from '../../models/SocialLinkHandle';
   imports: [ReactiveFormsModule],
   templateUrl: './user-presence.html',
 })
-export class UserPresence {
+export class UserPresence implements OnDestroy {
   private fb = inject(FormBuilder);
   private presenceService = inject(UserPresenceService);
+  private formSub?: Subscription;
 
-  // Inicializamos con el tipo explícito para evitar "No overload matches this call"
   form = this.fb.group({
-    social_links: this.fb.array<FormGroup<SocialLink>>([]),
+    social_links: this.fb.array([]),
   });
 
-  linksSignal = signal<FormArray<FormGroup<SocialLink>>>(this.form.controls.social_links);
-  linksForTemplate = computed(() => this.linksSignal().controls);
+  get links(): FormArray {
+    return this.form.get('social_links') as FormArray;
+  }
 
   constructor() {
-    this.presenceService.loadUserPresence();
-
-    // Sincronizamos el Signal del servicio con el FormArray del componente
     effect(() => {
-      const links = this.presenceService.socialLinksSignal();
-      this.populateForm(links);
+      const links = this.presenceService.pendingLinks();
+      if (links.length !== this.links.length) {
+        this.populateForm(links);
+      }
+    });
+
+    this.formSub = this.form.valueChanges.subscribe((val) => {
+      const currentValues = (val.social_links || []) as SocialLinkHandle[];
+      this.presenceService.pendingLinks.set(currentValues);
     });
   }
 
   private populateForm(links: SocialLinkHandle[]) {
-    const control = this.form.controls.social_links;
-    control.clear({ emitEvent: false }); // Evita loops infinitos
-
-    links.forEach((l) => {
-      control.push(this.createGroup(l.platform, l.url), { emitEvent: false });
-    });
-
-    this.linksSignal.set(control);
+    this.links.clear({ emitEvent: false });
+    links.forEach((l) =>
+      this.links.push(this.createGroup(l.platform, l.url), { emitEvent: false }),
+    );
   }
 
-  private createGroup(platform = 'instagram', url = ''): FormGroup<SocialLink> {
-    return this.fb.group<SocialLink>({
-      platform: this.fb.control(platform, { nonNullable: true }),
-      url: this.fb.control(url, { nonNullable: true, validators: [Validators.required] }),
+  private createGroup(platform = 'instagram', url = ''): FormGroup {
+    return this.fb.group({
+      platform: [platform, Validators.required],
+      url: [url, Validators.required],
     });
   }
 
   addLink() {
-    this.form.controls.social_links.push(this.createGroup());
-    this.linksSignal.set(this.form.controls.social_links);
+    const newLink = { platform: 'instagram', url: '' };
+    this.links.push(this.createGroup(newLink.platform, newLink.url));
   }
 
   removeLink(index: number) {
-    this.form.controls.social_links.removeAt(index);
-    this.linksSignal.set(this.form.controls.social_links);
+    this.links.removeAt(index);
   }
 
-  async save() {
-    if (this.form.invalid) return;
-    const values = this.form.getRawValue().social_links;
-
-    try {
-      await this.presenceService.savePresence(values);
-      this.form.markAsPristine();
-      alert('¡Guardado!');
-    } catch (error) {
-      alert('Error al guardar');
-    }
+  ngOnDestroy() {
+    this.formSub?.unsubscribe();
   }
 }
