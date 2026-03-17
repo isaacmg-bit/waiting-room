@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, effect } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user-service';
+import { SupabaseService } from '../../services/supabase-service';
 
 @Component({
   selector: 'app-users',
@@ -12,7 +13,23 @@ import { UserService } from '../../services/user-service';
 })
 export class Users {
   readonly userService = inject(UserService);
+  readonly supabase = inject(SupabaseService);
   private readonly fb = inject(FormBuilder);
+  readonly userId = signal<string | null>(null);
+  userRole = this.supabase.userRole;
+
+  constructor() {
+    effect(() => {
+      this.supabase.getSession().then(({ data: { session } }) => {
+        if (session?.user.id) {
+          this.userId.set(session.user.id);
+          this.supabase.loadUserRole(this.userId()!);
+        } else {
+          this.userId.set(null);
+        }
+      });
+    });
+  }
 
   userForm = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
@@ -23,6 +40,7 @@ export class Users {
 
   loadUserForEdit(user: User): void {
     this.userService.loadUserForEdit(user);
+    console.log(user.role);
     this.userForm.patchValue({
       name: user.name,
       email: user.email,

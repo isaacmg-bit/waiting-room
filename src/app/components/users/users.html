@@ -58,7 +58,7 @@
             <button
               type="submit"
               [disabled]="userForm.invalid"
-              class="px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-40  disabled:hover:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              class="px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-40 disabled:hover:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Save Changes
             </button>
@@ -170,6 +170,7 @@
                   <div class="flex gap-2 justify-end flex-wrap">
                     <button
                       (click)="loadUserForEdit(user)"
+                      [disabled]="userRole() === 'admin'"
                       aria-label="Edit user {{ user.name }}"
                       class="px-3 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 text-xs font-medium hover:bg-primary/20 active:scale-95 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
@@ -177,6 +178,7 @@
                     </button>
                     <button
                       (click)="onDelete(user.id)"
+                      [disabled]="userRole() === 'admin'"
                       aria-label="Delete user {{ user.name }}"
                       class="px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-medium hover:bg-red-500/20 active:scale-95 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500/50"
                     >
