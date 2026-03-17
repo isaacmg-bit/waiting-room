@@ -20,6 +20,7 @@ import { UserBandsService } from '../../services/user-bands-service';
 import { UserGenresService } from '../../services/user-genres-service';
 import { UserProfilePicService } from '../../services/user-profilepic-service';
 import { UserProfilePicture } from "../user-profilepicture/user-profilepicture";
+import { UserPresence } from "../user-presence/user-presence";
 
 @Component({
   selector: 'app-edit-profile',
@@ -30,7 +31,8 @@ import { UserProfilePicture } from "../user-profilepicture/user-profilepicture";
     UserInstruments,
     UserGenres,
     UserBands,
-    UserProfilePicture
+    UserProfilePicture,
+    UserPresence
 ],
   providers: [provideIcons({ heroTrash, heroArrowDownTray })],
   templateUrl: './edit-profile.html',
