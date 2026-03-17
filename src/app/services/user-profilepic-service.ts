@@ -15,8 +15,25 @@ export class UserProfilePicService {
   private readonly profilePicUrl = '/profilepicture.jpg';
 
   constructor() {
+    this.init();
+  }
+
+  private async getSession() {
+    const {
+      data: { session },
+    } = await this.supabaseService.getSession();
+    if (!session) throw new Error('No authenticated session');
+    return session;
+  }
+  
+  private async init() {
+    const session = await this.getSession().catch(() => null);
+
+    if (!session) return;
+
     this.userService.getMe().subscribe((user) => {
       this.currentUser = user;
+
       if (user.profile_photo_url) {
         this.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
       } else {

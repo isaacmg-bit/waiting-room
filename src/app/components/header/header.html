@@ -76,15 +76,16 @@
           class="size-9 rounded-full border-2 border-primary/30 hover:border-primary overflow-hidden block transition-all cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
           [attr.aria-expanded]="isUserMenuOpen()"
         >
-          <img
-            #img
-            class="w-full h-full object-cover pointer-events-none"
-            [src]="userProfilePicService.profilePhotoUrl() || 'assets/img/Portrait_Placeholder.png'"
-            (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
-            alt="User profile"
-          />
+            <img
+              #img
+              class="w-full h-full object-cover pointer-events-none"
+              [src]="
+                userProfilePicService.profilePhotoUrl() || 'assets/img/Portrait_Placeholder.png'
+              "
+              (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
+              alt="User profile"
+            />
         </button>
-
         @if (isUserMenuOpen() && userId()) {
           <div
             class="absolute top-12 right-0 w-48 glass-card rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-100 origin-top-right border border-white/10"
