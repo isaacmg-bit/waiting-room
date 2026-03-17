@@ -21,9 +21,7 @@ export class GenresService {
     this.loadingSignal.set(true);
     this.api
       .get<Genre[]>(this.BASE_URL)
-      .pipe(
-        finalize(() => this.loadingSignal.set(false)),
-      )
+      .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
         next: (genres) => this.genresSignal.set(genres),
         error: (err) => console.error('Error loading genres:', err),

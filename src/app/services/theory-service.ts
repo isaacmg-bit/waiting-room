@@ -9,21 +9,21 @@ export class UserTheoryService {
   private readonly api = inject(ApiServiceBack);
 
   readonly userTheorySignal = signal<UserTheory | null>(null);
-  readonly loadingSignal = signal(false);
-  readonly theoryLevels = ['Basic', 'Composition', 'Advanced Orchestration'];
+  readonly loadingSignal = signal<boolean>(false);
+  readonly theoryLevels: string[] = ['Basic', 'Composition', 'Advanced Orchestration'];
 
   readonly pendingKnowsTheory = signal<boolean | null>(null);
   readonly pendingTheoryLevel = signal<string | null>(null);
 
-  readonly currentKnowsTheory = computed(
+  readonly currentKnowsTheory = computed<boolean>(
     () => this.pendingKnowsTheory() ?? this.userTheorySignal()?.knows_theory ?? false,
   );
-  readonly currentTheoryLevel = computed(
+  readonly currentTheoryLevel = computed<string | null>(
     () => this.pendingTheoryLevel() ?? this.userTheorySignal()?.theory_level ?? null,
   );
 
-  private readonly BASE_URL = environment.apiUserTheoryUrl;
-  private readonly ME_URL = `${environment.apiUserTheoryUrl}${environment.apiMeUrl}`;
+  private readonly BASE_URL: string = environment.apiUserTheoryUrl;
+  private readonly ME_URL: string = `${environment.apiUserTheoryUrl}${environment.apiMeUrl}`;
 
   loadUserTheory(): void {
     this.loadingSignal.set(true);
@@ -31,8 +31,8 @@ export class UserTheoryService {
       .get<UserTheory | UserTheory[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (theory) => this.setTheoryData(theory),
-        error: (err) => {
+        next: (theory: UserTheory | UserTheory[]) => this.setTheoryData(theory),
+        error: (err: unknown) => {
           console.error('Error loading theory:', err);
           this.setTheoryData({ knows_theory: false, theory_level: null } as UserTheory);
         },
@@ -55,16 +55,19 @@ export class UserTheoryService {
   }
 
   async saveUserTheory(): Promise<void> {
-    const knows = this.pendingKnowsTheory() ?? this.userTheorySignal()?.knows_theory ?? false;
-    const level = this.pendingTheoryLevel() ?? this.userTheorySignal()?.theory_level ?? null;
+    const knows: boolean = this.currentKnowsTheory();
+    const level: string | null = this.currentTheoryLevel();
 
     this.loadingSignal.set(true);
     try {
       const created = await firstValueFrom(
-        this.api.post<UserTheory>(this.BASE_URL, { knows_theory: knows, theory_level: level }),
+        this.api.post<UserTheory>(this.BASE_URL, {
+          knows_theory: knows,
+          theory_level: level,
+        }),
       );
       this.setTheoryData(created);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Error saving theory:', err);
     } finally {
       this.loadingSignal.set(false);
@@ -73,7 +76,7 @@ export class UserTheoryService {
   }
 
   getTheory(): Observable<UserTheory[]> {
-    return this.api.get<UserTheory[]>('/user-theory/me');
+    return this.api.get<UserTheory[]>(this.ME_URL);
   }
 
   getTheoryByUserId(userId: string): Observable<UserTheory[]> {
@@ -87,7 +90,7 @@ export class UserTheoryService {
       return;
     }
 
-    const theory = Array.isArray(data) ? data[0] : data;
+    const theory: UserTheory = Array.isArray(data) ? data[0] : data;
     this.userTheorySignal.set(theory);
     this.discardPendingTheory();
   }
