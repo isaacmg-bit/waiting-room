@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { UserService } from '../../services/user-service';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UploadService } from '../../services/upload-service';
@@ -8,27 +8,30 @@ import { User } from '../../models/User';
 import { City } from '../../models/City';
 import { UserInstruments } from '../user-instruments/user-instruments';
 import { CityService } from '../../services/city-service';
-import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { provideIcons } from '@ng-icons/core';
 import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
 import { UserGenres } from '../user-genres/user-genres';
 import { UserBands } from '../user-bands/user-bands';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
 import { UserInstrumentsService } from '../../services/user-instruments-service';
 import { UserTheoryService } from '../../services/theory-service';
 import { UserBandsService } from '../../services/user-bands-service';
 import { UserGenresService } from '../../services/user-genres-service';
+import { UserProfilePicService } from '../../services/user-profilepic-service';
+import { UserProfilePicture } from "../user-profilepicture/user-profilepicture";
 
 @Component({
   selector: 'app-edit-profile',
   imports: [
-    NgIconComponent,
     ReactiveFormsModule,
     UserGallery,
     UserLocation,
     UserInstruments,
     UserGenres,
     UserBands,
-  ],
+    UserProfilePicture
+],
   providers: [provideIcons({ heroTrash, heroArrowDownTray })],
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.css',
@@ -42,11 +45,12 @@ export class EditProfile {
   private readonly userTheoryService = inject(UserTheoryService);
   private readonly userBandsService = inject(UserBandsService);
   private readonly userGenresService = inject(UserGenresService);
+  private readonly userProfilePicService = inject(UserProfilePicService);
   private readonly toast = inject(ToastrService);
 
+  profilePhotoUrl = this.userProfilePicService.profilePhotoUrl;
   private currentUser: User | null = null;
   private initialFormValue: any;
-  profilePhotoUrl = signal<string | null>(null);
 
   form = this.fb.group({
     name: [''],
@@ -58,62 +62,36 @@ export class EditProfile {
   });
 
   constructor() {
-    this.userService.getMe().subscribe(async (user) => {
-      this.currentUser = user;
+    this.userService
+      .getMe()
+      .pipe(takeUntilDestroyed())
+      .subscribe(async (user) => {
+        this.currentUser = user;
 
-      const city = user.location ? await this.cityService.getCityCoords(user.location) : null;
+        const city = user.location ? await this.cityService.getCityCoords(user.location) : null;
 
-      this.initialFormValue = {
-        name: user.name,
-        email: user.email,
-        bio: user.bio,
-        gear: user.gear,
-        rehearsal_space: user.rehearsal_space,
-        location: city,
-      };
+        this.initialFormValue = {
+          name: user.name,
+          email: user.email,
+          bio: user.bio,
+          gear: user.gear,
+          rehearsal_space: user.rehearsal_space,
+          location: city,
+        };
 
-      this.form.patchValue(this.initialFormValue);
-      this.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
-      this.userInstrumentsService.loadUserInstruments();
-      this.userTheoryService.loadUserTheory();
-      this.userBandsService.loadUserBands();
-      this.userGenresService.loadUserGenres();
-      this.uploadService.getGallery().subscribe({
-        next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
-        error: () => this.uploadService.galleryPhotosSignal.set([]),
+        this.form.patchValue(this.initialFormValue);
+
+        this.userProfilePicService.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
+
+        this.userInstrumentsService.loadUserInstruments();
+        this.userTheoryService.loadUserTheory();
+        this.userBandsService.loadUserBands();
+        this.userGenresService.loadUserGenres();
+        this.uploadService.getGallery().subscribe({
+          next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
+          error: () => this.uploadService.galleryPhotosSignal.set([]),
+        });
       });
-    });
-  }
-
-  async onProfileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
-
-    const localUrl = URL.createObjectURL(input.files[0]);
-    this.profilePhotoUrl.set(localUrl);
-
-    try {
-      const url = await this.uploadService.uploadProfilePhoto(input.files[0]);
-      if (this.currentUser) {
-        this.userService.editUser(this.currentUser.id, { profile_photo_url: url });
-      }
-      this.profilePhotoUrl.set(`${url}?t=${Date.now()}`);
-    } catch (err) {
-      console.error('Error uploading profile photo:', err);
-      this.profilePhotoUrl.set(null);
-    }
-  }
-
-  async removeProfilePhoto(): Promise<void> {
-    if (!this.currentUser) return;
-
-    try {
-      await this.uploadService.removeProfilePhoto(this.currentUser.id);
-      this.userService.editUser(this.currentUser.id, { profile_photo_url: null });
-      this.profilePhotoUrl.set(null);
-    } catch (err) {
-      console.error('Error removing profile photo:', err);
-    }
   }
 
   saveProfile(): void {
@@ -161,7 +139,7 @@ export class EditProfile {
       this.form.markAsPristine();
       this.form.markAsUntouched();
 
-      this.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
+      this.userProfilePicService.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
 
       this.userInstrumentsService.loadUserInstruments();
       this.userTheoryService.loadUserTheory();

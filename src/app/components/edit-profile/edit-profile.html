@@ -9,39 +9,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div class="flex flex-col items-center gap-4">
-            <div class="relative group">
-              <button
-                type="button"
-                class="size-48 rounded-full overflow-hidden border-4 border-primary/20 p-1 cursor-pointer focus:outline-none"
-                (click)="profileFileInput.click()"
-              >
-                <img
-                  #img
-                  class="w-full h-full object-cover rounded-full opacity-80 group-hover:opacity-100 transition-opacity"
-                  [src]="profilePhotoUrl() || 'assets/img/Portrait_Placeholder.png'"
-                  (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
-                  alt="Profile photo"
-                />
-              </button>
-
-              @if (profilePhotoUrl()) {
-                <button
-                  type="button"
-                  (click)="removeProfilePhoto()"
-                  class="absolute cursor-pointer top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-600 z-10 flex items-center justify-center"
-                >
-                  <ng-icon name="heroTrash" size="16" />
-                </button>
-              }
-
-              <input
-                type="file"
-                #profileFileInput
-                hidden
-                accept="image/*"
-                (change)="onProfileSelected($event)"
-              />
-            </div>
+            <app-user-profilepicture></app-user-profilepicture>
           </div>
 
           <div class="lg:col-span-2 relative">

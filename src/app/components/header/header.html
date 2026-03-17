@@ -79,11 +79,7 @@
           <img
             #img
             class="w-full h-full object-cover pointer-events-none"
-            [src]="
-              'https://otfzbljpjqojoiojfvrq.supabase.co/storage/v1/object/public/profiles/' +
-              userId() +
-              '/profilepicture.jpg'
-            "
+            [src]="userProfilePicService.profilePhotoUrl() || 'assets/img/Portrait_Placeholder.png'"
             (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
             alt="User profile"
           />

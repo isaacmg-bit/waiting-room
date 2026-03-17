@@ -17,29 +17,16 @@ export class UploadService {
   readonly pendingPhotos = signal<GalleryPhoto[]>([]);
 
   private readonly BASE_URL = environment.apiGalleryUrl;
-  private readonly profilePicUrl = '/profilepicture.jpg';
+
 
   readonly allPhotos = computed(() => [...this.galleryPhotosSignal(), ...this.pendingPhotos()]);
+  
   private async getSession() {
     const {
       data: { session },
     } = await this.supabaseService.getSession();
     if (!session) throw new Error('No authenticated session');
     return session;
-  }
-
-  async uploadProfilePhoto(file: File): Promise<string> {
-    const session = await this.getSession();
-    const fileName = `${session.user.id}${this.profilePicUrl}`;
-
-    const { data, error } = await this.supabase.storage
-      .from('profiles')
-      .upload(fileName, file, { cacheControl: '0', upsert: true });
-
-    if (error) throw error;
-
-    const { data: publicUrl } = this.supabase.storage.from('profiles').getPublicUrl(data.path);
-    return publicUrl.publicUrl;
   }
 
   async uploadGalleryPhoto(file: File, position?: number): Promise<string> {
@@ -100,12 +87,6 @@ export class UploadService {
     }
   }
 
-  async removeProfilePhoto(userId: string): Promise<void> {
-    const fileName = `${userId}/profilepicture.jpg`;
-    const { error } = await this.supabase.storage.from('profiles').remove([fileName]);
-    if (error) throw error;
-  }
-
   openPhoto(url: string): void {
     this.selectedPhoto.set(url);
   }
@@ -131,4 +112,6 @@ export class UploadService {
   canAddMorePhotos(): boolean {
     return this.allPhotos().length < 4;
   }
+
+  
 }

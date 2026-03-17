@@ -4,6 +4,7 @@ import { SupabaseService } from '../../services/supabase-service';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { lucideDrum } from '@ng-icons/lucide';
 import { UserService } from '../../services/user-service';
+import { UserProfilePicService } from '../../services/user-profilepic-service';
 
 @Component({
   selector: 'app-header',
@@ -16,6 +17,7 @@ export class Header {
   readonly supabase = inject(SupabaseService);
   readonly userService = inject(UserService);
   private readonly router = inject(Router);
+  readonly userProfilePicService = inject(UserProfilePicService);
 
   isUserMenuOpen = signal(false);
   readonly userId = signal<string | null>(null);
