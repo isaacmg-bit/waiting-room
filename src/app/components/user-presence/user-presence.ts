@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 })
 export class UserPresence implements OnDestroy {
   private fb = inject(FormBuilder);
-  private presenceService = inject(UserPresenceService);
+  public presenceService = inject(UserPresenceService);
   private formSub?: Subscription;
 
   form = this.fb.group({
@@ -52,12 +52,11 @@ export class UserPresence implements OnDestroy {
   }
 
   addLink() {
-    const newLink = { platform: 'instagram', url: '' };
-    this.links.push(this.createGroup(newLink.platform, newLink.url));
+    this.presenceService.addPendingLink();
   }
 
   removeLink(index: number) {
-    this.links.removeAt(index);
+    this.presenceService.deleteLink(index);
   }
 
   ngOnDestroy() {
