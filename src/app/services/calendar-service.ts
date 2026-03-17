@@ -13,16 +13,16 @@ export class CalendarService {
 
   readonly userEventsSignal = signal<UserEvent[]>([]);
   readonly loadingSignal = signal<boolean>(false);
-  readonly calendarModalActive = signal(false);
-  readonly editCalendarModalActive = signal(false);
+  readonly calendarModalActive = signal<boolean>(false);
+  readonly editCalendarModalActive = signal<boolean>(false);
 
   readonly eventTitle = signal<string>('');
   readonly eventColor = signal<string>('');
   readonly selectedDate = signal<string>('');
-  readonly selectedEvent = signal<any>(null);
+  readonly selectedEvent = signal<UserEvent | null>(null);
 
-  private readonly BASE_URL = environment.apiEventUrl;
-  private readonly ME_URL = `${environment.apiEventUrl}${environment.apiMeUrl}`;
+  private readonly BASE_URL: string = environment.apiEventUrl;
+  private readonly ME_URL: string = `${environment.apiEventUrl}${environment.apiMeUrl}`;
 
   constructor() {
     this.loadEvents();
@@ -34,27 +34,30 @@ export class CalendarService {
       .get<UserEvent[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (events) => this.userEventsSignal.set(events),
-        error: (err) => console.error('Error loading events:', err),
+        next: (events: UserEvent[]) => this.userEventsSignal.set(events),
+        error: (err: unknown) => {
+          console.error('Error loading events:', err);
+          this.toast.error('Error loading events');
+        },
       });
   }
 
   async saveEvent(): Promise<void> {
-    if (!this.eventTitle() || !this.eventColor()) return;
+    const title = this.eventTitle();
+    const color = this.eventColor();
+    const date = this.selectedDate();
+
+    if (!title || !color) return;
 
     this.loadingSignal.set(true);
-    const payload = {
-      title: this.eventTitle(),
-      date: this.selectedDate(),
-      color: this.eventColor(),
-    };
+    const payload = { title, date, color };
 
     try {
       const created = await firstValueFrom(this.api.post<UserEvent>(this.BASE_URL, payload));
-      this.userEventsSignal.update((list) => [...list, created]);
+      this.userEventsSignal.update((list: UserEvent[]) => [...list, created]);
       this.closeModals();
       this.toast.success('Event saved');
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Error saving event:', err);
       this.toast.error('Error saving event');
     } finally {
@@ -62,23 +65,8 @@ export class CalendarService {
     }
   }
 
-  async deleteEvent(id: string): Promise<void> {
-    this.loadingSignal.set(true);
-    try {
-      await firstValueFrom(this.api.delete(`${this.BASE_URL}/${id}`));
-      this.userEventsSignal.update((list) => list.filter((e) => e.id !== id));
-      this.closeModals();
-      this.toast.success('Event deleted');
-    } catch (err) {
-      console.error('Error deleting event:', err);
-      this.toast.error('Error deleting event');
-    } finally {
-      this.loadingSignal.set(false);
-    }
-  }
-
   async updateEvent(): Promise<void> {
-    const id = this.selectedEvent()?.id;
+    const id: string | undefined = this.selectedEvent()?.id;
     if (!id) return;
 
     this.loadingSignal.set(true);
@@ -92,12 +80,31 @@ export class CalendarService {
       const updated = await firstValueFrom(
         this.api.patch<UserEvent>(`${this.BASE_URL}/${id}`, payload),
       );
-      this.userEventsSignal.update((list) => list.map((e) => (e.id === id ? updated : e)));
+      this.userEventsSignal.update((list: UserEvent[]) =>
+        list.map((e: UserEvent) => (e.id === id ? updated : e)),
+      );
       this.closeModals();
       this.toast.success('Event updated');
-    } catch (err) {
-      console.error('Error loading users:', err);
-      this.toast.error('Error loading users');
+    } catch (err: unknown) {
+      console.error('Error updating event:', err);
+      this.toast.error('Error updating event');
+    } finally {
+      this.loadingSignal.set(false);
+    }
+  }
+
+  async deleteEvent(id: string): Promise<void> {
+    this.loadingSignal.set(true);
+    try {
+      await firstValueFrom(this.api.delete<void>(`${this.BASE_URL}/${id}`));
+      this.userEventsSignal.update((list: UserEvent[]) =>
+        list.filter((e: UserEvent) => e.id !== id),
+      );
+      this.closeModals();
+      this.toast.success('Event deleted');
+    } catch (err: unknown) {
+      console.error('Error deleting event:', err);
+      this.toast.error('Error deleting event');
     } finally {
       this.loadingSignal.set(false);
     }
@@ -109,11 +116,14 @@ export class CalendarService {
     this.calendarModalActive.set(true);
   }
 
-  openEditModal(event: any): void {
+  openEditModal(event: UserEvent): void {
     this.selectedEvent.set(event);
-    this.eventTitle.set(event.title);
-    this.eventColor.set(event.extendedProps?.color || '');
-    this.selectedDate.set(event.startStr);
+    this.eventTitle.set(event.title || '');
+    this.eventColor.set(event.color || '');
+
+    const dateStr = event.event_date ? String(event.event_date).split('T')[0] : '';
+    this.selectedDate.set(dateStr);
+
     this.editCalendarModalActive.set(true);
   }
 
@@ -130,6 +140,7 @@ export class CalendarService {
   onColorChange(value: string): void {
     this.eventColor.set(value);
   }
+
   onTitleInput(value: string): void {
     this.eventTitle.set(value);
   }

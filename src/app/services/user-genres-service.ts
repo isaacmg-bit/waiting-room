@@ -12,23 +12,27 @@ export class UserGenresService {
   private readonly genresService = inject(GenresService);
 
   readonly userGenreSignal = signal<UserGenre[]>([]);
-  readonly loadingSignal = signal(false);
-  readonly isModalOpen = signal(false);
-  readonly searchQuery = signal('');
+  readonly loadingSignal = signal<boolean>(false);
+  readonly isModalOpen = signal<boolean>(false);
+  readonly searchQuery = signal<string>('');
 
   readonly pendingGenres = signal<UserGenre[]>([]);
   readonly pendingDeletes = signal<string[]>([]);
 
-  readonly filteredGenres = computed(() => {
-    const q = this.searchQuery().toLowerCase();
-    if (!q) return this.genresService.genresSignal();
-    return this.genresService.genresSignal().filter((i) => i.genre.toLowerCase().includes(q));
+  readonly filteredGenres = computed<Genre[]>(() => {
+    const q: string = this.searchQuery().toLowerCase();
+    const allGenres: Genre[] = this.genresService.genresSignal();
+    if (!q) return allGenres;
+    return allGenres.filter((i: Genre) => i.genre.toLowerCase().includes(q));
   });
 
-  readonly allGenres = computed(() => [...this.userGenreSignal(), ...this.pendingGenres()]);
+  readonly allGenres = computed<UserGenre[]>(() => [
+    ...this.userGenreSignal(),
+    ...this.pendingGenres(),
+  ]);
 
-  private readonly BASE_URL = environment.apiUserGenresUrl;
-  private readonly ME_URL = `${environment.apiUserGenresUrl}${environment.apiMeUrl}`;
+  private readonly BASE_URL: string = environment.apiUserGenresUrl;
+  private readonly ME_URL: string = `${environment.apiUserGenresUrl}${environment.apiMeUrl}`;
 
   loadUserGenres(): void {
     this.loadingSignal.set(true);
@@ -36,31 +40,33 @@ export class UserGenresService {
       .get<UserGenre[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (genres) => this.userGenreSignal.set(genres),
-        error: (err) => console.error('Error loading user genres:', err),
+        next: (genres: UserGenre[]) => this.userGenreSignal.set(genres),
+        error: (err: unknown) => console.error('Error loading user genres:', err),
       });
   }
 
   addPendingGenre(genre: Genre): void {
     const tempId = `temp-${Date.now()}`;
-    this.pendingGenres.update((list) => [
-      ...list,
-      { id: tempId, genre_id: genre.id, genres: genre },
-    ]);
+    const newPending: UserGenre = {
+      id: tempId,
+      genre_id: genre.id,
+      genres: genre,
+    };
+    this.pendingGenres.update((list: UserGenre[]) => [...list, newPending]);
   }
 
   deletePendingGenre(id: string): void {
-    this.pendingGenres.update((list) => list.filter((g) => g.id !== id));
+    this.pendingGenres.update((list: UserGenre[]) => list.filter((g: UserGenre) => g.id !== id));
   }
 
   deleteUserGenre(id: string): void {
-    if (this.pendingGenres().some((g) => g.id === id)) {
+    if (this.pendingGenres().some((g: UserGenre) => g.id === id)) {
       this.deletePendingGenre(id);
       return;
     }
 
-    this.pendingDeletes.update((list) => [...list, id]);
-    this.userGenreSignal.update((list) => list.filter((g) => g.id !== id));
+    this.pendingDeletes.update((list: string[]) => [...list, id]);
+    this.userGenreSignal.update((list: UserGenre[]) => list.filter((g: UserGenre) => g.id !== id));
   }
 
   discardPendingGenres(): void {
@@ -76,16 +82,16 @@ export class UserGenresService {
         const created = await firstValueFrom(
           this.api.post<UserGenre>(this.BASE_URL, { genre_id: g.genre_id }),
         );
-        this.userGenreSignal.update((list) => [...list, created]);
-      } catch (err) {
+        this.userGenreSignal.update((list: UserGenre[]) => [...list, created]);
+      } catch (err: unknown) {
         console.error('Error saving genre:', err);
       }
     }
 
     for (const id of this.pendingDeletes()) {
       try {
-        await firstValueFrom(this.api.delete(`${this.BASE_URL}/${id}`));
-      } catch (err) {
+        await firstValueFrom(this.api.delete<void>(`${this.BASE_URL}/${id}`));
+      } catch (err: unknown) {
         console.error('Error deleting genre:', err);
       }
     }

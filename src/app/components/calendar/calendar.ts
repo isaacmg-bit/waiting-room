@@ -8,11 +8,10 @@ import {
   signal,
 } from '@angular/core';
 import { FullCalendarModule, FullCalendarComponent } from '@fullcalendar/angular';
-import { CalendarOptions } from '@fullcalendar/core/index.js';
+import { CalendarOptions, CalendarApi } from '@fullcalendar/core';
 import { CalendarService } from '../../services/calendar-service';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-
 
 @Component({
   selector: 'app-calendar',
@@ -25,7 +24,7 @@ export class Calendar implements AfterViewInit, OnDestroy {
   calendarComponent = viewChild<FullCalendarComponent>('calendar');
   readonly calendarService = inject(CalendarService);
 
-  private calendarApi: any = null;
+  private calendarApi: CalendarApi | null = null;
   private readonly apiReady = signal(false);
 
   calendarOptions: CalendarOptions = {
@@ -33,7 +32,16 @@ export class Calendar implements AfterViewInit, OnDestroy {
     displayEventTime: false,
     plugins: [dayGridPlugin, interactionPlugin],
     dateClick: (arg) => this.calendarService.openAddModal(arg.dateStr),
-    eventClick: (arg) => this.calendarService.openEditModal(arg.event),
+
+    eventClick: (arg) => {
+      const eventId = arg.event.id;
+      const originalEvent = this.calendarService.userEventsSignal().find((e) => e.id === eventId);
+
+      if (originalEvent) {
+        this.calendarService.openEditModal(originalEvent);
+      }
+    },
+
     events: (info, successCallback) => {
       const events = this.calendarService.userEventsSignal().map((event) => ({
         id: event.id,
@@ -49,7 +57,7 @@ export class Calendar implements AfterViewInit, OnDestroy {
 
   constructor() {
     effect(() => {
-      if (!this.apiReady()) return;
+      if (!this.apiReady() || !this.calendarApi) return;
       this.calendarService.userEventsSignal();
       this.calendarApi.refetchEvents();
     });
@@ -68,7 +76,6 @@ export class Calendar implements AfterViewInit, OnDestroy {
     this.calendarApi = null;
     this.apiReady.set(false);
   }
-
   async saveEvent(): Promise<void> {
     await this.calendarService.saveEvent();
   }

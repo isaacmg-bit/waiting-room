@@ -4,6 +4,7 @@ import { ApiServiceBack } from './apiservice-back';
 import { InstrumentsService } from './instruments-service';
 import { environment } from '../../environments/environment';
 import { finalize, Observable, firstValueFrom } from 'rxjs';
+import { Instrument } from '../models/Instrument';
 
 @Injectable({ providedIn: 'root' })
 export class UserInstrumentsService {
@@ -11,29 +12,27 @@ export class UserInstrumentsService {
   private readonly instrumentService = inject(InstrumentsService);
 
   readonly userInstrumentSignal = signal<UserInstrument[]>([]);
-  readonly loadingSignal = signal(false);
-  readonly isModalOpen = signal(false);
-  readonly searchQuery = signal('');
+  readonly loadingSignal = signal<boolean>(false);
+  readonly isModalOpen = signal<boolean>(false);
+  readonly searchQuery = signal<string>('');
 
-  readonly pendingAdds = signal<UserInstrument[]>([]);
-  readonly pendingRemoves = signal<string[]>([]);
+  readonly pendingInstruments = signal<UserInstrument[]>([]);
+  readonly pendingDeletes = signal<string[]>([]);
 
-  readonly filteredInstruments = computed(() => {
-    const q = this.searchQuery().toLowerCase();
-    if (!q) return this.instrumentService.instrumentsSignal();
-    return this.instrumentService
-      .instrumentsSignal()
-      .filter((i) => i.instrument_name.toLowerCase().includes(q));
+  readonly filteredInstruments = computed<Instrument[]>(() => {
+    const q: string = this.searchQuery().toLowerCase();
+    const allInstruments: Instrument[] = this.instrumentService.instrumentsSignal();
+    if (!q) return allInstruments;
+    return allInstruments.filter((i: Instrument) => i.instrument_name.toLowerCase().includes(q));
   });
 
-  readonly allInstruments = computed(() => {
-    return [...this.userInstrumentSignal(), ...this.pendingAdds()].sort((a, b) =>
-      a.instruments!.instrument_name.localeCompare(b.instruments!.instrument_name),
-    );
-  });
+  readonly allInstruments = computed<UserInstrument[]>(() => [
+    ...this.userInstrumentSignal(),
+    ...this.pendingInstruments(),
+  ]);
 
-  private readonly BASE_URL = environment.apiUserInstrumentsUrl;
-  private readonly ME_URL = `${environment.apiUserInstrumentsUrl}${environment.apiMeUrl}`;
+  private readonly BASE_URL: string = environment.apiUserInstrumentsUrl;
+  private readonly ME_URL: string = `${environment.apiUserInstrumentsUrl}${environment.apiMeUrl}`;
 
   loadUserInstruments(): void {
     this.loadingSignal.set(true);
@@ -41,42 +40,83 @@ export class UserInstrumentsService {
       .get<UserInstrument[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (instruments) => this.userInstrumentSignal.set(instruments),
-        error: (err) => console.error('Error loading user instruments:', err),
+        next: (instruments: UserInstrument[]) => this.userInstrumentSignal.set(instruments),
+        error: (err: unknown) => console.error('Error loading user instruments:', err),
       });
   }
 
-  private createPendingInstrument(instrumentId: string, level = 'Beginner') {
+  addPendingInstrument(instrumentId: string, level = 'Beginner'): void {
     const instrument = this.instrumentService
       .instrumentsSignal()
       .find((i) => i.id === instrumentId);
+
     if (!instrument) return;
 
     const tempId = `temp-${Date.now()}`;
-    const pending: UserInstrument = {
+    const newPending: UserInstrument = {
       id: tempId,
       instrument_id: instrumentId,
       level,
       instruments: instrument,
     };
-    this.pendingAdds.update((list) => [...list, pending]);
+    this.pendingInstruments.update((list: UserInstrument[]) => [...list, newPending]);
   }
 
-  private updateLevelInList(list: UserInstrument[], id: string, level: string) {
-    return list.map((i) => (i.id === id ? { ...i, level } : i));
+  deletePendingInstrument(id: string): void {
+    this.pendingInstruments.update((list: UserInstrument[]) => list.filter((i) => i.id !== id));
   }
 
-  private markForDelete(id: string) {
-    this.pendingRemoves.update((list) => [...list, id]);
-    this.userInstrumentSignal.update((list) => list.filter((i) => i.id !== id));
+  deleteUserInstrument(id: string): void {
+    if (this.pendingInstruments().some((i: UserInstrument) => i.id === id)) {
+      this.deletePendingInstrument(id);
+      return;
+    }
+
+    this.pendingDeletes.update((list: string[]) => [...list, id]);
+    this.userInstrumentSignal.update((list: UserInstrument[]) => list.filter((i) => i.id !== id));
   }
 
-  addPendingInstrument(instrumentId: string, level: string) {
-    this.createPendingInstrument(instrumentId, level);
+  discardPendingInstruments(): void {
+    this.pendingInstruments.set([]);
+    this.pendingDeletes.set([]);
   }
 
-  selectInstrument(instrumentId: string) {
-    this.createPendingInstrument(instrumentId);
+  async savePendingInstruments(): Promise<void> {
+    this.loadingSignal.set(true);
+
+    for (const instr of this.pendingInstruments()) {
+      try {
+        const created = await firstValueFrom(
+          this.api.post<UserInstrument>(this.BASE_URL, {
+            instrument_id: instr.instrument_id,
+            level: instr.level,
+          }),
+        );
+        this.userInstrumentSignal.update((list: UserInstrument[]) => [...list, created]);
+      } catch (err: unknown) {
+        console.error('Error saving instrument:', err);
+      }
+    }
+
+    for (const id of this.pendingDeletes()) {
+      try {
+        await firstValueFrom(this.api.delete<void>(`${this.BASE_URL}/${id}`));
+      } catch (err: unknown) {
+        console.error('Error deleting instrument:', err);
+      }
+    }
+
+    this.pendingInstruments.set([]);
+    this.pendingDeletes.set([]);
+    this.loadingSignal.set(false);
+  }
+
+  onSearch(query: string): void {
+    this.searchQuery.set(query);
+  }
+
+  selectInstrument(instrumentId: string): void {
+    this.addPendingInstrument(instrumentId);
     this.closeModal();
   }
 
@@ -91,74 +131,32 @@ export class UserInstrumentsService {
   }
 
   updateInstrumentLevel(userInstrumentId: string, level: string): void {
-    if (this.pendingAdds().some((i) => i.id === userInstrumentId)) {
-      this.pendingAdds.update((list) => this.updateLevelInList(list, userInstrumentId, level));
+    if (this.pendingInstruments().some((i) => i.id === userInstrumentId)) {
+      this.pendingInstruments.update((list: UserInstrument[]) =>
+        this.updateLevelInList(list, userInstrumentId, level),
+      );
       return;
     }
 
-    this.api.patch(`${this.BASE_URL}/${userInstrumentId}`, { level }).subscribe({
+    this.api.patch<void>(`${this.BASE_URL}/${userInstrumentId}`, { level }).subscribe({
       next: () => {
-        this.userInstrumentSignal.update((list) =>
+        this.userInstrumentSignal.update((list: UserInstrument[]) =>
           this.updateLevelInList(list, userInstrumentId, level),
         );
       },
-      error: (err) => console.error('Error updating instrument level:', err),
+      error: (err: unknown) => console.error('Error updating instrument level:', err),
     });
   }
 
-  deleteUserInstrument(id: string): void {
-    if (this.pendingAdds().some((i) => i.id === id)) {
-      this.pendingAdds.update((list) => list.filter((i) => i.id !== id));
-      return;
-    }
-
-    this.markForDelete(id);
-  }
-
-  discardPendingInstruments(): void {
-    this.pendingAdds.set([]);
-  }
-
-  async savePendingInstruments(): Promise<void> {
-    await Promise.all(
-      this.pendingAdds().map(async (instr) => {
-        try {
-          const created = await firstValueFrom(
-            this.api.post<UserInstrument>(this.BASE_URL, {
-              instrument_id: instr.instrument_id,
-              level: instr.level,
-            }),
-          );
-          this.userInstrumentSignal.update((list) => [...list, created]);
-        } catch (err) {
-          console.error('Error saving instrument:', err);
-        }
-      }),
-    );
-
-    await Promise.all(
-      this.pendingRemoves().map(async (id) => {
-        try {
-          await firstValueFrom(this.api.delete(`${this.BASE_URL}/${id}`));
-        } catch (err) {
-          console.error('Error deleting instrument:', err);
-        }
-      }),
-    );
-
-    this.pendingAdds.set([]);
-    this.pendingRemoves.set([]);
-  }
-
-  onSearch(query: string): void {
-    this.searchQuery.set(query);
-  }
-
   getInstruments(): Observable<UserInstrument[]> {
-    return this.api.get<UserInstrument[]>('/user-instruments/me');
+    return this.api.get<UserInstrument[]>(this.ME_URL);
   }
 
   getInstrumentsByUserId(userId: string): Observable<UserInstrument[]> {
     return this.api.get<UserInstrument[]>(`${this.BASE_URL}/${userId}`);
+  }
+
+  private updateLevelInList(list: UserInstrument[], id: string, level: string): UserInstrument[] {
+    return list.map((i) => (i.id === id ? { ...i, level } : i));
   }
 }

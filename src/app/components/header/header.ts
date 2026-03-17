@@ -51,7 +51,7 @@ export class Header {
   async logout(): Promise<void> {
     try {
       await this.supabase.signOut();
-      this.userProfilePicService.clear();
+      this.userProfilePicService.clearData();
       this.userId.set(null);
       this.router.navigate(['/login']);
     } catch (err) {

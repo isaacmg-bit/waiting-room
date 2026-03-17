@@ -4,7 +4,7 @@ import { ApiServiceBack } from './apiservice-back';
 import { MusicBrainzService } from './bands-service';
 import { UserBand } from '../models/UserBand';
 import { Band } from '../models/Band';
-import { finalize, Observable, firstValueFrom } from 'rxjs';
+import { finalize, firstValueFrom, Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class UserBandsService {
@@ -12,23 +12,24 @@ export class UserBandsService {
   private readonly bandsService = inject(MusicBrainzService);
 
   readonly userBandsSignal = signal<UserBand[]>([]);
-  readonly loadingSignal = signal(false);
-  readonly isModalOpen = signal(false);
-  readonly searchQuery = signal('');
+  readonly loadingSignal = signal<boolean>(false);
+  readonly isModalOpen = signal<boolean>(false);
+  readonly searchQuery = signal<string>('');
 
   readonly pendingBands = signal<UserBand[]>([]);
   readonly pendingDeletes = signal<string[]>([]);
 
-  readonly filteredBands = computed(() => {
-    const q = this.searchQuery().toLowerCase();
-    if (!q) return this.bandsService.bandsSignal();
-    return this.bandsService.bandsSignal().filter((i) => i.name.toLowerCase().includes(q));
+  readonly filteredBands = computed<Band[]>(() => {
+    return this.bandsService.bandsSignal();
   });
 
-  readonly allBands = computed(() => [...this.userBandsSignal(), ...this.pendingBands()]);
+  readonly allBands = computed<UserBand[]>(() => [
+    ...this.userBandsSignal(),
+    ...this.pendingBands(),
+  ]);
 
-  private readonly BASE_URL = environment.apiUserBandsUrl;
-  private readonly ME_URL = `${environment.apiUserBandsUrl}${environment.apiMeUrl}`;
+  private readonly BASE_URL: string = environment.apiUserBandsUrl;
+  private readonly ME_URL: string = `${environment.apiUserBandsUrl}${environment.apiMeUrl}`;
 
   loadUserBands(): void {
     this.loadingSignal.set(true);
@@ -36,23 +37,31 @@ export class UserBandsService {
       .get<UserBand[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (bands) => this.userBandsSignal.set(bands),
-        error: (err) => console.error('Error loading user bands:', err),
+        next: (bands: UserBand[]) => this.userBandsSignal.set(bands),
+        error: (err: unknown) => console.error('Error loading user bands:', err),
       });
   }
 
-  addPendingBand(bandName: string, bandId: string): void {
-    const tempId = `temp-${Date.now()}`;
-    this.pendingBands.update((list) => [...list, { id: tempId, name: bandName, band_id: bandId }]);
+  addPendingBand(band: Band): void {
+    const newPending: UserBand = {
+      id: band.id,
+      name: band.name,
+    };
+    this.pendingBands.update((list: UserBand[]) => [...list, newPending]);
   }
 
-  deleteBand(id: string): void {
-    if (this.pendingBands().some((b) => b.id === id)) {
-      this.pendingBands.update((list) => list.filter((b) => b.id !== id));
+  deletePendingBand(id: string): void {
+    this.pendingBands.update((list: UserBand[]) => list.filter((b: UserBand) => b.id !== id));
+  }
+
+  deleteUserBand(id: string): void {
+    if (this.pendingBands().some((b: UserBand) => b.id === id)) {
+      this.deletePendingBand(id);
       return;
     }
-    this.pendingDeletes.update((list) => [...list, id]);
-    this.userBandsSignal.update((list) => list.filter((b) => b.id !== id));
+
+    this.pendingDeletes.update((list: string[]) => [...list, id]);
+    this.userBandsSignal.update((list: UserBand[]) => list.filter((b: UserBand) => b.id !== id));
   }
 
   discardPendingBands(): void {
@@ -61,27 +70,33 @@ export class UserBandsService {
   }
 
   async savePendingBands(): Promise<void> {
+    this.loadingSignal.set(true);
+
     for (const band of this.pendingBands()) {
       try {
         const created = await firstValueFrom(
-          this.api.post<UserBand>(this.BASE_URL, { band_id: band.id, name: band.name }),
+          this.api.post<UserBand>(this.BASE_URL, {
+            id: band.id,
+            name: band.name,
+          }),
         );
-        this.userBandsSignal.update((list) => [...list, created]);
-      } catch (err) {
+        this.userBandsSignal.update((list: UserBand[]) => [...list, created]);
+      } catch (err: unknown) {
         console.error('Error saving band:', err);
       }
     }
 
     for (const id of this.pendingDeletes()) {
       try {
-        await firstValueFrom(this.api.delete(`${this.BASE_URL}/${id}`));
-      } catch (err) {
+        await firstValueFrom(this.api.delete<void>(`${this.BASE_URL}/${id}`));
+      } catch (err: unknown) {
         console.error('Error deleting band:', err);
       }
     }
 
     this.pendingBands.set([]);
     this.pendingDeletes.set([]);
+    this.loadingSignal.set(false);
   }
 
   onSearch(query: string): void {
@@ -90,7 +105,7 @@ export class UserBandsService {
   }
 
   selectBand(band: Band): void {
-    this.addPendingBand(band.name, band.id);
+    this.addPendingBand(band);
     this.closeModal();
   }
 
@@ -102,10 +117,7 @@ export class UserBandsService {
   closeModal(): void {
     this.isModalOpen.set(false);
     this.searchQuery.set('');
-  }
-
-  getBands(): Observable<UserBand[]> {
-    return this.api.get<UserBand[]>('/user-bands/me');
+    this.bandsService.bandsSignal.set([]);
   }
 
   getBandsByUserId(userId: string): Observable<UserBand[]> {

@@ -2,22 +2,22 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { User } from '../models/User';
-import { ApiService } from './apiservice';
+import { ApiServiceBack } from './apiservice-back';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private readonly api = inject(ApiService);
+  private readonly api = inject(ApiServiceBack);
   private readonly toast = inject(ToastrService);
 
   readonly usersSignal = signal<User[]>([]);
-  readonly loadingSignal = signal(false);
-  readonly isEditMode = signal(false);
+  readonly loadingSignal = signal<boolean>(false);
+  readonly isEditMode = signal<boolean>(false);
   readonly editingUserId = signal<string | null>(null);
 
-  private readonly USERS_URL = `${environment.apiUrl}${environment.apiUserUrl}`;
-  private readonly ME_URL = `${environment.apiUrl}${environment.apiUserUrl}${environment.apiMeUrl}`;
+  private readonly USERS_URL: string = environment.apiUserUrl;
+  private readonly ME_URL: string = `${environment.apiUserUrl}${environment.apiMeUrl}`;
 
   constructor() {
     this.loadUsers();
@@ -29,20 +29,21 @@ export class UserService {
       .get<User[]>(this.USERS_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (users) => this.usersSignal.set(users),
-        error: (err) => {
+        next: (users: User[]) => this.usersSignal.set(users),
+        error: (err: unknown) => {
           console.error('Error loading users:', err);
           this.toast.error('Error loading users');
         },
       });
   }
+
   addUser(user: User): void {
     this.api.post<User>(this.USERS_URL, user).subscribe({
-      next: (createdUser) => {
-        this.usersSignal.update((users) => [...users, createdUser]);
+      next: (createdUser: User) => {
+        this.usersSignal.update((users: User[]) => [...users, createdUser]);
         this.toast.success('User created successfully');
       },
-      error: (err) => {
+      error: (err: unknown) => {
         console.error('Error adding user:', err);
         this.toast.error('Error creating user');
       },
@@ -51,11 +52,13 @@ export class UserService {
 
   editUser(id: string, body: Partial<User>): void {
     this.api.patch<User>(`${this.USERS_URL}/${id}`, body).subscribe({
-      next: (updatedUser) => {
-        this.usersSignal.update((users) => users.map((u) => (u.id === id ? updatedUser : u)));
+      next: (updatedUser: User) => {
+        this.usersSignal.update((users: User[]) =>
+          users.map((u: User) => (u.id === id ? updatedUser : u)),
+        );
         this.toast.success('User updated successfully');
       },
-      error: (err) => {
+      error: (err: unknown) => {
         console.error('Error updating user:', err);
         this.toast.error('Error updating user');
       },
@@ -66,10 +69,10 @@ export class UserService {
     if (confirm('Are you sure you want to delete this user?')) {
       this.api.delete<void>(`${this.USERS_URL}/${id}`).subscribe({
         next: () => {
-          this.usersSignal.update((users) => users.filter((u) => u.id !== id));
+          this.usersSignal.update((users: User[]) => users.filter((u: User) => u.id !== id));
           this.toast.success('User deleted successfully');
         },
-        error: (err) => {
+        error: (err: unknown) => {
           console.error('Error deleting user:', err);
           this.toast.error('Error deleting user');
         },
@@ -87,8 +90,9 @@ export class UserService {
   }
 
   submitUser(userData: User): void {
-    if (this.isEditMode() && this.editingUserId()) {
-      this.editUser(this.editingUserId()!, userData);
+    const currentId = this.editingUserId();
+    if (this.isEditMode() && currentId) {
+      this.editUser(currentId, userData);
     } else {
       this.addUser(userData);
     }
@@ -109,6 +113,7 @@ export class UserService {
   }
 
   getRandomUsers(): Observable<User[]> {
-    return this.api.get<User[]>(`${environment.apiUrl}${environment.apiSearchRandomMusicians}`);
+    const url = `${environment.apiSearchRandomMusicians}`;
+    return this.api.get<User[]>(url);
   }
 }

@@ -39,7 +39,7 @@ export class UserBands {
   }
 
   deleteBand(id: string): void {
-    this.userBandsService.deleteBand(id);
+    this.userBandsService.deleteUserBand(id);
   }
 
   openModal(): void {

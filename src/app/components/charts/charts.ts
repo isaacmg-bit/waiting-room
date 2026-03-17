@@ -9,13 +9,13 @@ import {
 } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { CalendarService } from '../../services/calendar-service';
-import { UserEvent } from '../../models/UserEvent'; // Asegúrate de importar la interfaz
+import { UserEvent } from '../../models/UserEvent';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-charts',
-  standalone: true, // Si es standalone
+  standalone: true,
   templateUrl: './charts.html',
   styleUrls: ['./charts.css'],
 })
@@ -46,7 +46,6 @@ export class Charts implements AfterViewInit {
 
   constructor() {
     effect(() => {
-      // CORRECCIÓN: Usar userEventsSignal
       this.calendarService.userEventsSignal();
       if (!this.chartsReady()) return;
       this.updateCharts();
@@ -98,10 +97,7 @@ export class Charts implements AfterViewInit {
   }
 
   private updateCharts(): void {
-    // CORRECCIÓN: Usar userEventsSignal
     const events = this.calendarService.userEventsSignal();
-
-    // CORRECCIÓN: Tipado de acc y event, y usar event_date
     const eventsByMonth = events.reduce<Record<number, number>>(
       (acc: Record<number, number>, event: UserEvent) => {
         if (event.event_date) {

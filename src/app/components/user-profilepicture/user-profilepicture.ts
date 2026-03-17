@@ -30,7 +30,7 @@ export class UserProfilePicture {
 
   async removeProfilePhoto(): Promise<void> {
     try {
-      await this.profilePicService.removeProfilePhoto();
+      await this.profilePicService.deleteProfilePhoto();
     } catch (err) {
       console.error('Error removing profile photo:', err);
     }

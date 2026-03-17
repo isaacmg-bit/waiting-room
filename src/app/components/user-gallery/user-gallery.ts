@@ -18,7 +18,7 @@ export class UserGallery {
 
   async onGallerySelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
-    await this.uploadService.onGallerySelected(input.files || new FileList());
+    await this.uploadService.addPendingPhotos(input.files || new FileList());
   }
 
   openPhoto(url: string): void {
@@ -30,7 +30,7 @@ export class UserGallery {
   }
 
   async removePhoto(photo: GalleryPhoto): Promise<void> {
-    await this.uploadService.removePhoto(photo);
+    await this.uploadService.deletePhoto(photo);
   }
 
   triggerFileInput(): void {

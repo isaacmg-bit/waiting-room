@@ -3,7 +3,7 @@ import { SupabaseService } from './supabase-service';
 import { ApiServiceBack } from './apiservice-back';
 import { GalleryPhoto } from '../models/GalleryPhoto';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, finalize, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -13,78 +13,118 @@ export class UploadService {
   private readonly api = inject(ApiServiceBack);
 
   readonly galleryPhotosSignal = signal<GalleryPhoto[]>([]);
+  readonly loadingSignal = signal<boolean>(false);
   readonly selectedPhoto = signal<string | null>(null);
+
   readonly pendingPhotos = signal<GalleryPhoto[]>([]);
+  readonly pendingDeletes = signal<GalleryPhoto[]>([]);
 
-  private readonly BASE_URL = environment.apiGalleryUrl;
+  private readonly BASE_URL: string = environment.apiGalleryUrl;
+  private readonly ME_URL: string = `${environment.apiGalleryUrl}${environment.apiMeUrl}`;
 
+  readonly allPhotos = computed<GalleryPhoto[]>(() => [
+    ...this.galleryPhotosSignal(),
+    ...this.pendingPhotos(),
+  ]);
 
-  readonly allPhotos = computed(() => [...this.galleryPhotosSignal(), ...this.pendingPhotos()]);
-  
-  private async getSession() {
-    const {
-      data: { session },
-    } = await this.supabaseService.getSession();
-    if (!session) throw new Error('No authenticated session');
-    return session;
+  loadGallery(): void {
+    this.loadingSignal.set(true);
+    this.api
+      .get<GalleryPhoto[]>(this.ME_URL)
+      .pipe(finalize(() => this.loadingSignal.set(false)))
+      .subscribe({
+        next: (photos: GalleryPhoto[]) => this.galleryPhotosSignal.set(photos),
+        error: (err: unknown) => console.error('Error loading gallery:', err),
+      });
   }
 
-  async uploadGalleryPhoto(file: File, position?: number): Promise<string> {
-    const session = await this.getSession();
-    const fileName = `${session.user.id}/${Date.now()}.jpg`;
+  async addPendingPhotos(files: FileList): Promise<void> {
+    if (!files?.length) return;
+    this.loadingSignal.set(true);
 
-    const { data, error } = await this.supabase.storage
-      .from('gallery')
-      .upload(fileName, file, { cacheControl: '0', upsert: true });
+    try {
+      const session = await this.getSession();
+      await Promise.all(
+        Array.from(files).map(async (file, i) => {
+          const fileName = `${session.user.id}/${Date.now()}-${i}.jpg`;
 
-    if (error) throw error;
+          const { data, error } = await this.supabase.storage
+            .from('gallery')
+            .upload(fileName, file, { cacheControl: '0', upsert: true });
 
-    const { data: publicUrl } = this.supabase.storage.from('gallery').getPublicUrl(data.path);
-    const url = publicUrl.publicUrl;
+          if (error) throw error;
 
-    const tempId = `temp-${Date.now()}`;
-    this.pendingPhotos.update((p) => [...p, { id: tempId, url, position }]);
-    return url;
-  }
+          const { data: publicUrl } = this.supabase.storage.from('gallery').getPublicUrl(data.path);
+          const url = publicUrl.publicUrl;
+          const tempId = `temp-${Date.now()}-${i}`;
 
-  async savePendingPhotos(): Promise<void> {
-    for (const photo of this.pendingPhotos()) {
-      const created = await firstValueFrom(
-        this.api.post<GalleryPhoto>('/gallery', { url: photo.url, position: photo.position }),
+          this.pendingPhotos.update((p) => [
+            ...p,
+            { id: tempId, url, position: this.allPhotos().length + 1 },
+          ]);
+        }),
       );
-      this.galleryPhotosSignal.update((p) => [...p, created]);
+    } catch (err: unknown) {
+      console.error('Error uploading to storage:', err);
+    } finally {
+      this.loadingSignal.set(false);
     }
-    this.pendingPhotos.set([]);
+  }
+
+  deletePhoto(photo: GalleryPhoto): void {
+    if (this.isPhotoTemporary(photo.id)) {
+      this.pendingPhotos.update((p) => p.filter((item) => item.id !== photo.id));
+      const path = photo.url.split('/gallery/')[1];
+      this.deleteFromStorage(path).catch(() => null);
+      return;
+    }
+
+    this.pendingDeletes.update((list) => [...list, photo]);
+    this.galleryPhotosSignal.update((list) => list.filter((p) => p.id !== photo.id));
   }
 
   async discardPendingPhotos(): Promise<void> {
+    this.loadingSignal.set(true);
     await Promise.all(
       this.pendingPhotos().map((photo) =>
         this.deleteFromStorage(photo.url.split('/gallery/')[1]).catch(() => null),
       ),
     );
+
+    this.galleryPhotosSignal.update((list) => [...list, ...this.pendingDeletes()]);
+
     this.pendingPhotos.set([]);
+    this.pendingDeletes.set([]);
+    this.loadingSignal.set(false);
   }
 
-  getGallery() {
-    return this.api.get<GalleryPhoto[]>('/gallery/me');
-  }
+  async savePendingPhotos(): Promise<void> {
+    this.loadingSignal.set(true);
 
-  private async deleteFromStorage(path: string): Promise<void> {
-    const { error } = await this.supabase.storage.from('gallery').remove([path]);
-    if (error) throw error;
-  }
-
-  async removePhoto(photo: GalleryPhoto): Promise<void> {
-    try {
-      await firstValueFrom(this.api.delete(`/gallery/${photo.id}`));
-      const path = photo.url.split('/gallery/')[1];
-      await this.deleteFromStorage(path);
-      this.galleryPhotosSignal.update((photos) => photos.filter((p) => p.id !== photo.id));
-    } catch (err) {
-      console.error('Error deleting gallery photo:', err);
-      throw err;
+    for (const photo of this.pendingPhotos()) {
+      try {
+        const created = await firstValueFrom(
+          this.api.post<GalleryPhoto>(this.BASE_URL, { url: photo.url, position: photo.position }),
+        );
+        this.galleryPhotosSignal.update((p) => [...p, created]);
+      } catch (err: unknown) {
+        console.error('Error saving photo record:', err);
+      }
     }
+
+    for (const photo of this.pendingDeletes()) {
+      try {
+        await firstValueFrom(this.api.delete(`${this.BASE_URL}/${photo.id}`));
+        const path = photo.url.split('/gallery/')[1];
+        await this.deleteFromStorage(path);
+      } catch (err: unknown) {
+        console.error('Error deleting photo record:', err);
+      }
+    }
+
+    this.pendingPhotos.set([]);
+    this.pendingDeletes.set([]);
+    this.loadingSignal.set(false);
   }
 
   openPhoto(url: string): void {
@@ -95,16 +135,6 @@ export class UploadService {
     this.selectedPhoto.set(null);
   }
 
-  async onGallerySelected(files: FileList): Promise<void> {
-    if (!files?.length) return;
-
-    await Promise.all(Array.from(files).map((file, i) => this.uploadGalleryPhoto(file, i + 1)));
-  }
-
-  getGalleryByUserId(userId: string) {
-    return this.api.get<GalleryPhoto[]>(`${this.BASE_URL}/${userId}`);
-  }
-
   isPhotoTemporary(photoId: string): boolean {
     return photoId.startsWith('temp-');
   }
@@ -113,5 +143,24 @@ export class UploadService {
     return this.allPhotos().length < 4;
   }
 
-  
+  getGallery() {
+    return this.api.get<GalleryPhoto[]>(this.ME_URL);
+  }
+
+  getGalleryByUserId(userId: string): Observable<GalleryPhoto[]> {
+    return this.api.get<GalleryPhoto[]>(`${this.BASE_URL}/${userId}`);
+  }
+
+  private async getSession() {
+    const {
+      data: { session },
+    } = await this.supabaseService.getSession();
+    if (!session) throw new Error('No authenticated session');
+    return session;
+  }
+
+  private async deleteFromStorage(path: string): Promise<void> {
+    const { error } = await this.supabase.storage.from('gallery').remove([path]);
+    if (error) throw error;
+  }
 }
