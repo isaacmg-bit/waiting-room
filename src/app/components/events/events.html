@@ -22,6 +22,7 @@
         </div>
         <div class="flex items-center gap-3">
           <button
+            (click)="calendarService.openAddModalFromButton()"
             class="rounded-xl bg-primary px-8 py-3 font-bold text-white shadow-lg shadow-primary/20 transition-all hover:brightness-110 active:scale-95"
           >
             + Create Event
@@ -29,7 +30,7 @@
         </div>
       </header>
 
-<app-charts></app-charts>
+      <app-charts></app-charts>
 
       <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
         <div class="xl:col-span-8">
@@ -44,65 +45,40 @@
             <div class="p-6 border-b border-white/5 bg-white/2">
               <h2 class="text-lg font-bold text-white flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary">local_activity</span>
-                Upcoming Gigs
+                Upcoming events
               </h2>
             </div>
             <div class="divide-y divide-white/5">
-              <div
-                class="flex items-center gap-4 p-5 hover:bg-white/5 transition-all group cursor-pointer"
-              >
+              @for (event of calendarService.userEventsSignal(); track event.id) {
                 <div
-                  class="flex flex-col items-center justify-center h-14 w-14 rounded-2xl bg-primary/10 text-primary border border-primary/20 group-hover:bg-primary group-hover:text-white transition-all shadow-inner"
+                  class="flex items-center gap-4 p-5 hover:bg-white/5 transition-all group cursor-pointer"
                 >
-                  <span class="text-base font-black">12</span>
-                  <span class="text-[9px] font-black uppercase tracking-tighter">JUN</span>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <h4
-                    class="text-sm font-bold text-white truncate group-hover:text-primary transition-colors"
+                  <div
+                    class="flex flex-col items-center justify-center h-14 w-14 rounded-2xl bg-primary/10 text-primary border border-primary/20 group-hover:bg-primary group-hover:text-white transition-all shadow-inner"
                   >
-                    Electric Summer Festival
-                  </h4>
-                  <p class="text-xs text-slate-500 flex items-center gap-1">
-                    <span class="material-symbols-outlined text-xs">location_on</span> Wembley Arena
-                  </p>
-                </div>
-                <span
-                  class="material-symbols-outlined text-slate-600 group-hover:text-white transition-colors"
-                  >chevron_right</span
-                >
-              </div>
-
-              <div
-                class="flex items-center gap-4 p-5 hover:bg-white/5 transition-all group cursor-pointer"
-              >
-                <div
-                  class="flex flex-col items-center justify-center h-14 w-14 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-400/20 group-hover:bg-cyan-500 group-hover:text-white transition-all shadow-inner"
-                >
-                  <span class="text-base font-black">15</span>
-                  <span class="text-[9px] font-black uppercase tracking-tighter">JUN</span>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <h4
-                    class="text-sm font-bold text-white truncate group-hover:text-cyan-400 transition-colors"
+                    <span class="text-base font-black">{{ event.event_date.slice(8, 10) }}</span>
+                    <span class="text-[9px] font-black uppercase tracking-tighter">{{
+                      monthToString(event.event_date.slice(5, 7))
+                    }}</span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h4
+                      class="text-sm font-bold text-white truncate group-hover:text-primary transition-colors"
+                    >
+                      {{ event.title }}
+                    </h4>
+                    <p class="text-xs text-slate-500 flex items-center gap-1">
+                      <span class="material-symbols-outlined text-xs">location_on</span>
+                      {{ event.street }}
+                    </p>
+                  </div>
+                  <span
+                    class="material-symbols-outlined text-slate-600 group-hover:text-white transition-colors"
+                    >chevron_right</span
                   >
-                    Apex Studio Session
-                  </h4>
-                  <p class="text-xs text-slate-500 flex items-center gap-1">
-                    <span class="material-symbols-outlined text-xs">mic</span> Soho District
-                  </p>
                 </div>
-                <span
-                  class="material-symbols-outlined text-slate-600 group-hover:text-white transition-colors"
-                  >chevron_right</span
-                >
-              </div>
+              }
             </div>
-            <button
-              class="w-full py-4 text-xs font-bold text-slate-500 hover:text-white hover:bg-white/5 transition-all uppercase tracking-widest"
-            >
-              View Full Schedule
-            </button>
           </div>
         </div>
       </div>

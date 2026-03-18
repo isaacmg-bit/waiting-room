@@ -3,6 +3,8 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CityService } from '../../services/city-service';
 import { City } from '../../models/City';
 import { Subject, Subscription, debounceTime } from 'rxjs';
+import { Street } from '../../models/Street';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-location',
@@ -11,28 +13,48 @@ import { Subject, Subscription, debounceTime } from 'rxjs';
 })
 export class UserLocation implements OnInit, OnDestroy {
   public readonly cityService = inject(CityService);
+
+  
   private searchSubject = new Subject<string>();
   private sub = new Subscription();
+  router = inject(Router);
 
   @Input() control!: FormControl;
   @Output() citySelected = new EventEmitter<City>();
+  @Output() streetSelected = new EventEmitter<Street>();
 
   ngOnInit() {
-    if (this.control.value) {
-      this.cityService.setSelectedCity(this.control.value);
+    const isCalendar = this.router.url.includes('events');
+    this.cityService.setView(isCalendar ? 'street' : 'city');
+
+    const initialValue = this.control.value;
+    if (initialValue && typeof initialValue === 'object') {
+      if (this.cityService.currentView() === 'city') {
+        this.cityService.setSelectedCity(initialValue);
+      } else {
+        this.cityService.setSelectedStreet(initialValue);
+      }
     }
 
     this.sub.add(
       this.control.valueChanges.subscribe((value) => {
         if (value && typeof value === 'object') {
-          this.cityService.setSelectedCity(value);
+          if (this.cityService.currentView() === 'city') {
+            this.cityService.setSelectedCity(value);
+          } else {
+            this.cityService.setSelectedStreet(value);
+          }
         }
       }),
     );
 
     this.sub.add(
       this.searchSubject.pipe(debounceTime(400)).subscribe((query) => {
-        this.cityService.onSearch(query);
+        if (this.cityService.currentView() === 'city') {
+          this.cityService.onSearch(query);
+        } else {
+          this.cityService.onSearchStreets(query);
+        }
       }),
     );
   }
@@ -48,9 +70,16 @@ export class UserLocation implements OnInit, OnDestroy {
     this.citySelected.emit(city);
   }
 
+  selectStreet(street: Street) {
+    this.cityService.selectStreet(street);
+    this.control.setValue(street);
+    this.streetSelected.emit(street);
+  }
+
   openModal() {
     this.cityService.openModal();
   }
+
   closeModal() {
     this.cityService.closeModal();
   }

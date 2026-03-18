@@ -5,6 +5,8 @@ import { environment } from '../../environments/environment';
 import { ApiServiceBack } from './apiservice-back';
 import { firstValueFrom } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { FormGroup, FormControl } from '@angular/forms';
+import { Street } from '../models/Street';
 
 @Injectable({ providedIn: 'root' })
 export class CalendarService {
@@ -18,11 +20,18 @@ export class CalendarService {
 
   readonly eventTitle = signal<string>('');
   readonly eventColor = signal<string>('');
+  readonly eventType = signal<string>('');
   readonly selectedDate = signal<string>('');
+  readonly selectedStreet = signal<Street | null>(null);
+  readonly isPublicSignal = signal<boolean>(false);
   readonly selectedEvent = signal<UserEvent | null>(null);
 
   private readonly BASE_URL: string = environment.apiEventUrl;
   private readonly ME_URL: string = `${environment.apiEventUrl}${environment.apiMeUrl}`;
+
+  publicEvent = new FormGroup({
+    public: new FormControl(false),
+  });
 
   constructor() {
     this.loadEvents();
@@ -43,14 +52,17 @@ export class CalendarService {
   }
 
   async saveEvent(): Promise<void> {
-    const title = this.eventTitle();
-    const color = this.eventColor();
-    const date = this.selectedDate();
-
-    if (!title || !color) return;
+    const payload = {
+      title: this.eventTitle(),
+      date: this.selectedDate(),
+      color: this.eventColor(),
+      event_type: this.eventType(),
+      is_public: this.isPublicSignal(),
+      street: this.selectedStreet()!.name,
+      location_point: `POINT(${this.selectedStreet()!.lng} ${this.selectedStreet()!.lat})`,
+    };
 
     this.loadingSignal.set(true);
-    const payload = { title, date, color };
 
     try {
       const created = await firstValueFrom(this.api.post<UserEvent>(this.BASE_URL, payload));
@@ -74,6 +86,9 @@ export class CalendarService {
       title: this.eventTitle(),
       date: this.selectedDate(),
       color: this.eventColor(),
+      event_type: this.eventType(),
+      is_public: this.isPublicSignal(),
+      streetName: this.selectedStreet()!.name,
     };
 
     try {
@@ -116,10 +131,18 @@ export class CalendarService {
     this.calendarModalActive.set(true);
   }
 
+  openAddModalFromButton(): void {
+    this.clearForm();
+    const today = new Date().toISOString().split('T')[0];
+    this.openAddModal(today);
+  }
+
   openEditModal(event: UserEvent): void {
     this.selectedEvent.set(event);
     this.eventTitle.set(event.title || '');
     this.eventColor.set(event.color || '');
+    this.eventType.set(event.event_type || '');
+    this.isPublicSignal.set(event.is_public ?? false);
 
     const dateStr = event.event_date ? String(event.event_date).split('T')[0] : '';
     this.selectedDate.set(dateStr);
@@ -152,6 +175,10 @@ export class CalendarService {
     this.eventColor.set(value);
   }
 
+  onTypeChange(value: string) {
+    this.eventType.set(value);
+  }
+
   onTitleInput(value: string): void {
     this.eventTitle.set(value);
   }
@@ -160,6 +187,8 @@ export class CalendarService {
     this.eventTitle.set('');
     this.eventColor.set('');
     this.selectedDate.set('');
+    this.eventType.set('');
     this.selectedEvent.set(null);
+    this.selectedStreet.set(null);
   }
 }

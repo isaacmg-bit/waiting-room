@@ -4,18 +4,28 @@ import { City } from '../models/City';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { NominatimResponse } from '../models/NominatimResponse';
+import { Street } from '../models/Street';
 
 @Injectable({ providedIn: 'root' })
 export class CityService {
   private readonly http = inject(HttpClient);
   private readonly nominatimUrl: string = environment.nominatimUrl;
   private readonly searchCache = new Map<string, City[]>();
+  private readonly searchCacheStreets = new Map<string, Street[]>();
 
   readonly filteredCities = signal<City[]>([]);
+  readonly filteredStreets = signal<Street[]>([]);
   readonly loadingSignal = signal<boolean>(false);
   readonly selectedCity = signal<City | null>(null);
+  readonly selectedStreet = signal<Street | null>(null);
   readonly isModalOpen = signal<boolean>(false);
   readonly searchInput = signal<string>('');
+
+  currentView = signal<'city' | 'street'>('city');
+
+  setView(view: 'city' | 'street') {
+    this.currentView.set(view);
+  }
 
   onSearch(query: string): void {
     this.searchInput.set(query);
@@ -24,6 +34,15 @@ export class CityService {
       return;
     }
     this.searchCities(query);
+  }
+
+  onSearchStreets(query: string): void {
+    this.searchInput.set(query);
+    if (!query.trim() || query.length < 2) {
+      this.filteredStreets.set([]);
+      return;
+    }
+    this.searchStreets(query);
   }
 
   async searchCities(query: string): Promise<void> {
@@ -59,6 +78,43 @@ export class CityService {
     }
   }
 
+  async searchStreets(query: string): Promise<void> {
+    const cacheKey = query.toLowerCase();
+    if (this.searchCacheStreets.has(cacheKey)) {
+      this.filteredStreets.set(this.searchCacheStreets.get(cacheKey)!);
+      return;
+    }
+
+    this.loadingSignal.set(true);
+    try {
+      const response = await firstValueFrom(
+        this.http.get<NominatimResponse[]>(this.nominatimUrl, {
+          params: {
+            q: query,
+            format: 'json',
+            addressdetails: '1',
+            limit: '40',
+            countrycodes: 'es',
+          },
+        }),
+      );
+
+      const streets = response.filter(
+        (item) => item.class === 'highway' || item.type === 'route' || item.address.road,
+      );
+
+      const processedStreets = this.processStreetsResponse(streets, query);
+      this.searchCacheStreets.set(cacheKey, processedStreets);
+
+      this.filteredStreets.set(processedStreets.slice(0, 15));
+    } catch (err: unknown) {
+      console.error('Error searching streets:', err);
+      this.filteredStreets.set([]);
+    } finally {
+      this.loadingSignal.set(false);
+    }
+  }
+
   async getCityCoords(cityName: string): Promise<City | undefined> {
     const cacheKey = cityName.toLowerCase();
     let cities: City[] = this.searchCache.get(cacheKey) || [];
@@ -87,8 +143,17 @@ export class CityService {
     this.closeModal();
   }
 
+  selectStreet(street: Street): void {
+    this.selectedStreet.set(street);
+    this.closeModal();
+  }
+
   setSelectedCity(city: City | null): void {
     this.selectedCity.set(city);
+  }
+
+  setSelectedStreet(street: Street | null): void {
+    this.selectedStreet.set(street);
   }
 
   openModal(): void {
@@ -104,6 +169,7 @@ export class CityService {
   private resetSearch(): void {
     this.searchInput.set('');
     this.filteredCities.set([]);
+    this.filteredStreets.set([]);
   }
 
   private processCitiesResponse(response: NominatimResponse[], query: string): City[] {
@@ -130,6 +196,51 @@ export class CityService {
         const aStarts = a.city.toLowerCase().startsWith(qLower);
         const bStarts = b.city.toLowerCase().startsWith(qLower);
         return aStarts && !bStarts ? -1 : !aStarts && bStarts ? 1 : a.city.localeCompare(b.city);
+      });
+  }
+
+  private processStreetsResponse(response: NominatimResponse[], query: string): Street[] {
+    const qLower = query.toLowerCase();
+
+    return response
+      .map((item): Street | null => {
+        const addr = item.address;
+
+        const streetName = addr.road;
+        if (!streetName || !item.lat || !item.lon) return null;
+
+        const houseNumber = addr.house_number;
+
+        const municipality = addr.city || addr.town || addr.village || addr.hamlet || '';
+        const province = addr.state || addr.province || '';
+
+        const displayName = houseNumber ? `${streetName}, ${houseNumber}` : streetName;
+
+        const displayLocation = municipality ? `${municipality}, ${province}` : province;
+
+        return {
+          name: displayName,
+          province: displayLocation,
+          lat: parseFloat(item.lat),
+          lng: parseFloat(item.lon),
+        };
+      })
+      .filter((street): street is Street => street !== null)
+      .filter(
+        (street, index, self) =>
+          index ===
+          self.findIndex(
+            (s) =>
+              s.name.toLowerCase() === street.name.toLowerCase() &&
+              s.province.toLowerCase() === street.province.toLowerCase(),
+          ),
+      )
+      .sort((a, b) => {
+        const aStarts = a.name.toLowerCase().startsWith(qLower);
+        const bStarts = b.name.toLowerCase().startsWith(qLower);
+        if (aStarts && !bStarts) return -1;
+        if (!aStarts && bStarts) return 1;
+        return a.name.localeCompare(b.name);
       });
   }
 }

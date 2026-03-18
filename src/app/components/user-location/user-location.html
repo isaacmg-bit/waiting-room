@@ -1,6 +1,6 @@
 <div class="w-full space-y-2">
   <label for="city-selector" class="text-xs font-semibold uppercase tracking-widest text-slate-500">
-    City
+    {{ cityService.currentView() === 'city' ? 'City' : 'Street' }}
   </label>
 
   <button
@@ -12,13 +12,21 @@
     [aria-expanded]="cityService.isModalOpen()"
   >
     <span class="flex items-center gap-2">
-      <span class="material-symbols-outlined text-base text-slate-500" aria-hidden="true"
-        >location_on</span
-      >
-      @let selected = cityService.selectedCity();
-      <span [class]="selected ? 'text-slate-200' : 'text-slate-500'">
-        {{ selected ? selected.city : 'Select a city...' }}
+      <span class="material-symbols-outlined text-base text-slate-500" aria-hidden="true">
+        {{ cityService.currentView() === 'city' ? 'location_on' : 'add_road' }}
       </span>
+
+      @if (cityService.currentView() === 'city') {
+        @let selectedCity = cityService.selectedCity();
+        <span [class]="selectedCity ? 'text-slate-200' : 'text-slate-500'">
+          {{ selectedCity ? selectedCity.city : 'Select a city...' }}
+        </span>
+      } @else {
+        @let selectedStreet = cityService.selectedStreet();
+        <span [class]="selectedStreet ? 'text-slate-200' : 'text-slate-500'">
+          {{ selectedStreet ? selectedStreet.name : 'Select a street...' }}
+        </span>
+      }
     </span>
     <span class="material-symbols-outlined text-base text-slate-500" aria-hidden="true"
       >chevron_right</span
@@ -39,14 +47,15 @@
       tabindex="-1"
       class="relative w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl animate-in zoom-in-95 duration-200 focus:outline-hidden"
       (click)="$event.stopPropagation()"
-      (keydown)="$event.stopPropagation()"
     >
       <header class="flex items-center justify-between border-b border-white/5 px-5 py-4">
-        <h2 id="modal-title" class="font-bold text-slate-100">Select your city</h2>
+        <h2 id="modal-title" class="font-bold text-slate-100">
+          {{ cityService.currentView() === 'city' ? 'Select your city' : 'Select your street' }}
+        </h2>
         <button
           type="button"
           (click)="closeModal()"
-          class="cursor-pointer text-slate-500 transition-colors hover:text-slate-200 focus-visible:outline-hidden"
+          class="cursor-pointer text-slate-500 transition-colors hover:text-slate-200"
           aria-label="Close modal"
         >
           <span class="material-symbols-outlined" aria-hidden="true">close</span>
@@ -57,16 +66,15 @@
         <div
           class="flex items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2 transition-colors focus-within:border-primary"
         >
-          <label for="city-search" class="sr-only">Search city</label>
-          <span class="material-symbols-outlined text-base text-slate-500" aria-hidden="true"
-            >search</span
-          >
+          <span class="material-symbols-outlined text-base text-slate-500">search</span>
           <input
             id="city-search"
             type="text"
             [value]="cityService.searchInput()"
             (input)="onSearch($event)"
-            placeholder="Search city..."
+            [placeholder]="
+              cityService.currentView() === 'city' ? 'Search city...' : 'Search street...'
+            "
             [disabled]="cityService.loadingSignal()"
             class="flex-1 border-none bg-transparent text-sm text-slate-200 placeholder-slate-500 focus:ring-0 focus:outline-hidden disabled:opacity-50"
           />
@@ -78,44 +86,71 @@
         </div>
       </div>
 
-      <ul
-        class="max-h-64 overflow-y-auto overflow-x-hidden scrollbar-thin"
-        role="listbox"
-        [attr.aria-busy]="cityService.loadingSignal()"
-      >
+      <ul class="max-h-64 overflow-y-auto overflow-x-hidden scrollbar-thin" role="listbox">
         @if (cityService.loadingSignal()) {
-          <li class="px-5 py-8 text-center text-sm text-slate-500" role="status">Searching...</li>
-        } @else if (cityService.filteredCities().length === 0) {
-          <li class="px-5 py-8 text-center text-sm text-slate-500" role="status">
-            Start typing to search...
-          </li>
+          <li class="px-5 py-8 text-center text-sm text-slate-500">Searching...</li>
         }
 
-        @for (city of cityService.filteredCities(); track city.city + city.province) {
-          @let isCurrent = cityService.selectedCity()?.city === city.city;
-
-          <li role="option" [attr.aria-selected]="isCurrent">
-            <button
-              type="button"
-              (click)="selectCity(city)"
-              class="group flex w-full items-center justify-between border-b border-white/5 px-5 py-3 text-left transition-colors last:border-0 hover:bg-primary/10 focus-visible:bg-primary/20 focus-visible:outline-hidden"
-            >
-              <span class="flex flex-col">
-                <span class="font-medium text-slate-200 group-hover:text-primary transition-colors">
-                  {{ city.city }}
-                </span>
-                <span class="text-xs text-slate-500">{{ city.province }}</span>
-              </span>
-
-              @if (isCurrent) {
-                <span
-                  class="material-symbols-outlined text-primary text-sm animate-in zoom-in"
-                  aria-hidden="true"
-                  >check</span
+        @switch (cityService.currentView()) {
+          @case ('city') {
+            @for (city of cityService.filteredCities(); track city.city + city.province) {
+              @let isCurrent = cityService.selectedCity()?.city === city.city;
+              <li role="option">
+                <button
+                  type="button"
+                  (click)="selectCity(city)"
+                  class="group flex w-full items-center justify-between border-b border-white/5 px-5 py-3 text-left hover:bg-primary/10 transition-colors"
                 >
+                  <span class="flex flex-col">
+                    <span
+                      class="font-medium text-slate-200 group-hover:text-primary transition-colors"
+                      >{{ city.city }}</span
+                    >
+                    <span class="text-xs text-slate-500">{{ city.province }}</span>
+                  </span>
+                  @if (isCurrent) {
+                    <span class="material-symbols-outlined text-primary text-sm animate-in zoom-in"
+                      >check</span
+                    >
+                  }
+                </button>
+              </li>
+            } @empty {
+              @if (!cityService.loadingSignal()) {
+                <li class="px-5 py-8 text-center text-sm text-slate-500">No cities found.</li>
               }
-            </button>
-          </li>
+            }
+          }
+
+          @case ('street') {
+            @for (street of cityService.filteredStreets(); track street.name + street.lat) {
+              @let isCurrent = cityService.selectedStreet()?.name === street.name;
+              <li role="option">
+                <button
+                  type="button"
+                  (click)="selectStreet(street)"
+                  class="group flex w-full items-center justify-between border-b border-white/5 px-5 py-3 text-left hover:bg-primary/10 transition-colors"
+                >
+                  <span class="flex flex-col">
+                    <span
+                      class="font-medium text-slate-200 group-hover:text-primary transition-colors"
+                      >{{ street.name }}</span
+                    >
+                    <span class="text-xs text-slate-500">{{ street.province }}</span>
+                  </span>
+                  @if (isCurrent) {
+                    <span class="material-symbols-outlined text-primary text-sm animate-in zoom-in"
+                      >check</span
+                    >
+                  }
+                </button>
+              </li>
+            } @empty {
+              @if (!cityService.loadingSignal()) {
+                <li class="px-5 py-8 text-center text-sm text-slate-500">No streets found.</li>
+              }
+            }
+          }
         }
       </ul>
     </section>

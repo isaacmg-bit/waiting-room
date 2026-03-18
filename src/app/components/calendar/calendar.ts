@@ -6,29 +6,43 @@ import {
   effect,
   signal,
   ChangeDetectorRef,
+  OnInit,
 } from '@angular/core';
 import { FullCalendarModule, FullCalendarComponent } from '@fullcalendar/angular';
-
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { CalendarOptions } from '@fullcalendar/core';
 import { CalendarService } from '../../services/calendar-service';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { UserLocation } from '../user-location/user-location';
+import { Validators } from '@angular/forms';
+import { Street } from '../../models/Street';
 
 @Component({
   selector: 'app-calendar',
-  standalone: true,
-  imports: [FullCalendarModule],
+  imports: [FullCalendarModule, UserLocation, ReactiveFormsModule],
   templateUrl: './calendar.html',
   styleUrl: './calendar.css',
 })
-export class Calendar implements AfterViewInit {
+export class Calendar implements AfterViewInit, OnInit {
   calendarComponent = viewChild<FullCalendarComponent>('calendar');
+
   readonly calendarService = inject(CalendarService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly fb = inject(FormBuilder);
 
+  selectedStreet: Street | null = null;
   calendarTitle = signal('');
   currentView = signal('dayGridMonth');
 
+  form = this.fb.group({
+    street: [null as any, Validators.required],
+  });
+
+  ngOnInit(): void {
+    this.form.reset();
+    this.selectedStreet = null;
+  }
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin, interactionPlugin],
@@ -48,6 +62,7 @@ export class Calendar implements AfterViewInit {
     },
 
     dateClick: (arg) => this.calendarService.openAddModal(arg.dateStr),
+    
     eventClick: (arg) => {
       const eventId = arg.event.id;
       const originalEvent = this.calendarService.userEventsSignal().find((e) => e.id === eventId);
@@ -101,19 +116,40 @@ export class Calendar implements AfterViewInit {
   async saveEvent() {
     await this.calendarService.saveEvent();
   }
+
   async editEvent() {
     await this.calendarService.updateEvent();
   }
+
   async deleteEvent(id: string) {
     if (confirm('Delete?')) await this.calendarService.deleteEvent(id);
   }
+
   onTitleInput(e: Event) {
     this.calendarService.onTitleInput((e.target as HTMLInputElement).value);
   }
+
   onColorChange(e: Event) {
     this.calendarService.onColorChange((e.target as HTMLSelectElement).value);
   }
+
+  onTypeChange(e: Event) {
+    const val = (e.target as HTMLSelectElement).value;
+    this.calendarService.eventType.set(val);
+  }
+
+  onCheckboxChange(e: Event) {
+    const checked = (e.target as HTMLInputElement).checked;
+    this.calendarService.isPublicSignal.set(checked);
+  }
+
   closeModals() {
     this.calendarService.closeModals();
+  }
+
+  onStreetSelected(street: Street): void {
+    this.selectedStreet = street;
+    this.calendarService.selectedStreet.set(street);
+    console.log(street)
   }
 }
