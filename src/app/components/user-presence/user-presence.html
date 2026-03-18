@@ -26,7 +26,7 @@
             class="flex items-center w-full bg-black/40 border border-white/10 rounded-xl overflow-hidden focus-within:border-purple-500 transition-colors"
           >
             <span class="pl-3 text-slate-500 text-sm hidden lg:block select-none whitespace-nowrap">
-              {{ link.get('platform')?.value }}.com/
+              {{ link.get('platform')?.value || 'link' }}.com/
             </span>
             <input
               formControlName="url"
@@ -47,7 +47,7 @@
       </div>
     }
 
-    @if (links.length > 0) {
+    @if (presenceService.pendingLinks().length > 0) {
       <span class="text-xs text-slate-600 block mt-2"> Enter your handle/username </span>
     } @else {
       <div

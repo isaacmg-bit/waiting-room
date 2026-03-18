@@ -1,35 +1,45 @@
-import { Component, Input, Output, EventEmitter, inject, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CityService } from '../../services/city-service';
 import { City } from '../../models/City';
+import { Subject, Subscription, debounceTime } from 'rxjs';
 
 @Component({
   selector: 'app-user-location',
   imports: [ReactiveFormsModule],
   templateUrl: './user-location.html',
 })
-export class UserLocation implements OnInit {
-  readonly cityService = inject(CityService);
+export class UserLocation implements OnInit, OnDestroy {
+  public readonly cityService = inject(CityService);
+  private searchSubject = new Subject<string>();
+  private sub = new Subscription();
 
   @Input() control!: FormControl;
   @Output() citySelected = new EventEmitter<City>();
 
   ngOnInit() {
-    const initialValue = this.control.value;
-    if (initialValue && typeof initialValue === 'object') {
-      this.cityService.setSelectedCity(initialValue);
+    if (this.control.value) {
+      this.cityService.setSelectedCity(this.control.value);
     }
 
-    this.control.valueChanges.subscribe((value) => {
-      if (value && typeof value === 'object') {
-        this.cityService.setSelectedCity(value);
-      }
-    });
+    this.sub.add(
+      this.control.valueChanges.subscribe((value) => {
+        if (value && typeof value === 'object') {
+          this.cityService.setSelectedCity(value);
+        }
+      }),
+    );
+
+    this.sub.add(
+      this.searchSubject.pipe(debounceTime(400)).subscribe((query) => {
+        this.cityService.onSearch(query);
+      }),
+    );
   }
 
   onSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
-    this.cityService.onSearch(value);
+    this.searchSubject.next(value);
   }
 
   selectCity(city: City) {
@@ -41,8 +51,11 @@ export class UserLocation implements OnInit {
   openModal() {
     this.cityService.openModal();
   }
-
   closeModal() {
     this.cityService.closeModal();
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 }

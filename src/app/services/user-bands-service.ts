@@ -37,7 +37,10 @@ export class UserBandsService {
       .get<UserBand[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (bands: UserBand[]) => this.userBandsSignal.set(bands),
+        next: (bands: UserBand[]) => {
+          this.userBandsSignal.set(bands);
+          this.discardPendingBands();
+        },
         error: (err: unknown) => console.error('Error loading user bands:', err),
       });
   }

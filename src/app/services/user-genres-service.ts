@@ -40,7 +40,10 @@ export class UserGenresService {
       .get<UserGenre[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (genres: UserGenre[]) => this.userGenreSignal.set(genres),
+        next: (genres: UserGenre[]) => {
+          this.userGenreSignal.set(genres);
+          this.discardPendingGenres();
+        },
         error: (err: unknown) => console.error('Error loading user genres:', err),
       });
   }

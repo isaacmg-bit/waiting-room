@@ -1,86 +1,42 @@
-import { Injectable, inject, signal, effect } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { City } from '../models/City';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { NominatimResponse } from '../models/NominatimResponse';
 
 @Injectable({ providedIn: 'root' })
 export class CityService {
   private readonly http = inject(HttpClient);
-
-  readonly filteredCities = signal<City[]>([]);
-  readonly isLoading = signal(false);
-  readonly selectedCity = signal<City | null>(null);
-  readonly isModalOpen = signal(false);
-  readonly searchInput = signal('');
-
-  private readonly nominatimUrl = environment.nominatimUrl;
-
+  private readonly nominatimUrl: string = environment.nominatimUrl;
   private readonly searchCache = new Map<string, City[]>();
 
-  constructor() {
-    effect(async () => {
-      const query = this.searchInput();
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      if (!query.trim()) {
-        this.filteredCities.set([]);
-        this.isLoading.set(false);
-        return;
-      }
-
-      this.isLoading.set(true);
-      const cities = await this.searchCitiesInternal(query);
-      this.filteredCities.set(cities.slice(0, 8));
-      this.isLoading.set(false);
-    });
-  }
+  readonly filteredCities = signal<City[]>([]);
+  readonly loadingSignal = signal<boolean>(false);
+  readonly selectedCity = signal<City | null>(null);
+  readonly isModalOpen = signal<boolean>(false);
+  readonly searchInput = signal<string>('');
 
   onSearch(query: string): void {
     this.searchInput.set(query);
+    if (!query.trim() || query.length < 2) {
+      this.filteredCities.set([]);
+      return;
+    }
+    this.searchCities(query);
   }
 
-  openModal(): void {
-    this.resetSearch();
-    this.isModalOpen.set(true);
-  }
-
-  closeModal(): void {
-    this.isModalOpen.set(false);
-    this.resetSearch();
-  }
-
-  selectCity(city: City): void {
-    this.selectedCity.set(city);
-    this.closeModal();
-  }
-
-  setSelectedCity(city: City | null): void {
-    this.selectedCity.set(city);
-  }
-
-  async getCityCoords(cityName: string): Promise<City | undefined> {
-    const cities = await this.searchCitiesInternal(cityName);
-    return cities.find((c) => c.city.toLowerCase() === cityName.toLowerCase());
-  }
-
-  private resetSearch(): void {
-    this.searchInput.set('');
-    this.filteredCities.set([]);
-  }
-
-  private async searchCitiesInternal(query: string): Promise<City[]> {
-    if (!query.trim() || query.length < 2) return [];
-
+  async searchCities(query: string): Promise<void> {
     const cacheKey = query.toLowerCase();
     if (this.searchCache.has(cacheKey)) {
-      return this.searchCache.get(cacheKey)!;
+      this.filteredCities.set(this.searchCache.get(cacheKey)!);
+      return;
     }
 
+    this.loadingSignal.set(true);
     try {
       const response = await firstValueFrom(
-        this.http.get<any[]>(this.nominatimUrl, {
+        this.http.get<NominatimResponse[]>(this.nominatimUrl, {
           params: {
             q: query,
             format: 'json',
@@ -93,29 +49,74 @@ export class CityService {
       );
 
       const cities = this.processCitiesResponse(response, query);
-
       this.searchCache.set(cacheKey, cities);
-
-      return cities;
-    } catch (err) {
+      this.filteredCities.set(cities.slice(0, 8));
+    } catch (err: unknown) {
       console.error('Error searching cities:', err);
-      return [];
+      this.filteredCities.set([]);
+    } finally {
+      this.loadingSignal.set(false);
     }
   }
 
-  private processCitiesResponse(response: any[], query: string): City[] {
+  async getCityCoords(cityName: string): Promise<City | undefined> {
+    const cacheKey = cityName.toLowerCase();
+    let cities: City[] = this.searchCache.get(cacheKey) || [];
+
+    if (cities.length === 0) {
+      this.loadingSignal.set(true);
+      try {
+        const response = await firstValueFrom(
+          this.http.get<NominatimResponse[]>(this.nominatimUrl, {
+            params: { q: cityName, format: 'json', addressdetails: '1', countrycodes: 'es' },
+          }),
+        );
+        cities = this.processCitiesResponse(response, cityName);
+        this.searchCache.set(cacheKey, cities);
+      } catch (err: unknown) {
+        console.error('Error getting coords:', err);
+      } finally {
+        this.loadingSignal.set(false);
+      }
+    }
+    return cities.find((c) => c.city.toLowerCase() === cityName.toLowerCase());
+  }
+
+  selectCity(city: City): void {
+    this.selectedCity.set(city);
+    this.closeModal();
+  }
+
+  setSelectedCity(city: City | null): void {
+    this.selectedCity.set(city);
+  }
+
+  openModal(): void {
+    this.resetSearch();
+    this.isModalOpen.set(true);
+  }
+
+  closeModal(): void {
+    this.isModalOpen.set(false);
+    this.resetSearch();
+  }
+
+  private resetSearch(): void {
+    this.searchInput.set('');
+    this.filteredCities.set([]);
+  }
+
+  private processCitiesResponse(response: NominatimResponse[], query: string): City[] {
     const qLower = query.toLowerCase();
-
     return response
-      .map((item) => {
-        const address = item.address || {};
-        const cityName = address.city || address.town || address.village || address.hamlet;
-
+      .map((item): City | null => {
+        const addr = item.address;
+        const cityName = addr.city || addr.town || addr.village || addr.hamlet;
         if (!cityName || !item.lat || !item.lon) return null;
 
         return {
           city: cityName,
-          province: address.state || address.province || '',
+          province: addr.state || addr.province || '',
           lat: parseFloat(item.lat),
           lng: parseFloat(item.lon),
         };
@@ -128,13 +129,7 @@ export class CityService {
       .sort((a, b) => {
         const aStarts = a.city.toLowerCase().startsWith(qLower);
         const bStarts = b.city.toLowerCase().startsWith(qLower);
-        if (aStarts && !bStarts) return -1;
-        if (!aStarts && bStarts) return 1;
-        return a.city.localeCompare(b.city);
+        return aStarts && !bStarts ? -1 : !aStarts && bStarts ? 1 : a.city.localeCompare(b.city);
       });
-  }
-
-  clearCache(): void {
-    this.searchCache.clear();
   }
 }

@@ -40,7 +40,10 @@ export class UserInstrumentsService {
       .get<UserInstrument[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (instruments: UserInstrument[]) => this.userInstrumentSignal.set(instruments),
+        next: (instruments: UserInstrument[]) => {
+          this.userInstrumentSignal.set(instruments);
+          this.discardPendingInstruments();
+        },
         error: (err: unknown) => console.error('Error loading user instruments:', err),
       });
   }
