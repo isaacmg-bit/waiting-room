@@ -79,7 +79,7 @@ export class UserBandsService {
       try {
         const created = await firstValueFrom(
           this.api.post<UserBand>(this.BASE_URL, {
-            id: band.id,
+            band_id: band.id,
             name: band.name,
           }),
         );
