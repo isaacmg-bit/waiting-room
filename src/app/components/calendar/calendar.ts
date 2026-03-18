@@ -42,7 +42,15 @@ export class Calendar implements AfterViewInit, OnInit {
     effect(() => {
       this.calendarService.userEventsSignal();
       this.calendarService.userPublicEventsSignal();
-      this.calendarComponent()?.getApi().refetchEvents();
+
+      const calendar = this.calendarComponent();
+
+      if (calendar) {
+        const api = calendar.getApi();
+        if (api) {
+          api.refetchEvents();
+        }
+      }
     });
   }
 
@@ -52,8 +60,10 @@ export class Calendar implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit(): void {
-    this.calendarService.loadInitialData();
-    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.calendarService.loadInitialData();
+      this.cdr.detectChanges();
+    }, 0);
   }
 
   calendarOptions: CalendarOptions = {
