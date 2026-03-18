@@ -134,7 +134,18 @@ export class CalendarService {
   }
 
   getColorCode(colorName: string): string {
-    return colorName;
+    const colors: Record<string, string> = {
+      red: '#ef4444',
+      blue: '#3b82f6',
+      green: '#22c55e',
+      yellow: '#eab308',
+      cyan: '#06b6d4',
+      pink: '#ec4899',
+      purple: '#a855f7',
+      primary: '#f97316',
+    };
+
+    return colors[colorName] || colors['primary'];
   }
 
   onColorChange(value: string): void {

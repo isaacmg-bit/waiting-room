@@ -1,72 +1,115 @@
-<main class="bg-slate-950 min-h-screen font-display selection:bg-primary/30">
-  <header class="max-w-7xl mx-auto px-6 py-12">
-    <h1
-      class="text-4xl font-black tracking-tighter text-slate-100 mb-2 bg-linear-to-r from-white to-slate-500 bg-clip-text"
-    >
-      Charts
-    </h1>
-    <p class="text-slate-500 text-sm font-medium uppercase tracking-[0.2em]">
-      Visual overview of your musical activity
-    </p>
-  </header>
+<main class="mb-10">
+  <div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+      <div
+        class="bg-slate-900/50 border border-white/5 p-5 rounded-3xl flex flex-col justify-between h-40"
+      >
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest"
+              >Total Gigs</span
+            >
+            <h2 class="text-3xl font-black text-white mt-1">128</h2>
+          </div>
+          <span
+            class="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-1 rounded-lg"
+            >+12%</span
+          >
+        </div>
+        <div class="h-12 w-full">
+          <canvas #gigsMiniChart></canvas>
+        </div>
+      </div>
 
-  <div class="max-w-7xl mx-auto px-6 pb-12">
+      <div
+        class="bg-slate-900/50 border border-white/5 p-5 rounded-3xl flex flex-col justify-between"
+      >
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest"
+              >Revenue</span
+            >
+            <h2 class="text-3xl font-black text-white mt-1">$4,250</h2>
+          </div>
+          <span class="bg-rose-500/10 text-rose-400 text-[10px] font-bold px-2 py-1 rounded-lg"
+            >-3%</span
+          >
+        </div>
+        <div class="h-12 w-full">
+          <canvas #revMiniChart></canvas>
+        </div>
+      </div>
+
+      <div
+        class="bg-slate-900/50 border border-white/5 p-5 rounded-3xl flex flex-col justify-between h-40"
+      >
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest"
+              >Avg Rating</span
+            >
+            <h2 class="text-3xl font-black text-white mt-1">4.9</h2>
+          </div>
+          <span class="bg-sky-500/10 text-sky-400 text-[10px] font-bold px-2 py-1 rounded-lg"
+            >New</span
+          >
+        </div>
+        <div class="flex items-center gap-1 text-sky-400">
+          <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+            <div class="h-full bg-sky-400 w-[98%]"></div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="bg-slate-900/50 border border-white/5 p-5 rounded-3xl flex flex-col justify-between h-40"
+      >
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest"
+              >New Connections</span
+            >
+            <h2 class="text-3xl font-black text-white mt-1">12</h2>
+          </div>
+          <span
+            class="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-1 rounded-lg"
+            >+5%</span
+          >
+        </div>
+        <div class="flex -space-x-2">
+          <div class="w-7 h-7 rounded-full bg-slate-700 border-2 border-slate-900"></div>
+          <div class="w-7 h-7 rounded-full bg-slate-600 border-2 border-slate-900"></div>
+          <div class="w-7 h-7 rounded-full bg-slate-500 border-2 border-slate-900"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="grid gap-8 md:grid-cols-2">
       <section
-        class="glass-card rounded-3xl overflow-hidden border border-white/10 bg-white/2 shadow-2xl transition-all hover:border-white/20"
+        class="bg-white/2 border border-white/10 rounded-4xl overflow-hidden backdrop-blur-sm"
       >
-        <div class="px-6 py-5 border-b border-white/5 flex justify-between items-center bg-white/1">
-          <h2
-            id="bar-chart-title"
-            class="text-xs font-bold uppercase tracking-widest text-slate-400"
-          >
-            Bar Chart
+        <div class="px-8 py-6 border-b border-white/5 flex justify-between items-center">
+          <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400">
+            Activity Overview
           </h2>
-          <span
-            class="px-2 py-1 rounded-md bg-slate-800/50 text-[10px] font-bold text-slate-500 uppercase tracking-tighter"
-          >
-            Overview
-          </span>
-        </div>
-
-        <div class="p-8">
-          <div class="relative h-80 w-full">
-            <canvas
-              #barChart
-              role="img"
-              aria-labelledby="bar-chart-title"
-              class="w-full h-full"
-            ></canvas>
+          <div class="flex gap-2">
+            <button class="px-3 py-1 bg-white/5 rounded-md text-[10px] text-white">Month</button>
+            <button class="px-3 py-1 rounded-md text-[10px] text-slate-500">Week</button>
           </div>
+        </div>
+        <div class="p-8">
+          <canvas #barChart class="max-h-64"></canvas>
         </div>
       </section>
 
       <section
-        class="glass-card rounded-3xl overflow-hidden border border-white/10 bg-white/2 shadow-2xl transition-all hover:border-white/20"
+        class="bg-white/2 border border-white/10 rounded-4xl overflow-hidden backdrop-blur-sm"
       >
-        <div class="px-6 py-5 border-b border-white/5 flex justify-between items-center bg-white/1">
-          <h2
-            id="line-chart-title"
-            class="text-xs font-bold uppercase tracking-widest text-slate-400"
-          >
-            Line Chart
-          </h2>
-          <span
-            class="px-2 py-1 rounded-md bg-slate-800/50 text-[10px] font-bold text-slate-500 uppercase tracking-tighter"
-          >
-            Trends
-          </span>
+        <div class="px-8 py-6 border-b border-white/5">
+          <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400">Growth Trends</h2>
         </div>
-
         <div class="p-8">
-          <div class="relative h-80 w-full">
-            <canvas
-              #lineChart
-              role="img"
-              aria-labelledby="line-chart-title"
-              class="w-full h-full"
-            ></canvas>
-          </div>
+          <canvas #lineChart class="max-h-64"></canvas>
         </div>
       </section>
     </div>

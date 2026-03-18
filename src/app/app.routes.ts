@@ -10,29 +10,11 @@ export const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full',
   },
-
   {
     path: 'home',
     loadComponent: () => import('./components/home/home').then((m) => m.Home),
     canActivate: [profileGuard],
   },
-
-  {
-    path: 'calendar',
-    loadComponent: () => import('./components/calendar/calendar').then((m) => m.Calendar),
-    canActivate: [profileGuard],
-  },
-  {
-    path: 'charts',
-    loadComponent: () => import('./components/charts/charts').then((m) => m.Charts),
-    canActivate: [profileGuard],
-  },
-  {
-    path: 'map',
-    loadComponent: () => import('./components/map/map').then((m) => m.Map),
-    canActivate: [profileGuard],
-  },
-
   {
     path: 'edit-profile',
     loadComponent: () =>
@@ -78,5 +60,9 @@ export const routes: Routes = [
     path: 'users',
     loadComponent: () => import('./components/users/users').then((m) => m.Users),
     canActivate: [adminGuard],
+  },
+  {
+    path: 'events',
+    loadComponent: () => import('./components/events/events').then((m) => m.Events),
   },
 ];

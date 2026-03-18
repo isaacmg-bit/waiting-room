@@ -1,0 +1,111 @@
+<div
+  class="relative min-h-screen overflow-x-hidden bg-slate-950 font-display text-slate-100 selection:bg-primary/30"
+>
+  <div
+    class="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-primary/10 blur-[140px] pointer-events-none"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-cyan-500/10 blur-[140px] pointer-events-none"
+    aria-hidden="true"
+  ></div>
+
+  <main class="relative z-10 p-6 lg:p-10">
+    <div class="max-w-350 mx-auto space-y-8">
+      <header class="flex flex-col gap-4 md:flex-row md:items-end justify-between">
+        <div class="space-y-1">
+          <h1
+            class="bg-linear-to-r from-primary via-purple-400 to-cyan-400 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent"
+          >
+            Events dashboard
+          </h1>
+        </div>
+        <div class="flex items-center gap-3">
+          <button
+            class="rounded-xl bg-primary px-8 py-3 font-bold text-white shadow-lg shadow-primary/20 transition-all hover:brightness-110 active:scale-95"
+          >
+            + Create Event
+          </button>
+        </div>
+      </header>
+
+<app-charts></app-charts>
+
+      <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+        <div class="xl:col-span-8">
+          <app-calendar></app-calendar>
+          <app-map></app-map>
+        </div>
+
+        <div class="xl:col-span-4 space-y-8">
+          <div
+            class="rounded-2xl border border-white/10 bg-black/30 backdrop-blur-md overflow-hidden shadow-xl"
+          >
+            <div class="p-6 border-b border-white/5 bg-white/2">
+              <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">local_activity</span>
+                Upcoming Gigs
+              </h2>
+            </div>
+            <div class="divide-y divide-white/5">
+              <div
+                class="flex items-center gap-4 p-5 hover:bg-white/5 transition-all group cursor-pointer"
+              >
+                <div
+                  class="flex flex-col items-center justify-center h-14 w-14 rounded-2xl bg-primary/10 text-primary border border-primary/20 group-hover:bg-primary group-hover:text-white transition-all shadow-inner"
+                >
+                  <span class="text-base font-black">12</span>
+                  <span class="text-[9px] font-black uppercase tracking-tighter">JUN</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4
+                    class="text-sm font-bold text-white truncate group-hover:text-primary transition-colors"
+                  >
+                    Electric Summer Festival
+                  </h4>
+                  <p class="text-xs text-slate-500 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs">location_on</span> Wembley Arena
+                  </p>
+                </div>
+                <span
+                  class="material-symbols-outlined text-slate-600 group-hover:text-white transition-colors"
+                  >chevron_right</span
+                >
+              </div>
+
+              <div
+                class="flex items-center gap-4 p-5 hover:bg-white/5 transition-all group cursor-pointer"
+              >
+                <div
+                  class="flex flex-col items-center justify-center h-14 w-14 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-400/20 group-hover:bg-cyan-500 group-hover:text-white transition-all shadow-inner"
+                >
+                  <span class="text-base font-black">15</span>
+                  <span class="text-[9px] font-black uppercase tracking-tighter">JUN</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4
+                    class="text-sm font-bold text-white truncate group-hover:text-cyan-400 transition-colors"
+                  >
+                    Apex Studio Session
+                  </h4>
+                  <p class="text-xs text-slate-500 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs">mic</span> Soho District
+                  </p>
+                </div>
+                <span
+                  class="material-symbols-outlined text-slate-600 group-hover:text-white transition-colors"
+                  >chevron_right</span
+                >
+              </div>
+            </div>
+            <button
+              class="w-full py-4 text-xs font-bold text-slate-500 hover:text-white hover:bg-white/5 transition-all uppercase tracking-widest"
+            >
+              View Full Schedule
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

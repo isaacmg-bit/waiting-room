@@ -1,247 +1,105 @@
-<main class="min-h-screen bg-slate-950 font-display text-slate-100 selection:bg-primary/30">
-  <header class="mx-auto max-w-7xl px-6 py-12">
-    <h1 class="mb-2 text-4xl font-black tracking-tight text-slate-100">Map Explorer</h1>
-    <p class="text-base text-slate-500">Discover shows and rehearsal spaces near you.</p>
-  </header>
+<main class="pb-12">
+  <div class="mt-10">
+    <div
+      class="rounded-4xl border border-white/10 bg-black/30 backdrop-blur-xl shadow-2xl overflow-hidden"
+    >
+      <div class="flex items-center justify-between p-8 border-b border-white/5 bg-white/1">
+        <div class="flex items-center gap-4">
+          <span class="material-symbols-outlined text-3xl text-slate-200">map</span>
+          <h2 class="text-2xl font-bold text-white tracking-tight">Venue Distribution</h2>
+        </div>
 
-  <div class="mx-auto max-w-7xl px-6 pb-16">
-    <div class="glass-card overflow-hidden rounded-3xl shadow-2xl">
-      <section class="border-b border-white/5 p-6 md:px-8" aria-labelledby="filter-legend">
-        <h2
-          id="filter-legend"
-          class="mb-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500"
-        >
-          Filter by category
-        </h2>
-        <div class="flex flex-wrap gap-6">
-          <label
-            class="group flex cursor-pointer items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-primary"
+        <div class="flex gap-1 p-1 bg-black/40 rounded-xl border border-white/5">
+          <button
+            (click)="toggleFilter('show')"
+            [class]="
+              locationService.activeFilters().includes('show')
+                ? 'bg-white/10 text-white shadow-lg'
+                : 'text-slate-500 hover:text-slate-200'
+            "
+            class="px-5 py-1.5 text-xs font-bold rounded-lg transition-all"
           >
-            <input
-              type="checkbox"
-              [checked]="locationService.activeFilters().includes('show')"
-              (change)="toggleFilter('show')"
-              class="size-5 rounded border-white/10 bg-black/40 text-primary transition-all focus:ring-primary focus:ring-offset-0"
-            />
             Shows
-          </label>
-          <label
-            class="group flex cursor-pointer items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-primary"
+          </button>
+          <button
+            (click)="toggleFilter('rehearsalspace')"
+            [class]="
+              locationService.activeFilters().includes('rehearsalspace')
+                ? 'bg-white/10 text-white shadow-lg'
+                : 'text-slate-500 hover:text-slate-200'
+            "
+            class="px-5 py-1.5 text-xs font-bold rounded-lg transition-all"
           >
-            <input
-              type="checkbox"
-              [checked]="locationService.activeFilters().includes('rehearsalspace')"
-              (change)="toggleFilter('rehearsalspace')"
-              class="size-5 rounded border-white/10 bg-black/40 text-primary transition-all focus:ring-primary focus:ring-offset-0"
-            />
-            Rehearsal Spaces
-          </label>
+            Rehearsal spaces
+          </button>
         </div>
-      </section>
+      </div>
 
-      <div
-        id="map"
-        class="h-125 w-full bg-slate-900 transition-opacity duration-500"
-        role="application"
-        aria-label="Interactive music community map"
-      ></div>
+      <div class="p-8">
+        <div
+          id="map"
+          class="w-full aspect-21/9 rounded-3xl border border-white/5 bg-slate-900/50 overflow-hidden transition-opacity duration-500"
+          role="application"
+        ></div>
+
+        <div class="mt-4 flex justify-between items-center px-2">
+          <div class="flex items-center gap-2">
+            <div class="size-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest"
+              >{{ locationService.locationsSignal().length }} Points Active</span
+            >
+          </div>
+        </div>
+      </div>
     </div>
-
-    @if (locationService.locationModalActive()) {
-      <div
-        class="fixed inset-0 z-1000 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in duration-300"
-        style="background: rgba(0, 0, 0, 0.75)"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-add-title"
-      >
-        <div
-          class="glass-card w-full max-w-md overflow-hidden rounded-3xl shadow-2xl animate-in zoom-in-95 duration-300"
-        >
-          <header class="flex items-center justify-between border-b border-white/5 px-6 py-4">
-            <h2 id="modal-add-title" class="text-lg font-bold">Add New Point</h2>
-            <button
-              type="button"
-              (click)="closeModals()"
-              class="flex size-8 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-white/5 hover:text-white"
-              aria-label="Close modal"
-            >
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </header>
-
-          <form class="space-y-5 p-6">
-            <div class="space-y-2">
-              <label
-                for="add-name"
-                class="block text-[10px] font-bold uppercase tracking-widest text-slate-500"
-                >Name</label
-              >
-              <input
-                id="add-name"
-                type="text"
-                placeholder="Venue or studio name"
-                [value]="locationService.nameInput()"
-                (input)="onNameInput($event)"
-                class="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-slate-200 outline-hidden transition-all focus:ring-1 focus:ring-primary placeholder:text-slate-600"
-              />
-            </div>
-
-            <div class="space-y-2">
-              <label
-                for="add-desc"
-                class="block text-[10px] font-bold uppercase tracking-widest text-slate-500"
-                >Description</label
-              >
-              <textarea
-                id="add-desc"
-                rows="2"
-                placeholder="What happens here?"
-                [value]="locationService.descriptionInput()"
-                (input)="onDescriptionInput($event)"
-                class="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-slate-200 outline-hidden transition-all focus:ring-1 focus:ring-primary placeholder:text-slate-600 resize-none"
-              ></textarea>
-            </div>
-
-            <div class="space-y-2">
-              <label
-                for="add-cat"
-                class="block text-[10px] font-bold uppercase tracking-widest text-slate-500"
-                >Category</label
-              >
-              <select
-                id="add-cat"
-                [value]="locationService.categoryInput()"
-                (change)="onCategoryChange($event)"
-                class="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-slate-200 outline-hidden focus:ring-1 focus:ring-primary appearance-none"
-              >
-                <option value="">Select a category</option>
-                <option value="show">Show / Live Music</option>
-                <option value="rehearsalspace">Rehearsal Space</option>
-              </select>
-            </div>
-
-            <footer class="flex justify-end gap-3 pt-4">
-              <button
-                type="button"
-                (click)="closeModals()"
-                class="rounded-xl border border-white/10 px-5 py-2.5 text-sm font-bold text-slate-400 transition-all hover:bg-white/5 active:scale-95"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                (click)="saveLocation()"
-                class="rounded-xl bg-primary px-8 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:brightness-110 active:scale-95"
-              >
-                Save Location
-              </button>
-            </footer>
-          </form>
-        </div>
-      </div>
-    }
-
-    @if (locationService.editLocationModalActive()) {
-      <div
-        class="fixed inset-0 z-1000 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in duration-300"
-        style="background: rgba(0, 0, 0, 0.75)"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-edit-title"
-      >
-        <div
-          class="glass-card w-full max-w-md overflow-hidden rounded-3xl shadow-2xl animate-in zoom-in-95 duration-300"
-        >
-          <header class="flex items-center justify-between border-b border-white/5 px-6 py-4">
-            <h2 id="modal-edit-title" class="text-lg font-bold">Manage Location</h2>
-            <button
-              type="button"
-              (click)="closeModals()"
-              class="flex size-8 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-white/5 hover:text-white"
-              aria-label="Close modal"
-            >
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </header>
-
-          <form class="space-y-5 p-6">
-            <div class="space-y-2">
-              <label
-                for="edit-name"
-                class="block text-[10px] font-bold uppercase tracking-widest text-slate-500"
-                >Name</label
-              >
-              <input
-                id="edit-name"
-                type="text"
-                [value]="locationService.nameInput()"
-                (input)="onNameInput($event)"
-                class="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-slate-200 outline-hidden transition-all focus:ring-1 focus:ring-primary"
-              />
-            </div>
-
-            <div class="space-y-2">
-              <label
-                for="edit-desc"
-                class="block text-[10px] font-bold uppercase tracking-widest text-slate-500"
-                >Description</label
-              >
-              <textarea
-                id="edit-desc"
-                rows="2"
-                [value]="locationService.descriptionInput()"
-                (input)="onDescriptionInput($event)"
-                class="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-slate-200 outline-hidden transition-all focus:ring-1 focus:ring-primary resize-none"
-              ></textarea>
-            </div>
-
-            <div class="space-y-2">
-              <label
-                for="edit-cat"
-                class="block text-[10px] font-bold uppercase tracking-widest text-slate-500"
-                >Category</label
-              >
-              <select
-                id="edit-cat"
-                [value]="locationService.categoryInput()"
-                (change)="onCategoryChange($event)"
-                class="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-slate-200 outline-hidden focus:ring-1 focus:ring-primary appearance-none"
-              >
-                <option value="show">Show / Live Music</option>
-                <option value="rehearsalspace">Rehearsal Space</option>
-              </select>
-            </div>
-
-            <footer class="flex flex-wrap items-center justify-between gap-3 pt-4">
-              <button
-                type="button"
-                (click)="deleteLocation()"
-                class="flex items-center gap-2 rounded-xl border border-red-500/20 px-4 py-2.5 text-sm font-bold text-red-400 transition-all hover:bg-red-500/10 active:scale-95"
-              >
-                <span class="material-symbols-outlined text-sm">delete</span>
-                Delete
-              </button>
-              <div class="flex gap-2">
-                <button
-                  type="button"
-                  (click)="closeModals()"
-                  class="rounded-xl border border-white/10 px-5 py-2.5 text-sm font-bold text-slate-400 transition-all hover:bg-white/5"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  (click)="editLocation()"
-                  class="rounded-xl bg-primary px-8 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:brightness-110 active:scale-95"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </footer>
-          </form>
-        </div>
-      </div>
-    }
   </div>
+
+  @if (locationService.locationModalActive()) {
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300"
+    >
+      <div
+        class="w-full max-w-sm rounded-3xl border border-white/10 bg-slate-900/90 p-1 shadow-2xl backdrop-blur-2xl"
+      >
+        <div
+          class="flex items-center justify-between px-6 py-5 border-b border-white/5 bg-white/2 rounded-t-3xl text-white"
+        >
+          <h2 class="font-bold text-lg">Add New Point</h2>
+          <button (click)="closeModals()" class="text-slate-500 hover:text-white transition-colors">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <form class="flex flex-col gap-6 p-6">
+          <div class="space-y-2">
+            <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1"
+              >Location Name</label
+            >
+            <input
+              type="text"
+              [value]="locationService.nameInput()"
+              (input)="onNameInput($event)"
+              placeholder="Venue name..."
+              class="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-2xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+            />
+          </div>
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              (click)="closeModals()"
+              type="button"
+              class="px-5 py-2.5 text-xs font-bold rounded-xl border border-white/5 text-slate-400"
+            >
+              Cancel
+            </button>
+            <button
+              (click)="saveLocation()"
+              type="button"
+              class="px-8 py-2.5 text-xs rounded-xl bg-primary text-white font-black shadow-lg shadow-primary/20 active:scale-95 transition-all"
+            >
+              Save Point
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
 </main>

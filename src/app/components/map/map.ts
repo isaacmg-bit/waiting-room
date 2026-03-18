@@ -15,11 +15,11 @@ export class Map implements AfterViewInit {
   private map: L.Map | null = null;
   private readonly savedMarkersLayer = L.layerGroup();
 
-  private readonly iconSavedMarker = L.icon({
-    iconUrl: '/assets/icons/savedlocationicon.png',
-    shadowUrl: '/assets/icons/shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
+  private readonly iconSavedMarker = L.divIcon({
+    className: 'custom-div-icon',
+    html: `<div class="w-4 h-4 bg-cyan-400 rounded-full shadow-[0_0_15px_rgba(34,211,238,0.8)] border-2 border-white"></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
   });
 
   private readonly iconUser = L.icon({
