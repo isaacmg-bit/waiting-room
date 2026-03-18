@@ -49,7 +49,11 @@
               </h2>
             </div>
             <div class="divide-y divide-white/5">
-              @for (event of calendarService.userEventsSignal(); track event.id) {
+              @for (
+                event of calendarService.userEventsSignal() &&
+                  calendarService.userPublicEventsSignal();
+                track event.id
+              ) {
                 <div
                   class="flex items-center gap-4 p-5 hover:bg-white/5 transition-all group cursor-pointer"
                 >

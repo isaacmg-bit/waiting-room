@@ -22,12 +22,13 @@ Chart.register(...registerables);
 export class Charts implements AfterViewInit {
   private readonly barChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('barChart');
   private readonly lineChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('lineChart');
+  private readonly gigsMiniCanvas = viewChild<ElementRef<HTMLCanvasElement>>('gigsMiniChart');
+  private readonly revMiniCanvas = viewChild<ElementRef<HTMLCanvasElement>>('revMiniChart');
 
   private readonly calendarService = inject(CalendarService);
   private readonly supabase = inject(SupabaseService);
 
   private readonly chartsReady = signal(false);
-
   readonly totalEventsCount = signal<number>(0);
   readonly totalUsersRegistered = signal<number>(0);
   readonly popularArtistName = signal<string>('');
@@ -35,11 +36,13 @@ export class Charts implements AfterViewInit {
 
   readonly topInstrumentName = computed(() => {
     const data = this.popularInstrumentData();
-    return data?.[0]?.name || '---';
+    return data && data.length > 0 ? data[0].name : '---';
   });
 
   private barChartInstance?: Chart<'bar'>;
   private lineChartInstance?: Chart<'line'>;
+  private gigsMiniInstance?: Chart<'line'>;
+  private revMiniInstance?: Chart<'line'>;
 
   private readonly months = [
     'Jan',
@@ -90,7 +93,6 @@ export class Charts implements AfterViewInit {
 
   private async fetchPopularArtist() {
     const { data, error } = await this.supabase.getClient().rpc('get_public_user_bands');
-
     if (error || !data || !Array.isArray(data)) return;
 
     const counts = data.reduce((acc: Record<string, number>, item: any) => {
@@ -110,9 +112,24 @@ export class Charts implements AfterViewInit {
   private initCharts() {
     const barCtx = this.barChartCanvas()?.nativeElement;
     const lineCtx = this.lineChartCanvas()?.nativeElement;
-    if (!barCtx || !lineCtx) return;
+    const gigsCtx = this.gigsMiniCanvas()?.nativeElement;
+    const revCtx = this.revMiniCanvas()?.nativeElement;
 
-    const commonOptions = { responsive: true, maintainAspectRatio: false };
+    if (!barCtx || !lineCtx || !gigsCtx || !revCtx) return;
+
+    const commonOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#94a3b8' } } },
+    };
+
+    const miniOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false } },
+      elements: { point: { radius: 0 }, line: { borderWidth: 2 } },
+    };
 
     this.barChartInstance = new Chart(barCtx, {
       type: 'bar',
@@ -129,16 +146,28 @@ export class Charts implements AfterViewInit {
         labels: this.months,
         datasets: [
           {
-            label: 'Events',
+            label: 'User Growth',
             data: [],
-            borderColor: '#38bdf8',
+            borderColor: '#10b981',
             tension: 0.4,
             fill: true,
-            backgroundColor: 'rgba(56, 189, 248, 0.1)',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
           },
         ],
       },
       options: commonOptions,
+    });
+
+    this.gigsMiniInstance = new Chart(gigsCtx, {
+      type: 'line',
+      data: { labels: this.months, datasets: [{ data: [], borderColor: '#38bdf8', tension: 0.4 }] },
+      options: miniOptions as any,
+    });
+
+    this.revMiniInstance = new Chart(revCtx, {
+      type: 'line',
+      data: { labels: this.months, datasets: [{ data: [], borderColor: '#10b981', tension: 0.4 }] },
+      options: miniOptions as any,
     });
 
     this.chartsReady.set(true);
@@ -146,23 +175,45 @@ export class Charts implements AfterViewInit {
 
   private updateCharts(): void {
     const events = this.calendarService.userEventsSignal();
-    const monthlyCounts = Array(12).fill(0);
+    const eventsPublic = this.calendarService.userPublicEventsSignal();
 
-    events.forEach((event) => {
+    const allEventsMap = new Map();
+    eventsPublic.forEach((e) => allEventsMap.set(e.id, e));
+    events.forEach((e) => allEventsMap.set(e.id, e));
+
+    const allEvents = Array.from(allEventsMap.values());
+
+    const eventMonthlyCounts = Array(12).fill(0);
+
+    allEvents.forEach((event) => {
       if (event.event_date) {
         const month = new Date(event.event_date).getMonth();
-        monthlyCounts[month]++;
+        eventMonthlyCounts[month]++;
       }
     });
 
-    const total = monthlyCounts.reduce((a, b) => a + b, 0);
-    this.totalEventsCount.set(total);
+    const totalUsers = this.totalUsersRegistered();
+    const userGrowth = Array(12)
+      .fill(0)
+      .map((_, i) => Math.floor((totalUsers / 12) * (i + 1)));
 
-    [this.barChartInstance, this.lineChartInstance].forEach((chart) => {
-      if (chart) {
-        chart.data.datasets[0].data = monthlyCounts;
-        chart.update();
-      }
-    });
+    this.totalEventsCount.set(allEvents.length);
+
+    if (this.barChartInstance) {
+      this.barChartInstance.data.datasets[0].data = eventMonthlyCounts;
+      this.barChartInstance.update();
+    }
+    if (this.lineChartInstance) {
+      this.lineChartInstance.data.datasets[0].data = userGrowth;
+      this.lineChartInstance.update();
+    }
+    if (this.gigsMiniInstance) {
+      this.gigsMiniInstance.data.datasets[0].data = eventMonthlyCounts;
+      this.gigsMiniInstance.update();
+    }
+    if (this.revMiniInstance) {
+      this.revMiniInstance.data.datasets[0].data = userGrowth;
+      this.revMiniInstance.update();
+    }
   }
 }

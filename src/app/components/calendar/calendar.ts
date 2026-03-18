@@ -9,13 +9,12 @@ import {
   OnInit,
 } from '@angular/core';
 import { FullCalendarModule, FullCalendarComponent } from '@fullcalendar/angular';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CalendarOptions } from '@fullcalendar/core';
 import { CalendarService } from '../../services/calendar-service';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { UserLocation } from '../user-location/user-location';
-import { Validators } from '@angular/forms';
 import { Street } from '../../models/Street';
 
 @Component({
@@ -39,10 +38,24 @@ export class Calendar implements AfterViewInit, OnInit {
     street: [null as any, Validators.required],
   });
 
+  constructor() {
+    effect(() => {
+      this.calendarService.userEventsSignal();
+      this.calendarService.userPublicEventsSignal();
+      this.calendarComponent()?.getApi().refetchEvents();
+    });
+  }
+
   ngOnInit(): void {
     this.form.reset();
     this.selectedStreet = null;
   }
+
+  ngAfterViewInit(): void {
+    this.calendarService.loadInitialData();
+    this.cdr.detectChanges();
+  }
+
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin, interactionPlugin],
@@ -53,50 +66,47 @@ export class Calendar implements AfterViewInit, OnInit {
     handleWindowResize: true,
     fixedWeekCount: false,
     showNonCurrentDates: false,
-
     datesSet: (arg) => {
       setTimeout(() => {
         this.calendarTitle.set(arg.view.title);
         this.cdr.detectChanges();
       });
     },
-
     dateClick: (arg) => this.calendarService.openAddModal(arg.dateStr),
-    
     eventClick: (arg) => {
-      const eventId = arg.event.id;
-      const originalEvent = this.calendarService.userEventsSignal().find((e) => e.id === eventId);
-      if (originalEvent) {
-        this.calendarService.openEditModal(originalEvent);
-      }
+      const allEvents = [
+        ...this.calendarService.userEventsSignal(),
+        ...this.calendarService.userPublicEventsSignal(),
+      ];
+      const originalEvent = allEvents.find((e) => e.id === arg.event.id);
+      if (originalEvent) this.calendarService.openEditModal(originalEvent);
     },
-
     events: (info, successCallback) => {
-      const events = this.calendarService.userEventsSignal().map((event) => ({
+      const myEvents = this.calendarService.userEventsSignal();
+      const publicEvents = this.calendarService.userPublicEventsSignal();
+      const combinedMap = new Map();
+
+      publicEvents.forEach((e) => {
+        combinedMap.set(e.id, { ...e, displayTitle: `🌍 ${e.title}`, isMine: false });
+      });
+
+      myEvents.forEach((e) => {
+        combinedMap.set(e.id, { ...e, displayTitle: e.title, isMine: true });
+      });
+
+      const formatted = Array.from(combinedMap.values()).map((event) => ({
         id: event.id,
-        title: event.title,
+        title: event.displayTitle,
         start: event.event_date,
         backgroundColor: this.calendarService.getColorCode(event.color),
         borderColor: this.calendarService.getColorCode(event.color),
+        classNames: event.isMine ? [] : ['public-event-style'],
+        extendedProps: { ...event },
       }));
-      successCallback(events);
+
+      successCallback(formatted);
     },
   };
-
-  constructor() {
-    effect(() => {
-      this.calendarService.userEventsSignal();
-      const api = this.calendarComponent()?.getApi();
-      if (api) {
-        api.refetchEvents();
-      }
-    });
-  }
-
-  ngAfterViewInit(): void {
-    this.calendarService.loadEvents();
-    this.cdr.detectChanges();
-  }
 
   prev(): void {
     this.calendarComponent()?.getApi().prev();
@@ -116,13 +126,12 @@ export class Calendar implements AfterViewInit, OnInit {
   async saveEvent() {
     await this.calendarService.saveEvent();
   }
-
   async editEvent() {
     await this.calendarService.updateEvent();
   }
 
   async deleteEvent(id: string) {
-    if (confirm('Delete?')) await this.calendarService.deleteEvent(id);
+    if (confirm('¿Eliminar evento?')) await this.calendarService.deleteEvent(id);
   }
 
   onTitleInput(e: Event) {
@@ -134,13 +143,11 @@ export class Calendar implements AfterViewInit, OnInit {
   }
 
   onTypeChange(e: Event) {
-    const val = (e.target as HTMLSelectElement).value;
-    this.calendarService.eventType.set(val);
+    this.calendarService.eventType.set((e.target as HTMLSelectElement).value);
   }
 
   onCheckboxChange(e: Event) {
-    const checked = (e.target as HTMLInputElement).checked;
-    this.calendarService.isPublicSignal.set(checked);
+    this.calendarService.isPublicSignal.set((e.target as HTMLInputElement).checked);
   }
 
   closeModals() {
@@ -150,6 +157,5 @@ export class Calendar implements AfterViewInit, OnInit {
   onStreetSelected(street: Street): void {
     this.selectedStreet = street;
     this.calendarService.selectedStreet.set(street);
-    console.log(street)
   }
 }

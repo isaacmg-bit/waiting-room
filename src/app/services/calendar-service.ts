@@ -14,6 +14,8 @@ export class CalendarService {
   private readonly toast = inject(ToastrService);
 
   readonly userEventsSignal = signal<UserEvent[]>([]);
+  readonly userPublicEventsSignal = signal<UserEvent[]>([]);
+
   readonly loadingSignal = signal<boolean>(false);
   readonly calendarModalActive = signal<boolean>(false);
   readonly editCalendarModalActive = signal<boolean>(false);
@@ -34,7 +36,12 @@ export class CalendarService {
   });
 
   constructor() {
+    this.loadInitialData();
+  }
+
+  loadInitialData(): void {
     this.loadEvents();
+    this.loadPublicEvents();
   }
 
   loadEvents(): void {
@@ -43,33 +50,51 @@ export class CalendarService {
       .get<UserEvent[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (events: UserEvent[]) => this.userEventsSignal.set(events),
-        error: (err: unknown) => {
-          console.error('Error loading events:', err);
-          this.toast.error('Error loading events');
+        next: (events) => {
+          this.userEventsSignal.set(events);
         },
+        error: (err) => console.error('Error User Events:', err),
       });
   }
 
+  loadPublicEvents(): void {
+    this.api.get<UserEvent[]>(`${this.BASE_URL}/public`).subscribe({
+      next: (events) => {
+        this.userPublicEventsSignal.set(events);
+      },
+    });
+  }
+
   async saveEvent(): Promise<void> {
+    if (!this.selectedStreet()) {
+      this.toast.warning('Please select a location on the map');
+      return;
+    }
+
     const payload = {
       title: this.eventTitle(),
       date: this.selectedDate(),
       color: this.eventColor(),
       event_type: this.eventType(),
       is_public: this.isPublicSignal(),
-      street: this.selectedStreet()!.name,
-      location_point: `POINT(${this.selectedStreet()!.lng} ${this.selectedStreet()!.lat})`,
+      street: this.selectedStreet()?.name,
+      location_point: `POINT(${this.selectedStreet()?.lng} ${this.selectedStreet()?.lat})`,
     };
 
     this.loadingSignal.set(true);
 
     try {
       const created = await firstValueFrom(this.api.post<UserEvent>(this.BASE_URL, payload));
-      this.userEventsSignal.update((list: UserEvent[]) => [...list, created]);
+
+      this.userEventsSignal.update((list) => [...list, created]);
+
+      if (created.is_public) {
+        this.userPublicEventsSignal.update((list) => [...list, created]);
+      }
+
       this.closeModals();
-      this.toast.success('Event saved');
-    } catch (err: unknown) {
+      this.toast.success('Event saved successfully');
+    } catch (err) {
       console.error('Error saving event:', err);
       this.toast.error('Error saving event');
     } finally {
@@ -78,7 +103,7 @@ export class CalendarService {
   }
 
   async updateEvent(): Promise<void> {
-    const id: string | undefined = this.selectedEvent()?.id;
+    const id = this.selectedEvent()?.id;
     if (!id) return;
 
     this.loadingSignal.set(true);
@@ -88,19 +113,24 @@ export class CalendarService {
       color: this.eventColor(),
       event_type: this.eventType(),
       is_public: this.isPublicSignal(),
-      streetName: this.selectedStreet()!.name,
+      streetName: this.selectedStreet()?.name,
     };
 
     try {
       const updated = await firstValueFrom(
         this.api.patch<UserEvent>(`${this.BASE_URL}/${id}`, payload),
       );
-      this.userEventsSignal.update((list: UserEvent[]) =>
-        list.map((e: UserEvent) => (e.id === id ? updated : e)),
-      );
+
+      this.userEventsSignal.update((list) => list.map((e) => (e.id === id ? updated : e)));
+
+      this.userPublicEventsSignal.update((list) => {
+        const filtered = list.filter((e) => e.id !== id);
+        return updated.is_public ? [...filtered, updated] : filtered;
+      });
+
       this.closeModals();
       this.toast.success('Event updated');
-    } catch (err: unknown) {
+    } catch (err) {
       console.error('Error updating event:', err);
       this.toast.error('Error updating event');
     } finally {
@@ -112,12 +142,13 @@ export class CalendarService {
     this.loadingSignal.set(true);
     try {
       await firstValueFrom(this.api.delete<void>(`${this.BASE_URL}/${id}`));
-      this.userEventsSignal.update((list: UserEvent[]) =>
-        list.filter((e: UserEvent) => e.id !== id),
-      );
+
+      this.userEventsSignal.update((list) => list.filter((e) => e.id !== id));
+      this.userPublicEventsSignal.update((list) => list.filter((e) => e.id !== id));
+
       this.closeModals();
       this.toast.success('Event deleted');
-    } catch (err: unknown) {
+    } catch (err) {
       console.error('Error deleting event:', err);
       this.toast.error('Error deleting event');
     } finally {
@@ -132,7 +163,6 @@ export class CalendarService {
   }
 
   openAddModalFromButton(): void {
-    this.clearForm();
     const today = new Date().toISOString().split('T')[0];
     this.openAddModal(today);
   }
@@ -167,18 +197,15 @@ export class CalendarService {
       purple: '#a855f7',
       primary: '#f97316',
     };
-
     return colors[colorName] || colors['primary'];
   }
 
   onColorChange(value: string): void {
     this.eventColor.set(value);
   }
-
-  onTypeChange(value: string) {
+  onTypeChange(value: string): void {
     this.eventType.set(value);
   }
-
   onTitleInput(value: string): void {
     this.eventTitle.set(value);
   }
@@ -188,6 +215,7 @@ export class CalendarService {
     this.eventColor.set('');
     this.selectedDate.set('');
     this.eventType.set('');
+    this.isPublicSignal.set(false);
     this.selectedEvent.set(null);
     this.selectedStreet.set(null);
   }
