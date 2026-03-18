@@ -1,11 +1,11 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { UserLocation } from '../models/UserLocation';
-import { ApiService } from './apiservice';
 import { environment } from '../../environments/environment';
+import { ApiServiceBack } from './apiservice-back';
 
 @Injectable({ providedIn: 'root' })
 export class LocationService {
-  private readonly api = inject(ApiService);
+  private readonly api = inject(ApiServiceBack);
 
   readonly locationsSignal = signal<UserLocation[]>([]);
   readonly loadingSignal = signal(false);
@@ -18,6 +18,8 @@ export class LocationService {
   readonly activeFilters = signal(['show', 'rehearsalspace']);
   readonly clickCoordinates = signal<{ lat: number; lng: number } | null>(null);
 
+  private readonly URL_LOCATIONS = `${environment.apiUrl}${environment.apiLocationUrl}`;
+
   readonly categoryLabels: Record<string, string> = {
     rehearsalspace: 'Rehearsal Space',
     show: 'Show',
@@ -26,7 +28,7 @@ export class LocationService {
   loadLocations(): void {
     this.loadingSignal.set(true);
     this.api
-      .get<UserLocation[]>(this.getLocationsUrl())
+      .get<UserLocation[]>(this.URL_LOCATIONS)
 
       .subscribe({
         next: (locations) => {
@@ -42,7 +44,7 @@ export class LocationService {
 
   addLocation(location: UserLocation): void {
     this.api
-      .post<UserLocation>(this.getLocationsUrl(), location)
+      .post<UserLocation>(this.URL_LOCATIONS, location)
 
       .subscribe({
         next: (created) => this.locationsSignal.update((locs) => [...locs, created]),
@@ -52,7 +54,7 @@ export class LocationService {
 
   deleteLocation(id: string): void {
     this.api
-      .delete<UserLocation>(`${this.getLocationsUrl()}/${id}`)
+      .delete<UserLocation>(`${this.URL_LOCATIONS}/${id}`)
 
       .subscribe({
         next: () => this.locationsSignal.update((locs) => locs.filter((l) => l.id !== id)),
@@ -67,7 +69,7 @@ export class LocationService {
     }
 
     this.api
-      .patch<UserLocation>(`${this.getLocationsUrl()}/${body.id}`, body)
+      .patch<UserLocation>(`${this.URL_LOCATIONS}/${body.id}`, body)
 
       .subscribe({
         next: (updated) =>
@@ -160,9 +162,5 @@ export class LocationService {
     this.categoryInput.set('');
     this.clickCoordinates.set(null);
     this.selectedLocation.set(null);
-  }
-
-  private getLocationsUrl(): string {
-    return `${environment.apiUrl}${environment.apiLocationUrl}`;
   }
 }
