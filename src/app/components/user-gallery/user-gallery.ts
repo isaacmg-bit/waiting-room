@@ -30,7 +30,7 @@ export class UserGallery {
   }
 
   async removePhoto(photo: GalleryPhoto): Promise<void> {
-    await this.uploadService.deletePhoto(photo);
+    this.uploadService.deletePhoto(photo);
   }
 
   triggerFileInput(): void {

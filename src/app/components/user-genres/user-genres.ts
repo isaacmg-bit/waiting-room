@@ -4,7 +4,6 @@ import { Genre } from '../../models/Genre';
 
 @Component({
   selector: 'app-user-genres',
-  standalone: true,
   templateUrl: './user-genres.html',
   styleUrl: './user-genres.css',
 })

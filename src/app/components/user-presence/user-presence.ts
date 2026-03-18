@@ -6,7 +6,6 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user-presence',
-  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './user-presence.html',
 })

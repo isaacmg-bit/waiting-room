@@ -18,7 +18,7 @@ export class UserInstrumentsService {
 
   readonly pendingInstruments = signal<UserInstrument[]>([]);
   readonly pendingDeletes = signal<string[]>([]);
-
+  
   readonly filteredInstruments = computed<Instrument[]>(() => {
     const q: string = this.searchQuery().toLowerCase();
     const allInstruments: Instrument[] = this.instrumentService.instrumentsSignal();

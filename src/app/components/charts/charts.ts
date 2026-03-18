@@ -15,7 +15,6 @@ Chart.register(...registerables);
 
 @Component({
   selector: 'app-charts',
-  standalone: true,
   templateUrl: './charts.html',
   styleUrls: ['./charts.css'],
 })

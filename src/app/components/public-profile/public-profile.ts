@@ -17,7 +17,6 @@ import { UserBand } from '../../models/UserBand';
 
 @Component({
   selector: 'app-public-profile',
-  standalone: true,
   templateUrl: './public-profile.html',
   styleUrl: './public-profile.css',
 })
