@@ -39,6 +39,20 @@ export class LocationService {
     });
   }
 
+  loadLocationId(userId: string): void {
+    this.loadingSignal.set(true);
+    this.api.get<UserLocation[]>(`${this.URL_LOCATIONS}/${userId}`).subscribe({
+      next: (locations) => {
+        this.locationsSignal.set(locations);
+        this.loadingSignal.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading locations:', err);
+        this.loadingSignal.set(false);
+      },
+    });
+  }
+
   addLocation(location: UserLocation): void {
     this.api
       .post<UserLocation>(this.URL_LOCATIONS, location)

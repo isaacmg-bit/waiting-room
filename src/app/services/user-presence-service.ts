@@ -4,11 +4,13 @@ import { environment } from '../../environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { SocialLinkHandle } from '../models/SocialLinkHandle';
 import { User } from '../models/User';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({ providedIn: 'root' })
 export class UserPresenceService {
   private readonly api = inject(ApiServiceBack);
   private readonly platformBases: Record<string, string> = environment.socialPlatforms;
+  private readonly toast = inject(ToastrService);
 
   readonly socialLinksSignal = signal<SocialLinkHandle[]>([]);
   readonly loadingSignal = signal<boolean>(false);
@@ -35,7 +37,25 @@ export class UserPresenceService {
   }
 
   addPendingLink(platform = 'instagram', url = ''): void {
-    this.pendingLinks.update((list) => [...list, { platform, url }]);
+    if (this.pendingLinks().length >= 8) {
+      this.toast.warning('You can add a maximum of 8 social links');
+      return;
+    }
+
+    const normalizedUrl = url.trim().replace(/\/$/, '');
+
+    if (normalizedUrl) {
+      const isDuplicate = this.pendingLinks().some(
+        (l) => l.platform === platform && l.url.trim().replace(/\/$/, '') === normalizedUrl,
+      );
+
+      if (isDuplicate) {
+        console.error(`This ${platform} account is already in the list`);
+        return;
+      }
+    }
+
+    this.pendingLinks.update((list) => [...list, { platform, url: normalizedUrl }]);
   }
 
   deleteLink(index: number): void {
