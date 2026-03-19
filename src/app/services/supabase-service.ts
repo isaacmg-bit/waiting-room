@@ -1,9 +1,11 @@
-import { Injectable, signal } from '@angular/core';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { Injectable, signal, inject } from '@angular/core';
+import { createClient, SupabaseClient, Session } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class SupabaseService {
+  private readonly router = inject(Router);
   private readonly supabase: SupabaseClient = createClient(
     environment.supabaseUrl,
     environment.supabaseAnonKey,
@@ -11,6 +13,38 @@ export class SupabaseService {
 
   userRole = signal<'user' | 'admin' | null>(null);
   userId = signal<string | null>(null);
+
+  isLoading = signal<boolean>(true);
+
+  constructor() {
+    this.initAuthListener();
+  }
+
+  private async initAuthListener() {
+    const {
+      data: { session },
+    } = await this.supabase.auth.getSession();
+    await this.handleAuthChange(session);
+
+    this.supabase.auth.onAuthStateChange(async (event, session) => {
+      await this.handleAuthChange(session);
+
+      if (event === 'SIGNED_OUT') {
+        this.router.navigate(['/login']);
+      }
+    });
+  }
+
+  private async handleAuthChange(session: Session | null) {
+    if (session?.user) {
+      this.userId.set(session.user.id);
+      await this.loadUserRole(session.user.id);
+    } else {
+      this.userId.set(null);
+      this.userRole.set(null);
+    }
+    this.isLoading.set(false);
+  }
 
   getClient() {
     return this.supabase;
@@ -30,6 +64,7 @@ export class SupabaseService {
 
   signOut() {
     this.userRole.set(null);
+    this.userId.set(null);
     return this.supabase.auth.signOut();
   }
 
@@ -48,7 +83,12 @@ export class SupabaseService {
 
   async loadUserRole(userId: string) {
     this.userId.set(userId);
-    const { data, error } = await this.supabase.from('user_profile').select('*').eq('id', userId);
+
+    const { data, error } = await this.supabase
+      .from('user_profile')
+      .select('role')
+      .eq('id', userId)
+      .maybeSingle();
 
     if (error) {
       console.error('Error loading user role:', error);
@@ -56,8 +96,7 @@ export class SupabaseService {
       return;
     }
 
-    const userProfile = data?.[0];
-    this.userRole.set(userProfile?.role || 'user');
+    this.userRole.set(data?.role || 'user');
   }
 
   updatePassword(password: string) {

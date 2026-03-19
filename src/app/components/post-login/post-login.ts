@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiServiceBack } from '../../services/apiservice-back';
+import { SupabaseService } from '../../services/supabase-service';
 import { firstValueFrom } from 'rxjs';
 import { UserLocation } from '../user-location/user-location';
 import { City } from '../../models/City';
@@ -10,6 +11,7 @@ import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-post-login',
+  standalone: true,
   imports: [ReactiveFormsModule, UserLocation],
   templateUrl: './post-login.html',
   styleUrl: './post-login.css',
@@ -18,6 +20,7 @@ export class PostLogin implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly api = inject(ApiServiceBack);
+  private readonly supabase = inject(SupabaseService);
 
   selectedCity: City | null = null;
   private map: L.Map | null = null;
@@ -57,6 +60,7 @@ export class PostLogin implements OnInit {
     try {
       this.loading = true;
       const { name } = this.form.value;
+
       await firstValueFrom(
         this.api.post('/users/profile-sync', {
           name,
@@ -64,6 +68,13 @@ export class PostLogin implements OnInit {
           location_point: `POINT(${this.selectedCity.lng} ${this.selectedCity.lat})`,
         }),
       );
+
+      const currentId = this.supabase.userId();
+
+      if (currentId) {
+        await this.supabase.loadUserRole(currentId);
+      }
+
       this.router.navigate(['/']);
     } catch (err) {
       console.error('Error syncing profile:', err);

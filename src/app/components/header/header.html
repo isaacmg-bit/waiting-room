@@ -51,7 +51,7 @@
         >
           Login
         </a>
-        @if (supabase.userRole() === 'admin') {
+        @if (userRole() === 'admin') {
           <a
             routerLink="/users"
             routerLinkActive="text-white bg-white/5"
@@ -76,15 +76,13 @@
           class="size-9 rounded-full border-2 border-primary/30 hover:border-primary overflow-hidden block transition-all cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
           [attr.aria-expanded]="isUserMenuOpen()"
         >
-            <img
-              #img
-              class="w-full h-full object-cover pointer-events-none"
-              [src]="
-                userProfilePicService.profilePhotoUrl() || 'assets/img/Portrait_Placeholder.png'
-              "
-              (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
-              alt="User profile"
-            />
+          <img
+            #img
+            class="w-full h-full object-cover pointer-events-none"
+            [src]="userProfilePic() || 'assets/img/Portrait_Placeholder.png'"
+            (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
+            alt="User profile"
+          />
         </button>
         @if (isUserMenuOpen() && userId()) {
           <div
