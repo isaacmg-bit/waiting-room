@@ -59,12 +59,12 @@ export class EditProfile {
   socialLinks: SocialLinkHandle[] = [];
 
   form = this.fb.group({
-    name: ['', [(Validators.required, Validators.minLength(2), Validators.maxLength(30))]],
+    name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(20)]],
     email: [{ value: '', disabled: true }],
     location: [null as City | null],
-    bio: ['', [(Validators.required, Validators.maxLength(150))]],
-    gear: ['', [(Validators.required, Validators.maxLength(150))]],
-    rehearsal_space: ['', [(Validators.required, Validators.maxLength(150))]],
+    bio: ['', [Validators.maxLength(150)]],
+    gear: ['', [Validators.maxLength(150)]],
+    rehearsal_space: ['', [Validators.maxLength(150)]],
   });
 
   constructor() {

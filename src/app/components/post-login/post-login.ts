@@ -27,7 +27,7 @@ export class PostLogin implements OnInit {
   loading = false;
 
   form = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(30)]],
+    name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(20)]],
     location: [null as any, Validators.required],
   });
 
