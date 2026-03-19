@@ -5,11 +5,13 @@ import { Genre } from '../models/Genre';
 import { GenresService } from './genres-service';
 import { finalize, Observable, firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({ providedIn: 'root' })
 export class UserGenresService {
   private readonly api = inject(ApiServiceBack);
   private readonly genresService = inject(GenresService);
+  private readonly toast = inject(ToastrService);
 
   readonly userGenreSignal = signal<UserGenre[]>([]);
   readonly loadingSignal = signal<boolean>(false);
@@ -49,12 +51,22 @@ export class UserGenresService {
   }
 
   addPendingGenre(genre: Genre): void {
+    const isDuplicate = [...this.userGenreSignal(), ...this.pendingGenres()].some(
+      (ug) => ug.genre_id === genre.id,
+    );
+
+    if (isDuplicate) {
+      this.toast.warning('Genre already added');
+      return;
+    }
+
     const tempId = `temp-${Date.now()}`;
     const newPending: UserGenre = {
       id: tempId,
       genre_id: genre.id,
       genres: genre,
     };
+
     this.pendingGenres.update((list: UserGenre[]) => [...list, newPending]);
   }
 

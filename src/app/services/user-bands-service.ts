@@ -5,11 +5,13 @@ import { MusicBrainzService } from './bands-service';
 import { UserBand } from '../models/UserBand';
 import { Band } from '../models/Band';
 import { finalize, firstValueFrom, Observable } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({ providedIn: 'root' })
 export class UserBandsService {
   private readonly api = inject(ApiServiceBack);
   private readonly bandsService = inject(MusicBrainzService);
+  private readonly toast = inject(ToastrService);
 
   readonly userBandsSignal = signal<UserBand[]>([]);
   readonly loadingSignal = signal<boolean>(false);
@@ -46,10 +48,20 @@ export class UserBandsService {
   }
 
   addPendingBand(band: Band): void {
+    const isDuplicate = [...this.userBandsSignal(), ...this.pendingBands()].some(
+      (ub) => ub.id === band.id,
+    );
+
+    if (isDuplicate) {
+      this.toast.warning('You are already in this band');
+      return;
+    }
+
     const newPending: UserBand = {
       id: band.id,
       name: band.name,
     };
+
     this.pendingBands.update((list: UserBand[]) => [...list, newPending]);
   }
 

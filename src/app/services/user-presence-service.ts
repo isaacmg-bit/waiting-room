@@ -51,10 +51,19 @@ export class UserPresenceService {
     if (!userId) return;
 
     this.loadingSignal.set(true);
-    const validRawLinks = this.pendingLinks().filter((l) => l.url?.trim());
-    const formattedLinks: SocialLinkHandle[] = validRawLinks.map((l) => ({
+
+    const rawLinks = this.pendingLinks()
+      .map((l) => ({ platform: l.platform, url: l.url?.trim().replace(/\/$/, '') }))
+      .filter((l) => l.url);
+
+    const uniqueLinks = rawLinks.filter(
+      (link, index, self) =>
+        index === self.findIndex((t) => t.platform === link.platform && t.url === link.url),
+    );
+
+    const formattedLinks = uniqueLinks.map((l) => ({
       platform: l.platform,
-      url: (this.platformBases[l.platform] || '') + l.url.trim(),
+      url: (this.platformBases[l.platform] || '') + l.url,
     }));
 
     try {
@@ -63,7 +72,9 @@ export class UserPresenceService {
           social_links: formattedLinks,
         }),
       );
-      this.socialLinksSignal.set([...this.pendingLinks()]);
+
+      this.socialLinksSignal.set(uniqueLinks);
+      this.pendingLinks.set([...uniqueLinks]);
     } catch (err: unknown) {
       console.error('Error saving presence:', err);
     } finally {

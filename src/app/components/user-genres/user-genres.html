@@ -1,9 +1,10 @@
 <div class="space-y-3">
+  <p class="text-xs text-slate-600">List genres you like.</p>
   <div
     class="flex min-h-12 w-full flex-wrap items-center gap-2 rounded-xl border border-white/10 bg-black/20 p-3"
     role="list"
     aria-label="Selected genres"
-  >
+    >
     @for (ug of userGenresService.allGenres(); track ug.id) {
       <span
         role="listitem"
@@ -20,20 +21,19 @@
         </button>
       </span>
     }
-
+    
     <button
-      type="button"
-      (click)="userGenresService.openModal()"
-      class="flex items-center gap-1 rounded-full border border-dashed border-white/10 bg-transparent px-3 py-1 text-sm text-slate-500 transition-colors hover:border-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
-      aria-haspopup="dialog"
-      [aria-expanded]="userGenresService.isModalOpen()"
+    type="button"
+    (click)="userGenresService.openModal()"
+    class="flex items-center gap-1 rounded-full border border-dashed border-white/10 bg-transparent px-3 py-1 text-sm text-slate-500 transition-colors hover:border-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+    aria-haspopup="dialog"
+    [aria-expanded]="userGenresService.isModalOpen()"
     >
-      <span class="material-symbols-outlined text-xs" aria-hidden="true">add</span>
-      Add Genre
-    </button>
-  </div>
+    <span class="material-symbols-outlined text-xs" aria-hidden="true">add</span>
+    Add Genre
+  </button>
+</div>
 
-  <p class="text-xs text-slate-600">List genres you like.</p>
 </div>
 
 @if (userGenresService.isModalOpen()) {

@@ -1,15 +1,17 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, effect, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { User } from '../models/User';
 import { ApiServiceBack } from './apiservice-back';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../environments/environment';
+import { SupabaseService } from './supabase-service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private readonly api = inject(ApiServiceBack);
   private readonly toast = inject(ToastrService);
+  private readonly supabase = inject(SupabaseService);
 
   readonly usersSignal = signal<User[]>([]);
   readonly loadingSignal = signal<boolean>(false);
@@ -20,7 +22,10 @@ export class UserService {
   private readonly ME_URL: string = `${environment.apiUserUrl}${environment.apiMeUrl}`;
 
   constructor() {
-    this.loadUsers();
+    effect(() => {
+      const id = this.supabase.userId();
+      if (id) this.loadUsers();
+    });
   }
 
   loadUsers(): void {

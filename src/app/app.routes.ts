@@ -64,5 +64,6 @@ export const routes: Routes = [
   {
     path: 'events',
     loadComponent: () => import('./components/events/events').then((m) => m.Events),
+    canActivate: [profileGuard],
   },
 ];

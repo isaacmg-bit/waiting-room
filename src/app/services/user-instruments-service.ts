@@ -5,11 +5,13 @@ import { InstrumentsService } from './instruments-service';
 import { environment } from '../../environments/environment';
 import { finalize, Observable, firstValueFrom } from 'rxjs';
 import { Instrument } from '../models/Instrument';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({ providedIn: 'root' })
 export class UserInstrumentsService {
   private readonly api = inject(ApiServiceBack);
   private readonly instrumentService = inject(InstrumentsService);
+  private readonly toast = inject(ToastrService);
 
   readonly userInstrumentSignal = signal<UserInstrument[]>([]);
   readonly loadingSignal = signal<boolean>(false);
@@ -18,7 +20,7 @@ export class UserInstrumentsService {
 
   readonly pendingInstruments = signal<UserInstrument[]>([]);
   readonly pendingDeletes = signal<string[]>([]);
-  
+
   readonly filteredInstruments = computed<Instrument[]>(() => {
     const q: string = this.searchQuery().toLowerCase();
     const allInstruments: Instrument[] = this.instrumentService.instrumentsSignal();
@@ -33,6 +35,7 @@ export class UserInstrumentsService {
 
   private readonly BASE_URL: string = environment.apiUserInstrumentsUrl;
   private readonly ME_URL: string = `${environment.apiUserInstrumentsUrl}${environment.apiMeUrl}`;
+  private readonly DEFAULT_LEVEL: string = 'Beginner';
 
   loadUserInstruments(): void {
     this.loadingSignal.set(true);
@@ -48,7 +51,16 @@ export class UserInstrumentsService {
       });
   }
 
-  addPendingInstrument(instrumentId: string, level = 'Beginner'): void {
+  addPendingInstrument(instrumentId: string, level = this.DEFAULT_LEVEL): void {
+    const isDuplicate = [...this.userInstrumentSignal(), ...this.pendingInstruments()].some(
+      (ui) => ui.instrument_id === instrumentId,
+    );
+
+    if (isDuplicate) {
+      this.toast.warning('You have already added this instrument');
+      return;
+    }
+
     const instrument = this.instrumentService
       .instrumentsSignal()
       .find((i) => i.id === instrumentId);
@@ -62,6 +74,7 @@ export class UserInstrumentsService {
       level,
       instruments: instrument,
     };
+
     this.pendingInstruments.update((list: UserInstrument[]) => [...list, newPending]);
   }
 

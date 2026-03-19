@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { UserService } from '../../services/user-service';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UploadService } from '../../services/upload-service';
 import { UserGallery } from '../user-gallery/user-gallery';
 import { UserLocation } from '../user-location/user-location';
@@ -59,12 +59,12 @@ export class EditProfile {
   socialLinks: SocialLinkHandle[] = [];
 
   form = this.fb.group({
-    name: [''],
+    name: ['', [(Validators.required, Validators.minLength(2), Validators.maxLength(30))]],
     email: [{ value: '', disabled: true }],
     location: [null as City | null],
-    bio: [''],
-    gear: [''],
-    rehearsal_space: [''],
+    bio: ['', [(Validators.required, Validators.maxLength(150))]],
+    gear: ['', [(Validators.required, Validators.maxLength(150))]],
+    rehearsal_space: ['', [(Validators.required, Validators.maxLength(150))]],
   });
 
   constructor() {
@@ -154,6 +154,7 @@ export class EditProfile {
       this.userBandsService.loadUserBands();
       this.userGenresService.loadUserGenres();
       this.userPresenceService.loadUserPresence();
+      this.uploadService.discardPendingPhotos();
       this.uploadService.getGallery().subscribe({
         next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
         error: () => this.uploadService.galleryPhotosSignal.set([]),

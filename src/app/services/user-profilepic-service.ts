@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, effect } from '@angular/core';
 import { SupabaseService } from './supabase-service';
 import { UserService } from './user-service';
 import { User } from '../models/User';
@@ -19,7 +19,10 @@ export class UserProfilePicService {
   private readonly PIC_URL_SUFFIX: string = environment.profilePicUrl;
 
   constructor() {
-    this.loadProfilePhoto();
+    effect(() => {
+      const id = this.supabaseService.userId();
+      if (id) this.loadProfilePhoto();
+    });
   }
 
   loadProfilePhoto(): void {
