@@ -18,7 +18,7 @@ export class LocationService {
   readonly activeFilters = signal(['show', 'rehearsalspace']);
   readonly clickCoordinates = signal<{ lat: number; lng: number } | null>(null);
 
-  private readonly URL_LOCATIONS = `${environment.apiUrl}${environment.apiLocationUrl}`;
+  private readonly URL_LOCATIONS = `${environment.apiLocationUrl}`;
 
   readonly categoryLabels: Record<string, string> = {
     rehearsalspace: 'Rehearsal Space',
@@ -27,19 +27,16 @@ export class LocationService {
 
   loadLocations(): void {
     this.loadingSignal.set(true);
-    this.api
-      .get<UserLocation[]>(this.URL_LOCATIONS)
-
-      .subscribe({
-        next: (locations) => {
-          this.locationsSignal.set(locations);
-          this.loadingSignal.set(false);
-        },
-        error: (err) => {
-          console.error('Error loading locations:', err);
-          this.loadingSignal.set(false);
-        },
-      });
+    this.api.get<UserLocation[]>(this.URL_LOCATIONS).subscribe({
+      next: (locations) => {
+        this.locationsSignal.set(locations);
+        this.loadingSignal.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading locations:', err);
+        this.loadingSignal.set(false);
+      },
+    });
   }
 
   addLocation(location: UserLocation): void {

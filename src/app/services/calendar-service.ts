@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { UserEvent } from '../models/UserEvent';
 import { environment } from '../../environments/environment';
@@ -15,6 +15,7 @@ export class CalendarService {
 
   readonly userEventsSignal = signal<UserEvent[]>([]);
   readonly userPublicEventsSignal = signal<UserEvent[]>([]);
+  readonly userPrivateEventsSignal = signal<UserEvent[]>([]);
 
   readonly loadingSignal = signal<boolean>(false);
   readonly calendarModalActive = signal<boolean>(false);
@@ -35,6 +36,20 @@ export class CalendarService {
     public: new FormControl(false),
   });
 
+  readonly upcomingEvents = computed(() => {
+    const allEvents = [
+      ...this.userEventsSignal(),
+      ...this.userPublicEventsSignal(),
+    ];
+
+    const seen = new Set<string>();
+    return allEvents.filter((event) => {
+      if (seen.has(event.id)) return false;
+      seen.add(event.id);
+      return true;
+    });
+  });
+
   constructor() {
     this.loadInitialData();
   }
@@ -42,6 +57,7 @@ export class CalendarService {
   loadInitialData(): void {
     this.loadEvents();
     this.loadPublicEvents();
+    this.loadPrivateEvents();
   }
 
   loadEvents(): void {
@@ -65,6 +81,14 @@ export class CalendarService {
     });
   }
 
+  loadPrivateEvents(): void {
+    this.api.get<UserEvent[]>(`${this.BASE_URL}/me`).subscribe({
+      next: (events) => {
+        this.userPrivateEventsSignal.set(events);
+      },
+    });
+  }
+
   async saveEvent(): Promise<void> {
     if (!this.selectedStreet()) {
       this.toast.warning('Please select a location on the map');
@@ -78,7 +102,9 @@ export class CalendarService {
       event_type: this.eventType(),
       is_public: this.isPublicSignal(),
       street: this.selectedStreet()?.name,
-      location_point: `POINT(${this.selectedStreet()?.lng} ${this.selectedStreet()?.lat})`,
+      location_point: this.selectedStreet()
+        ? { lat: this.selectedStreet()!.lat, lng: this.selectedStreet()!.lng }
+        : null,
     };
 
     this.loadingSignal.set(true);

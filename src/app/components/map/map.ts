@@ -1,7 +1,8 @@
-import { Component, AfterViewInit, inject, effect } from '@angular/core';
+import { signal, Component, AfterViewInit, inject, effect } from '@angular/core';
 import { LocationService } from '../../services/location-service';
 import * as L from 'leaflet';
 import { environment } from '../../../environments/environment';
+import { CalendarService } from '../../services/calendar-service';
 
 @Component({
   selector: 'app-map',
@@ -11,9 +12,12 @@ import { environment } from '../../../environments/environment';
 })
 export class Map implements AfterViewInit {
   readonly locationService = inject(LocationService);
+  readonly calendarService = inject(CalendarService);
 
-  private map: L.Map | null = null;
+  private map = signal<L.Map | null>(null);
   private readonly savedMarkersLayer = L.layerGroup();
+  private readonly eventsPrivateMarkersLayer = L.layerGroup();
+  private readonly eventsPublicMarkersLayer = L.layerGroup();
 
   private readonly iconSavedMarker = L.divIcon({
     className: 'custom-div-icon',
@@ -30,39 +34,89 @@ export class Map implements AfterViewInit {
   });
 
   constructor() {
-    effect(() => {
-      this.locationService.locationsSignal();
+    const addMarkers = (
+      map: L.Map,
+      layer: L.LayerGroup,
+      items: any[],
+      getLatLng: (item: any) => [number, number],
+      getTooltipHtml: (item: any) => string,
+      onClick?: (item: any) => void,
+    ) => {
+      layer.clearLayers();
+      layer.addTo(map);
 
-      if (!this.map) {
-        return;
-      }
+      items.forEach((item) => {
+        const [lat, lng] = getLatLng(item);
+        if (lat == null || lng == null) return;
+
+        const marker = L.marker([lat, lng], { icon: this.iconSavedMarker });
+        marker.bindTooltip(getTooltipHtml(item), {
+          direction: 'top',
+          offset: [0, -10],
+          opacity: 0.9,
+        });
+
+        if (onClick) {
+          marker.on('click', (e) => {
+            L.DomEvent.stopPropagation(e);
+            onClick(item);
+          });
+        }
+
+        marker.addTo(layer);
+      });
+    };
+
+    effect(() => {
+      const map = this.map();
+      if (!map) return;
 
       const locations = this.locationService.locationsSignal();
       const filters = this.locationService.activeFilters();
 
-      this.savedMarkersLayer.clearLayers();
+      addMarkers(
+        map,
+        this.savedMarkersLayer,
+        locations.filter((loc) => filters.includes(loc.category)),
+        (loc) => [loc.lat, loc.lng],
+        (loc) =>
+          `<div style="font-size: 12px">
+          <strong>${loc.name}</strong><br/>
+          ${loc.description ?? ''}<br/>
+          ${this.locationService.categoryLabels[loc.category] || loc.category}
+        </div>`,
+        (loc) => this.locationService.selectLocation(loc),
+      );
 
-      locations
-        .filter((loc) => filters.includes(loc.category))
-        .forEach((loc) => {
-          const marker = L.marker([loc.lat, loc.lng], { icon: this.iconSavedMarker });
+      const publicEvents = [...this.calendarService.userPublicEventsSignal()];
+      addMarkers(
+        map,
+        this.eventsPublicMarkersLayer,
+        publicEvents,
+        (event) => [event.location_point?.lat, event.location_point?.lng],
+        (event) =>
+          `<div style="font-size: 12px">
+          <strong>${event.title}</strong><br/>
+          ${event.event_type ?? ''}<br/>
+          ${event.street ?? ''}<br/>
+          ${event.event_date ?? ''}
+        </div>`,
+      );
 
-          marker.bindTooltip(
-            `<div style="font-size: 12px">
-              <strong>${loc.name}</strong><br/>
-              ${loc.description ?? ''}<br/>
-              ${this.locationService.categoryLabels[loc.category] || loc.category}
-            </div>`,
-            { direction: 'top', offset: [0, -10], opacity: 0.9 },
-          );
-
-          marker.on('click', (e) => {
-            L.DomEvent.stopPropagation(e);
-            this.locationService.selectLocation(loc);
-          });
-
-          marker.addTo(this.savedMarkersLayer);
-        });
+      const privateEvents = [...this.calendarService.userPrivateEventsSignal()];
+      addMarkers(
+        map,
+        this.eventsPrivateMarkersLayer,
+        privateEvents,
+        (event) => [event.location_point?.lat, event.location_point?.lng],
+        (event) =>
+          `<div style="font-size: 12px">
+          <strong>${event.title}</strong><br/>
+          ${event.event_type ?? ''}<br/>
+          ${event.street ?? ''}<br/>
+          ${event.event_date ?? ''}
+        </div>`,
+      );
     });
   }
 
@@ -70,17 +124,24 @@ export class Map implements AfterViewInit {
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude: myLat, longitude: myLng } = position.coords;
 
-      this.map = L.map('map', { center: [myLat, myLng], zoom: 13 });
+      if (this.map()) return;
 
-      L.tileLayer(`${environment.leafletTileLayer}`).addTo(this.map);
-      L.marker([myLat, myLng], { icon: this.iconUser }).addTo(this.map);
-      this.savedMarkersLayer.addTo(this.map);
+      const mapInstance = L.map('map', {
+        center: [myLat, myLng],
+        zoom: 13,
+      });
 
-      this.map.on('click', (selectedCoords) => {
+      this.map.set(mapInstance);
+
+      L.tileLayer(environment.leafletTileLayer).addTo(mapInstance);
+      L.marker([myLat, myLng], { icon: this.iconUser }).addTo(mapInstance);
+      this.savedMarkersLayer.addTo(mapInstance);
+
+      mapInstance.on('click', (selectedCoords) => {
         this.locationService.openAddModal(selectedCoords.latlng.lat, selectedCoords.latlng.lng);
       });
 
-      setTimeout(() => this.map!.invalidateSize(), 0);
+      setTimeout(() => mapInstance.invalidateSize(), 0);
 
       this.locationService.loadLocations();
     });
