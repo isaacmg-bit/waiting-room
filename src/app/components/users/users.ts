@@ -16,7 +16,7 @@ export class Users {
   readonly supabase = inject(SupabaseService);
   private readonly fb = inject(FormBuilder);
   readonly userId = signal<string | null>(null);
-  userRole = this.supabase.userRole;
+  userRole = this.supabase.userRole();
 
   constructor() {
     effect(() => {
