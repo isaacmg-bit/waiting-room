@@ -2,6 +2,8 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { UserService } from '../../services/user-service';
 import { ChartService } from '../../services/chart-service';
+import { CalendarService } from '../../services/calendar-service';
+
 @Component({
   selector: 'app-home',
   imports: [RouterModule],
@@ -11,8 +13,27 @@ import { ChartService } from '../../services/chart-service';
 export class Home implements OnInit {
   userService = inject(UserService);
   chartsService = inject(ChartService);
+  calendarService = inject(CalendarService);
   readonly randomUsersHome = signal<any[]>([]);
+  
+  monthToString(monthNum: string): string {
+    const months: Record<string, string> = {
+      '01': 'JAN',
+      '02': 'FEB',
+      '03': 'MAR',
+      '04': 'APR',
+      '05': 'MAY',
+      '06': 'JUN',
+      '07': 'JUL',
+      '08': 'AUG',
+      '09': 'SEP',
+      '10': 'OCT',
+      '11': 'NOV',
+      '12': 'DEC',
+    };
 
+    return months[monthNum];
+  }
   ngOnInit() {
     this.chartsService.fetchTotalUsers();
     this.userService.getRandomUsers().subscribe((results) => {
