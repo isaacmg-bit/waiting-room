@@ -73,21 +73,10 @@ export class UserSearch implements OnInit {
       params.append('bands', this.selectedBands().join(','));
     }
 
-    const queryString = params.toString();
-    const url = queryString
-      ? `${environment.apiSearchMusicians}?${queryString}`
-      : environment.apiSearchMusicians;
-
-    this.api.get(url).subscribe({
-      next: (results: any) => {
-        this.searchResults.set(results);
-        this.currentPage.set(0);
-      },
-      error: (err) => {
-        console.error('Search failed', err);
-        this.searchResults.set([]);
-        this.currentPage.set(0);
-      },
+    const url = `${environment.apiSearchMusicians}?${params.toString()}`;
+    this.api.get(url).subscribe((results: any) => {
+      this.searchResults.set(results);
+      this.currentPage.set(0);
     });
   }
 
