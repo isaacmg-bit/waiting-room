@@ -107,4 +107,11 @@ export class Map implements AfterViewInit {
   toggleFilter(category: string): void {
     this.locationService.toggleFilter(category);
   }
+
+  get filteredPointsCount(): number {
+    const activeFilters = this.locationService.activeFilters();
+    const allPoints = this.calendarService.upcomingEvents(); 
+
+    return allPoints.filter((point) => activeFilters.includes(point.event_type)).length;
+  }
 }

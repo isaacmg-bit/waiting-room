@@ -173,7 +173,7 @@ export class Charts implements AfterViewInit {
     this.chartsReady.set(true);
   }
 
-  private updateCharts(): void {
+  private async updateCharts(): Promise<void> {
     const events = this.calendarService.userEventsSignal();
     const eventsPublic = this.calendarService.userPublicEventsSignal();
 
@@ -192,25 +192,45 @@ export class Charts implements AfterViewInit {
       }
     });
 
-    const totalUsers = this.totalUsersRegistered();
-    const userGrowth = Array(12)
-      .fill(0)
-      .map((_, i) => Math.floor((totalUsers / 12) * (i + 1)));
+    const { data: usersData, error: usersError } = await this.supabase
+      .getClient()
+      .from('user_profile')
+      .select('created_at');
+
+    const userMonthlyCounts = Array(12).fill(0);
+
+    if (!usersError && usersData) {
+      usersData.forEach((user) => {
+        if (user.created_at) {
+          const month = new Date(user.created_at).getMonth();
+          userMonthlyCounts[month]++;
+        }
+      });
+    }
+
+    const userGrowth = userMonthlyCounts.reduce<number[]>((acc, count, i) => {
+      acc[i] = (i === 0 ? 0 : acc[i - 1]) + count;
+      return acc;
+    }, Array(12).fill(0));
 
     this.totalEventsCount.set(allEvents.length);
+    this.totalUsersRegistered.set(usersData?.length || 0);
 
     if (this.barChartInstance) {
       this.barChartInstance.data.datasets[0].data = eventMonthlyCounts;
       this.barChartInstance.update();
     }
+
     if (this.lineChartInstance) {
       this.lineChartInstance.data.datasets[0].data = userGrowth;
       this.lineChartInstance.update();
     }
+
     if (this.gigsMiniInstance) {
       this.gigsMiniInstance.data.datasets[0].data = eventMonthlyCounts;
       this.gigsMiniInstance.update();
     }
+
     if (this.revMiniInstance) {
       this.revMiniInstance.data.datasets[0].data = userGrowth;
       this.revMiniInstance.update();
