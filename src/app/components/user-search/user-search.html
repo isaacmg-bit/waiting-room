@@ -1,21 +1,19 @@
 <main class="min-h-screen bg-background-dark font-display text-slate-100">
   <div class="mx-auto max-w-7xl px-4 py-8 md:px-8">
-    <nav class="mb-8 flex flex-col gap-4 justify-center md:flex-row" aria-label="Search filters">
+    <!-- FILTERS -->
+    <nav class="mb-6 flex flex-col gap-9 justify-center md:flex-row" aria-label="Search filters">
+      <!-- DISTANCE -->
       <div class="relative" appClickOutside (clickOutside)="closeDistance()">
         <div
           class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2 transition-colors focus-within:border-primary"
         >
-          <span class="material-symbols-outlined text-base text-slate-500" aria-hidden="true"
-            >location_on</span
-          >
+          <span class="material-symbols-outlined text-base text-slate-500">location_on</span>
           <button
             type="button"
             (click)="toggleDistance()"
-            class="flex-1 cursor-pointer border-none bg-transparent text-left text-sm text-slate-500 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
-            aria-haspopup="listbox"
-            [aria-expanded]="isDistanceOpen()"
+            class="flex-1 text-left text-sm text-slate-500"
           >
-            {{ selectedDistance() ? selectedDistance() + ' km' : 'Distance' }}
+            {{ selectedDistance() + ' km' }}
           </button>
         </div>
 
@@ -36,7 +34,7 @@
                 step="5"
                 [value]="selectedDistance()"
                 (input)="onDistanceChange($event)"
-                class="w-full h-2 rounded-lg appearance-none cursor-pointer accent-primary bg-gray-700"
+                class="w-full h-2 rounded-lg cursor-pointer accent-primary bg-gray-700"
               />
 
               <div class="flex justify-between text-xs text-slate-400">
@@ -48,7 +46,7 @@
               <button
                 type="button"
                 (click)="closeDistance()"
-                class="w-full mt-2 rounded-lg bg-primary py-2 text-sm font-semibold text-white hover:opacity-90"
+                class="w-full rounded-lg bg-primary py-2 text-sm font-semibold text-white"
               >
                 Apply
               </button>
@@ -57,40 +55,35 @@
         }
       </div>
 
+      <!-- INSTRUMENT -->
       <div class="relative" appClickOutside (clickOutside)="closeInstruments()">
         <div
-          class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2 transition-colors focus-within:border-primary"
+          class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
         >
-          <label for="instrument-search" class="sr-only">Search instrument</label>
-          <span class="material-symbols-outlined text-base text-slate-500" aria-hidden="true"
-            >piano</span
-          >
+          <span class="material-symbols-outlined text-base text-slate-500">piano</span>
           <input
-            id="instrument-search"
             type="text"
             (input)="onSearchInstrument($event)"
             (focus)="openInstruments()"
             placeholder="Instrument"
-            class="flex-1 border-none bg-transparent text-sm text-slate-200 placeholder-slate-500 focus:ring-0 focus:outline-hidden"
-            aria-autocomplete="list"
+            class="flex-1 bg-transparent text-sm text-slate-200"
           />
         </div>
 
         @if (isInstrumentsOpen() && userInstrumentService.searchQuery().length > 0) {
           <ul
-            role="listbox"
-            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded border border-border-dark bg-gray-500 p-2 space-y-1 shadow-xl"
+            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded bg-gray-500 p-2 shadow-xl"
           >
             @for (instrument of userInstrumentService.filteredInstruments(); track instrument.id) {
               @let isSel = isSelectedInstrument(instrument.instrument_name);
-              <li role="option" [attr.aria-selected]="isSel">
+              <li>
                 <button
-                  type="button"
                   (click)="selectInstrument(instrument)"
-                  [class]="[
-                    'w-full text-left rounded px-3 py-2 text-sm transition',
-                    isSel ? 'bg-gray-300 text-slate-900' : 'text-slate-500 hover:bg-primary/20',
-                  ]"
+                  [class]="
+                    isSel
+                      ? 'bg-gray-300 text-slate-900 w-full text-left px-3 py-2 rounded'
+                      : 'w-full text-left px-3 py-2 text-slate-200 hover:bg-primary/20 rounded'
+                  "
                 >
                   {{ instrument.instrument_name }}
                 </button>
@@ -100,39 +93,24 @@
         }
       </div>
 
+      <!-- MUSIC THEORY -->
       <div class="relative" appClickOutside (clickOutside)="closeMusicTheory()">
         <div
-          class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2 transition-colors focus-within:border-primary"
+          class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
         >
-          <span class="material-symbols-outlined text-base text-slate-500" aria-hidden="true"
-            >school</span
-          >
-          <button
-            type="button"
-            (click)="toggleMusicTheory()"
-            class="flex-1 cursor-pointer border-none bg-transparent text-left text-sm text-slate-500 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
-            aria-haspopup="listbox"
-            [aria-expanded]="isMusicTheoryOpen()"
-          >
+          <span class="material-symbols-outlined text-base text-slate-500">school</span>
+          <button (click)="toggleMusicTheory()" class="flex-1 text-left text-sm text-slate-500">
             {{ selectedMusicTheory() || 'Music theory' }}
           </button>
         </div>
 
         @if (isMusicTheoryOpen()) {
-          <ul
-            role="listbox"
-            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded border border-border-dark bg-gray-500 p-2 space-y-1 shadow-xl"
-          >
+          <ul class="absolute inset-x-0 top-full z-50 mt-2 rounded bg-gray-500 p-2 shadow-xl">
             @for (theory of musicTheoryOptions; track theory) {
-              @let isSel = selectedMusicTheory() === theory;
-              <li role="option" [attr.aria-selected]="isSel">
+              <li>
                 <button
-                  type="button"
                   (click)="selectMusicTheory(theory); closeMusicTheory()"
-                  [class]="[
-                    'w-full text-left rounded px-3 py-2 text-sm transition',
-                    isSel ? 'bg-gray-300 text-slate-900' : 'text-slate-500 hover:bg-primary/20',
-                  ]"
+                  class="w-full text-left px-3 py-2 hover:bg-primary/20 rounded"
                 >
                   {{ theory }}
                 </button>
@@ -142,39 +120,30 @@
         }
       </div>
 
+      <!-- GENRE -->
       <div class="relative" appClickOutside (clickOutside)="closeGenres()">
         <div
-          class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2 transition-colors focus-within:border-primary"
+          class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
         >
-          <label for="genre-search" class="sr-only">Search genre</label>
-          <span class="material-symbols-outlined text-base text-slate-500" aria-hidden="true"
-            >music_note</span
-          >
+          <span class="material-symbols-outlined text-slate-500">music_note</span>
           <input
-            id="genre-search"
             type="text"
             (input)="onSearchGenre($event)"
             (focus)="openGenres()"
             placeholder="Genre"
-            class="flex-1 border-none bg-transparent text-sm text-slate-200 placeholder-slate-500 focus:ring-0 focus:outline-hidden"
+            class="flex-1 bg-transparent text-sm text-slate-200"
           />
         </div>
 
         @if (isGenresOpen() && userGenresService.searchQuery().length > 0) {
           <ul
-            role="listbox"
-            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded border border-border-dark bg-gray-500 p-2 space-y-1 shadow-xl"
+            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded bg-gray-500 p-2 shadow-xl"
           >
             @for (genre of userGenresService.filteredGenres(); track genre.id) {
-              @let isSel = isSelectedGenre(genre.genre);
-              <li role="option" [attr.aria-selected]="isSel">
+              <li>
                 <button
-                  type="button"
                   (click)="selectGenre(genre)"
-                  [class]="[
-                    'w-full text-left rounded px-3 py-2 text-sm transition',
-                    isSel ? 'bg-gray-300 text-slate-900' : 'text-slate-500 hover:bg-primary/20',
-                  ]"
+                  class="w-full text-left px-3 py-2 text-slate-200 hover:bg-primary/20 rounded"
                 >
                   {{ genre.genre }}
                 </button>
@@ -184,39 +153,28 @@
         }
       </div>
 
+      <!-- BAND -->
       <div class="relative" appClickOutside (clickOutside)="closeBands()">
         <div
-          class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2 transition-colors focus-within:border-primary"
+          class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
         >
-          <label for="band-search" class="sr-only">Search band</label>
-          <span class="material-symbols-outlined text-base text-slate-500" aria-hidden="true"
-            >speaker</span
-          >
+          <span class="material-symbols-outlined text-slate-500">speaker</span>
           <input
-            id="band-search"
             type="text"
             (input)="onSearchBand($event)"
             (focus)="openBands()"
             placeholder="Band"
-            class="flex-1 border-none bg-transparent text-sm text-slate-200 placeholder-slate-500 focus:ring-0 focus:outline-hidden"
+            class="flex-1 bg-transparent text-sm text-slate-200"
           />
         </div>
 
         @if (isBandsOpen() && musicBrainzService.bandsSignal().length > 0) {
-          <ul
-            role="listbox"
-            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded border border-border-dark bg-gray-500 p-2 space-y-1 shadow-xl"
-          >
+          <ul class="absolute inset-x-0 top-full z-50 mt-2 rounded bg-gray-500 p-2 shadow-xl">
             @for (band of musicBrainzService.bandsSignal(); track band.id) {
-              @let isSel = isSelectedBand(band.name);
-              <li role="option" [attr.aria-selected]="isSel">
+              <li>
                 <button
-                  type="button"
                   (click)="selectBand(band)"
-                  [class]="[
-                    'w-full text-left rounded px-3 py-2 text-sm transition',
-                    isSel ? 'bg-gray-300 text-slate-900' : 'text-slate-500 hover:bg-primary/20',
-                  ]"
+                  class="w-full text-left px-3 py-2 hover:bg-primary/20 rounded"
                 >
                   {{ band.name }}
                 </button>
@@ -226,63 +184,81 @@
         }
       </div>
 
-      <button
-        type="submit"
-        (click)="search()"
-        class="cursor-pointer rounded-xl bg-primary px-6 py-3 font-bold text-white transition-transform hover:scale-105 hover:shadow-lg active:scale-95 focus-visible:outline-hidden"
-      >
+      <button (click)="search()" class="rounded-xl bg-primary px-6 py-3 font-bold text-white">
         Search
       </button>
     </nav>
 
-    <section aria-labelledby="results-title" class="mb-12">
-      <h2 id="results-title" class="mb-6 text-center text-2xl font-bold">
-        Find your new bandmates!
-      </h2>
+    <!-- ✅ ACTIVE FILTERS -->
+    <div class="mb-6 flex flex-wrap gap-2">
+      @if (
+        selectedDistance() ||
+        selectedInstruments().length ||
+        selectedGenres().length ||
+        selectedBands().length ||
+        selectedMusicTheory()
+      ) {
+        @if (selectedDistance()) {
+          <span class="filter-chip">
+            📍 {{ selectedDistance() }} km
+            <button (click)="selectedDistance.set(10)">✕</button>
+          </span>
+        }
+
+        @for (inst of selectedInstruments(); track inst) {
+          <span class="filter-chip">
+            🎸 {{ inst }}
+            <button (click)="removeInstrument(inst)">✕</button>
+          </span>
+        }
+
+        @for (genre of selectedGenres(); track genre) {
+          <span class="filter-chip">
+            🎵 {{ genre }}
+            <button (click)="removeGenre(genre)">✕</button>
+          </span>
+        }
+
+        @for (band of selectedBands(); track band) {
+          <span class="filter-chip">
+            🎤 {{ band }}
+            <button (click)="removeBand(band)">✕</button>
+          </span>
+        }
+
+        @if (selectedMusicTheory()) {
+          <span class="filter-chip">
+            🎼 {{ selectedMusicTheory() }}
+            <button (click)="selectedMusicTheory.set(null)">✕</button>
+          </span>
+        }
+
+        <button (click)="clearAllFilters()" class="ml-2 text-xs text-red-400 hover:underline">
+          Clear all
+        </button>
+      }
+    </div>
+
+    <!-- RESULTS -->
+    <section class="mb-12">
+      <h2 class="mb-6 text-center text-2xl font-bold">Find your new bandmates!</h2>
 
       @if (searchResults().length > 0) {
-        <div class="rounded-3xl border border-border-dark bg-surface-dark p-6 shadow-sm">
-          <div class="flex items-center justify-between gap-4">
-            <button
-              type="button"
-              (click)="previousPage()"
-              [disabled]="currentPage() === 0"
-              class="shrink-0 cursor-pointer rounded-lg bg-primary p-3 text-white transition-transform hover:scale-110 disabled:opacity-30 focus-visible:outline-hidden"
-              aria-label="Previous page"
-            >
-              <span class="material-symbols-outlined block" aria-hidden="true">chevron_left</span>
-            </button>
-
-            <div class="grid flex-1 grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              @for (user of paginatedResults(); track user.id) {
-                <article class="h-162.5">
-                  <app-user-card [user]="user"></app-user-card>
-                </article>
-              }
-            </div>
-
-            <button
-              type="button"
-              (click)="nextPage()"
-              [disabled]="currentPage() === totalPages() - 1"
-              class="shrink-0 cursor-pointer rounded-lg bg-primary p-3 text-white transition-transform hover:scale-110 disabled:opacity-30 focus-visible:outline-hidden"
-              aria-label="Next page"
-            >
-              <span class="material-symbols-outlined block" aria-hidden="true">chevron_right</span>
-            </button>
-          </div>
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          @for (user of paginatedResults(); track user.id) {
+            <app-user-card [user]="user"></app-user-card>
+          }
         </div>
       }
     </section>
 
-    <section aria-labelledby="random-title">
-      <h2 id="random-title" class="mb-6 text-2xl font-bold">Random musicians</h2>
-      <div class="rounded-3xl border border-border-dark bg-surface-dark p-6 shadow-sm">
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          @for (user of randomUsers(); track user.id) {
-            <app-user-card [randomUser]="user"></app-user-card>
-          }
-        </div>
+    <!-- RANDOM -->
+    <section>
+      <h2 class="mb-6 text-2xl font-bold">Random musicians</h2>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        @for (user of randomUsers(); track user.id) {
+          <app-user-card [randomUser]="user"></app-user-card>
+        }
       </div>
     </section>
   </div>

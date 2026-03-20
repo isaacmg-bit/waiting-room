@@ -26,7 +26,7 @@ export class UserSearch implements OnInit {
   readonly currentPage = signal(0);
   readonly musicTheoryOptions = ['Basic', 'Composition', 'Advanced Orchestration'];
 
-  readonly selectedDistance = signal<number>(10);
+  readonly selectedDistance = signal<number>(5);
   readonly selectedInstruments = signal<string[]>([]);
   readonly selectedMusicTheory = signal<string | null>(null);
   readonly selectedGenres = signal<string[]>([]);
@@ -219,5 +219,25 @@ export class UserSearch implements OnInit {
 
   toggleMusicTheory(): void {
     this.isMusicTheoryOpen.set(!this.isMusicTheoryOpen());
+  }
+
+  removeInstrument(inst: string): void {
+    this.selectedInstruments.set(this.selectedInstruments().filter((i) => i !== inst));
+  }
+
+  removeGenre(genre: string): void {
+    this.selectedGenres.set(this.selectedGenres().filter((g) => g !== genre));
+  }
+
+  removeBand(band: string): void {
+    this.selectedBands.set(this.selectedBands().filter((b) => b !== band));
+  }
+
+  clearAllFilters(): void {
+    this.selectedDistance.set(10);
+    this.selectedInstruments.set([]);
+    this.selectedGenres.set([]);
+    this.selectedBands.set([]);
+    this.selectedMusicTheory.set(null);
   }
 }
