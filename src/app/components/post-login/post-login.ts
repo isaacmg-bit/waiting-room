@@ -11,7 +11,6 @@ import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-post-login',
-  standalone: true,
   imports: [ReactiveFormsModule, UserLocation],
   templateUrl: './post-login.html',
   styleUrl: './post-login.css',
