@@ -26,7 +26,8 @@ export class UserSearch implements OnInit {
   readonly currentPage = signal(0);
   readonly musicTheoryOptions = ['Basic', 'Composition', 'Advanced Orchestration'];
 
-  readonly selectedDistance = signal<number>(5);
+  readonly selectedDistance = signal<number | null>(null);
+  readonly tempDistance = signal<number | null>(5);
   readonly selectedInstruments = signal<string[]>([]);
   readonly selectedMusicTheory = signal<string | null>(null);
   readonly selectedGenres = signal<string[]>([]);
@@ -72,10 +73,21 @@ export class UserSearch implements OnInit {
       params.append('bands', this.selectedBands().join(','));
     }
 
-    const url = `${environment.apiSearchMusicians}?${params.toString()}`;
-    this.api.get(url).subscribe((results: any) => {
-      this.searchResults.set(results);
-      this.currentPage.set(0);
+    const queryString = params.toString();
+    const url = queryString
+      ? `${environment.apiSearchMusicians}?${queryString}`
+      : environment.apiSearchMusicians;
+
+    this.api.get(url).subscribe({
+      next: (results: any) => {
+        this.searchResults.set(results);
+        this.currentPage.set(0);
+      },
+      error: (err) => {
+        console.error('Search failed', err);
+        this.searchResults.set([]);
+        this.currentPage.set(0);
+      },
     });
   }
 
@@ -119,6 +131,7 @@ export class UserSearch implements OnInit {
       this.selectedInstruments.set([...current, instrument.instrument_name]);
     }
   }
+
   selectMusicTheory(theory: string): void {
     this.selectedMusicTheory.set(theory);
   }
@@ -158,7 +171,13 @@ export class UserSearch implements OnInit {
 
   onDistanceChange(event: Event): void {
     const value = Number((event.target as HTMLInputElement).value);
-    this.selectedDistance.set(value);
+    this.tempDistance.set(value);
+  }
+
+  clearDistance() {
+    this.selectedDistance.set(null);
+    this.tempDistance.set(5);
+    this.search();
   }
 
   isSelectedInstrument(instrumentName: string): boolean {
@@ -194,6 +213,7 @@ export class UserSearch implements OnInit {
   }
 
   openDistance(): void {
+    this.tempDistance.set(this.selectedDistance() ?? 5);
     this.isDistanceOpen.set(true);
   }
 
@@ -234,7 +254,7 @@ export class UserSearch implements OnInit {
   }
 
   clearAllFilters(): void {
-    this.selectedDistance.set(10);
+    this.selectedDistance.set(null);
     this.selectedInstruments.set([]);
     this.selectedGenres.set([]);
     this.selectedBands.set([]);

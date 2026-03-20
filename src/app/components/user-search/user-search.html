@@ -1,7 +1,7 @@
 <main class="min-h-screen bg-background-dark font-display text-slate-100">
   <div class="mx-auto max-w-7xl px-4 py-8 md:px-8">
     <nav class="mb-6 flex flex-col gap-9 justify-center md:flex-row" aria-label="Search filters">
-      <div class="relative" appClickOutside (clickOutside)="closeDistance()">
+      <div class="relative" appClickOutside (clickOutside)="closeDistance(); search()">
         <div
           class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2 transition-colors focus-within:border-primary"
         >
@@ -11,7 +11,7 @@
             (click)="toggleDistance()"
             class="flex-1 text-left text-sm text-slate-500"
           >
-            {{ selectedDistance() + ' km' }}
+            {{ selectedDistance() ? selectedDistance() + ' km' : 'Distance' }}
           </button>
         </div>
 
@@ -21,8 +21,8 @@
           >
             <div class="space-y-3">
               <div class="text-sm text-slate-200">
-                Distancia:
-                <span class="font-semibold text-white"> {{ selectedDistance() }} km </span>
+                Distance:
+                <span class="font-semibold text-white"> {{ tempDistance() }} km </span>
               </div>
 
               <input
@@ -30,7 +30,7 @@
                 min="5"
                 max="100"
                 step="5"
-                [value]="selectedDistance()"
+                [value]="tempDistance()"
                 (input)="onDistanceChange($event)"
                 class="w-full h-2 rounded-lg cursor-pointer accent-primary bg-gray-700"
               />
@@ -43,7 +43,7 @@
 
               <button
                 type="button"
-                (click)="closeDistance()"
+                (click)="selectedDistance.set(tempDistance()); closeDistance(); search()"
                 class="w-full rounded-lg bg-primary py-2 text-sm font-semibold text-white"
               >
                 Apply
@@ -53,7 +53,7 @@
         }
       </div>
 
-      <div class="relative" appClickOutside (clickOutside)="closeInstruments()">
+      <div class="relative" appClickOutside (clickOutside)="closeInstruments(); search()">
         <div
           class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
         >
@@ -75,7 +75,7 @@
               @let isSel = isSelectedInstrument(instrument.instrument_name);
               <li>
                 <button
-                  (click)="selectInstrument(instrument)"
+                  (click)="selectInstrument(instrument); search()"
                   [class]="
                     isSel
                       ? 'bg-gray-300 text-slate-900 w-full text-left px-3 py-2 rounded'
@@ -90,7 +90,7 @@
         }
       </div>
 
-      <div class="relative" appClickOutside (clickOutside)="closeMusicTheory()">
+      <div class="relative" appClickOutside (clickOutside)="closeMusicTheory(); search()">
         <div
           class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
         >
@@ -105,7 +105,7 @@
             @for (theory of musicTheoryOptions; track theory) {
               <li>
                 <button
-                  (click)="selectMusicTheory(theory); closeMusicTheory()"
+                  (click)="selectMusicTheory(theory); closeMusicTheory(); search()"
                   class="w-full text-left px-3 py-2 hover:bg-primary/20 rounded"
                 >
                   {{ theory }}
@@ -116,7 +116,7 @@
         }
       </div>
 
-      <div class="relative" appClickOutside (clickOutside)="closeGenres()">
+      <div class="relative" appClickOutside (clickOutside)="closeGenres(); search()">
         <div
           class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
         >
@@ -137,7 +137,7 @@
             @for (genre of userGenresService.filteredGenres(); track genre.id) {
               <li>
                 <button
-                  (click)="selectGenre(genre)"
+                  (click)="selectGenre(genre); search()"
                   class="w-full text-left px-3 py-2 text-slate-200 hover:bg-primary/20 rounded"
                 >
                   {{ genre.genre }}
@@ -148,7 +148,7 @@
         }
       </div>
 
-      <div class="relative" appClickOutside (clickOutside)="closeBands()">
+      <div class="relative" appClickOutside (clickOutside)="closeBands(); search()">
         <div
           class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
         >
@@ -167,7 +167,7 @@
             @for (band of musicBrainzService.bandsSignal(); track band.id) {
               <li>
                 <button
-                  (click)="selectBand(band)"
+                  (click)="selectBand(band); search()"
                   class="w-full text-left px-3 py-2 hover:bg-primary/20 rounded"
                 >
                   {{ band.name }}
@@ -194,7 +194,7 @@
         @if (selectedDistance()) {
           <span class="filter-chip">
             📍 {{ selectedDistance() }} km
-            <button (click)="selectedDistance.set(10)">✕</button>
+            <button (click)="clearDistance()">✕</button>
           </span>
         }
 
@@ -226,7 +226,10 @@
           </span>
         }
 
-        <button (click)="clearAllFilters()" class="ml-2 text-xs text-red-400 hover:underline">
+        <button
+          (click)="clearAllFilters(); search()"
+          class="ml-2 text-xs text-red-400 hover:underline"
+        >
           Clear all
         </button>
       }

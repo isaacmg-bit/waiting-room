@@ -9,7 +9,7 @@
             <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest"
               >Total events</span
             >
-            <h2 class="text-3xl font-black text-white mt-1">{{ totalEventsCount() }}</h2>
+            <h2 class="text-3xl font-black text-white mt-1">{{ chartsService.totalEventsCount() }}</h2>
           </div>
           <span class="material-symbols-outlined text-sky-400 bg-sky-400/10 p-2 rounded-xl"
             >calendar_month</span
@@ -28,7 +28,7 @@
             <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest"
               >Registered users</span
             >
-            <h2 class="text-3xl font-black text-white mt-1">{{ totalUsersRegistered() }}</h2>
+            <h2 class="text-3xl font-black text-white mt-1">{{ chartsService.totalUsersRegistered() }}</h2>
           </div>
           <span class="material-symbols-outlined text-emerald-400 bg-emerald-400/10 p-2 rounded-xl"
             >group</span
@@ -48,7 +48,7 @@
               >Top Artist</span
             >
             <h2 class="text-xl font-black text-white mt-2 max-w-40">
-              {{ popularArtistName() || 'Calculating...' }}
+              {{ chartsService.popularArtistName() || 'Calculating...' }}
             </h2>
           </div>
           <span class="material-symbols-outlined text-amber-400 bg-amber-400/10 p-2 rounded-xl"
@@ -69,7 +69,7 @@
               >Top Instrument</span
             >
             <h2 class="text-xl font-black text-white mt-2 max-w-40">
-              {{ topInstrumentName() }}
+              {{ chartsService.topInstrumentName() }}
             </h2>
           </div>
           <span class="material-symbols-outlined text-purple-400 bg-purple-400/10 p-2 rounded-xl"

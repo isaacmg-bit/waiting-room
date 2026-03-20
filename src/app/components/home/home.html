@@ -1,179 +1,490 @@
-<main
-  class="relative min-h-screen overflow-hidden bg-slate-950 font-display text-slate-100 selection:bg-primary/30"
+<body
+  class="bg-background text-on-surface font-body selection:bg-primary selection:text-on-primary-container"
 >
-  <div
-    class="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-primary/10 blur-[140px] pointer-events-none"
-    aria-hidden="true"
-  ></div>
-  <div
-    class="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-cyan-500/10 blur-[140px] pointer-events-none"
-    aria-hidden="true"
-  ></div>
-
-  <section class="relative z-10 px-6 pt-28 pb-32">
-    <div class="mx-auto max-w-4xl space-y-8 text-center">
-      <div class="space-y-4">
-        <h1 class="text-5xl font-extrabold tracking-tight md:text-7xl">
-          <span
-            class="bg-linear-to-r from-primary via-purple-400 to-cyan-400 bg-clip-text text-transparent"
-          >
-            Waiting Room
-          </span>
-        </h1>
-        <p class="mx-auto max-w-2xl text-lg font-light text-slate-400 md:text-xl">
-          Marketplace for musicians and session artists.
-        </p>
-      </div>
-
-      <div class="group relative mx-auto max-w-2xl">
+  <main class="pt-20">
+    <!-- Hero Section -->
+    <section class="relative min-h-[870px] flex items-center overflow-hidden asymmetric-clip">
+      <!-- Neon Nocturne Background -->
+      <div class="absolute inset-0 -z-10 bg-background">
         <div
-          class="absolute -inset-1 rounded-xl bg-linear-to-r from-primary to-purple-400 opacity-20 blur-sm transition duration-700 group-hover:opacity-40"
-          aria-hidden="true"
+          class="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-secondary-dim/20 rounded-full blur-[120px]"
         ></div>
-
-        <form
-          (submit)="$event.preventDefault()"
-          class="relative flex items-center overflow-hidden rounded-xl border border-white/10 bg-black/30 p-2 backdrop-blur-md"
-        >
-          <label for="main-search" class="sr-only">Search musicians or instruments</label>
-          <div class="pl-4 text-slate-500">
-            <span class="material-symbols-outlined" aria-hidden="true">search</span>
-          </div>
-
-          <input
-            id="main-search"
-            type="text"
-            placeholder="Search musicians, instruments..."
-            class="w-full border-none bg-transparent px-4 py-3 text-lg text-slate-200 outline-hidden placeholder:text-slate-600 focus:ring-0"
-          />
-
-          <button
-            type="submit"
-            class="rounded-lg bg-primary px-8 py-3 font-bold text-white shadow-lg shadow-primary/20 transition-all hover:brightness-110 active:scale-95 whitespace-nowrap"
+        <div
+          class="absolute bottom-[10%] left-[-5%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px]"
+        ></div>
+        <div
+          class="absolute inset-0 opacity-20"
+          style="
+            background-image: radial-gradient(circle at 2px 2px, #48474d 1px, transparent 0);
+            background-size: 40px 40px;
+          "
+        ></div>
+      </div>
+      <div
+        class="max-w-[1440px] mx-auto px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
+      >
+        <div class="lg:col-span-7 space-y-8">
+          <h1
+            class="text-6xl md:text-8xl font-headline font-bold text-on-surface leading-[0.9] tracking-tight"
           >
-            Search
+            NIñO KE DISE <br />
+            <span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-tertiary"
+              >GALLERY.</span
+            >
+          </h1>
+          <p
+            class="text-xl md:text-2xl text-on-surface-variant max-w-2xl font-light leading-relaxed"
+          >
+            Where amateur artists and talented musicians unite. Discover the rare talent
+            behind the records.
+          </p>
+          <!-- Smart Filter Bar -->
+          <div
+            class="glass-panel p-2 rounded-xl border border-outline-variant/15 flex flex-wrap lg:flex-nowrap items-center gap-2 max-w-4xl neon-glow-tertiary"
+          >
+            <div class="flex-1 min-w-[160px] px-4 py-3 group border-r border-outline-variant/10">
+              <label
+                class="block text-[10px] uppercase tracking-widest text-secondary font-bold mb-1"
+                >Instrument</label
+              >
+              <select
+                class="bg-transparent border-none p-0 text-on-surface focus:ring-0 w-full font-headline text-lg cursor-pointer"
+              >
+                <option>Analog Synth</option>
+                <option>Electric Guitar</option>
+                <option>Upright Bass</option>
+                <option>Modular Rack</option>
+              </select>
+            </div>
+            <div class="flex-1 min-w-[160px] px-4 py-3 group border-r border-outline-variant/10">
+              <label
+                class="block text-[10px] uppercase tracking-widest text-tertiary font-bold mb-1"
+                >Location</label
+              >
+              <select
+                class="bg-transparent border-none p-0 text-on-surface focus:ring-0 w-full font-headline text-lg cursor-pointer"
+              >
+                <option>Berlin, DE</option>
+                <option>Brooklyn, NY</option>
+                <option>London, UK</option>
+                <option>Remote Only</option>
+              </select>
+            </div>
+            <div class="flex-1 min-w-[160px] px-4 py-3 group border-r border-outline-variant/10">
+              <label class="block text-[10px] uppercase tracking-widest text-primary font-bold mb-1"
+                >Skill Level</label
+              >
+              <select
+                class="bg-transparent border-none p-0 text-on-surface focus:ring-0 w-full font-headline text-lg cursor-pointer"
+              >
+                <option>Platinum Tier</option>
+                <option>Pro Session</option>
+                <option>Emerging</option>
+              </select>
+            </div>
+            <div class="flex-1 min-w-[160px] px-4 py-3 group">
+              <label
+                class="block text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1"
+                >Genre</label
+              >
+              <select
+                class="bg-transparent border-none p-0 text-on-surface focus:ring-0 w-full font-headline text-lg cursor-pointer"
+              >
+                <option>Techno</option>
+                <option>Neo-Jazz</option>
+                <option>Hyper-Pop</option>
+                <option>Ambient</option>
+              </select>
+            </div>
+            <button
+              class="bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-8 py-4 rounded-lg font-headline font-bold hover:brightness-110 transition-all flex items-center gap-2 group"
+            >
+              <span>FIND TALENT</span>
+              <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform"
+                >arrow_forward</span
+              >
+            </button>
+          </div>
+        </div>
+        <div class="lg:col-span-5 hidden lg:block relative">
+          <div
+            class="relative w-full aspect-square rounded-2xl overflow-hidden border border-outline-variant/20 shadow-2xl"
+          >
+            @if (randomUsersHome().length > 0) {
+              <img
+                alt="Random musician"
+                class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-110"
+                data-alt="Random musician profile picture"
+                src="{{ randomUsersHome()[0].profile_photo_url }}"
+              />
+            }
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"
+            ></div>
+            <div class="absolute bottom-6 left-6 right-6 p-6 glass-panel rounded-lg">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-tertiary/20 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-tertiary">graphic_eq</span>
+                </div>
+                <div>
+                  <p class="text-xs text-tertiary font-bold tracking-widest uppercase">
+                    Live Pulse
+                  </p>
+                  <h3 class="font-headline text-xl">    {{ chartsService.totalUsersRegistered()}}       </h3>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Decorative Element -->
+          <div
+            class="absolute -top-12 -right-12 w-48 h-48 border-t-2 border-r-2 border-secondary/30 rounded-tr-[4rem]"
+          ></div>
+        </div>
+      </div>
+    </section>
+    <!-- Featured Talent (Bento Style) -->
+    <section class="py-24 max-w-[1440px] mx-auto px-8">
+      <div class="flex justify-between items-end mb-16">
+        <div>
+          <span class="text-secondary font-bold tracking-[0.2em] uppercase text-xs"
+            >Curated Selection</span
+          >
+          <h2 class="text-4xl md:text-5xl font-headline font-bold mt-2">FEATURED TALENT</h2>
+        </div>
+        <a class="text-tertiary hover:underline font-label flex items-center gap-2 group" href="#">
+          View All Artists
+          <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform"
+            >arrow_right_alt</span
+          >
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <!-- Large Feature -->
+        <div
+          class="md:col-span-2 md:row-span-2 group relative overflow-hidden rounded-xl bg-surface-container-low aspect-square md:aspect-auto"
+        >
+          <img
+            alt="Artist portrait"
+            class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
+            data-alt="Modern musician portrait in cinematic lighting"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHdiMFlyCy56Vq8eO64b587LViWs15hTbbE6JHpMvubqA1FkkBXuB7V_ddXE_7U7jNtxwkZFz2wSWH7aGiZusmhO4VJovIwNtsVyLw-Gr5h_RBiP3Mwd-0KHZ8qDj2L4qd0xsWHBuRK6U2TomucOnU9PSsPPM0kbJ4AEiTnfVZDULYyO7KUqwWgcRe5wjxN4K3YHqXjubomPkitkS6NCOck_atQaw4D1PhLGPp6P7BwNbhY_hzU-ITlIuUBq7WCJxMJnf42f1fUjk8"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-80"
+          ></div>
+          <div class="absolute bottom-0 left-0 p-8 w-full">
+            <div class="flex gap-2 mb-4">
+              <span
+                class="px-3 py-1 bg-primary/20 text-primary text-[10px] font-bold rounded-full border border-primary/30"
+                >PLATINUM</span
+              >
+              <span
+                class="px-3 py-1 bg-surface-container-high/60 backdrop-blur text-on-surface-variant text-[10px] font-bold rounded-full"
+                >ANALOG SYNTH</span
+              >
+            </div>
+            <h3 class="text-3xl font-headline font-bold mb-2">Elena Vance</h3>
+            <p class="text-on-surface-variant text-sm max-w-xs mb-6 font-light">
+              Specializing in modular textures and dark cinematic soundscapes for top-tier labels.
+            </p>
+            <button
+              class="w-full md:w-auto px-6 py-3 bg-on-surface text-background font-bold rounded-md hover:bg-tertiary transition-colors active:scale-95"
+            >
+              Book Session
+            </button>
+          </div>
+        </div>
+        <!-- Regular Cards -->
+        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div
+            class="bg-surface-container-low p-6 rounded-xl group hover:bg-surface-container-high transition-all duration-300"
+          >
+            <div class="relative w-full aspect-square rounded-lg overflow-hidden mb-6">
+              <img
+                alt="Artist Profile"
+                class="w-full h-full object-cover"
+                data-alt="Female cellist in dark atmospheric room"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDc6GCac6WFs4dtL1IjSegvbpSJLOzqRnWYRID7w40g4Mcb4Nn6segYawqUrlASGbtLhbpbaR7JXNoWnpj_qPc8J3DW6jcT14NiCwXddmlE6HAJebCuoGa9Eod-rk7qGJpu_3_dWHeR8D21_1AaFzL0x8CivreWjWUGesGKqHaoptalcnKwSkPTQy9jkTaoUbaLIAnz4MJmP-ypY5EEurqJMSV3tqW7rUH3uDl89F1cMSy0kIjI6vlcgH3rBkg6K6VdAC4d_pjA60NA"
+              />
+              <div
+                class="absolute inset-0 bg-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity"
+              ></div>
+            </div>
+            <h4 class="text-xl font-headline font-bold">Julian Cross</h4>
+            <p class="text-on-surface-variant text-sm mb-4">Jazz Fusion / Electric Guitar</p>
+            <div class="flex justify-between items-center">
+              <span class="text-tertiary font-bold">$120/hr</span>
+              <div class="flex items-center gap-1 text-xs text-on-surface-variant">
+                <span
+                  class="material-symbols-outlined text-sm"
+                  style="font-variation-settings: 'FILL' 1"
+                  >star</span
+                >
+                4.9 (84)
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-surface-container-low p-6 rounded-xl group hover:bg-surface-container-high transition-all duration-300"
+          >
+            <div class="relative w-full aspect-square rounded-lg overflow-hidden mb-6">
+              <img
+                alt="Artist Profile"
+                class="w-full h-full object-cover"
+                data-alt="Abstract music visualizer glow"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGvF5w9YW5DU3YZVgF8qaQKPX7QkRwVmKskSlzq5K8rKDvPsshumtPNEKd_6ucRuLC-Mv_p3ft8He3qP4PffKScOsCKoumVbghgWCiUgy-tAU0mxC5KBgGgMSi4xZAhBLG29lE5ScyCDrMHV1gEQZYnf9gaywbaPDp-hMMdsIDvNB8AOSdZiiF00WeuhINqWwwV2jsdZEvLXIaxOSnZ41vX0khFSNQsoZ5y0wFrHkJsr7F1DDrBkXdKKBof4P7WXqH0_DB9Lk4U9_b"
+              />
+              <div
+                class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"
+              ></div>
+            </div>
+            <h4 class="text-xl font-headline font-bold">MIAO</h4>
+            <p class="text-on-surface-variant text-sm mb-4">Techno / Drum Machines</p>
+            <div class="flex justify-between items-center">
+              <span class="text-tertiary font-bold">$95/hr</span>
+              <div class="flex items-center gap-1 text-xs text-on-surface-variant">
+                <span
+                  class="material-symbols-outlined text-sm"
+                  style="font-variation-settings: 'FILL' 1"
+                  >star</span
+                >
+                5.0 (112)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Browse by Vibe -->
+    <section class="bg-surface-container-low py-24">
+      <div class="max-w-[1440px] mx-auto px-8">
+        <div class="mb-16 text-center">
+          <span class="text-tertiary font-bold tracking-[0.2em] uppercase text-xs"
+            >Curated Vibes</span
+          >
+          <h2 class="text-4xl md:text-5xl font-headline font-bold mt-2">BROWSE BY FREQUENCY</h2>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div
+            class="aspect-[4/5] relative rounded-xl overflow-hidden group cursor-pointer border border-outline-variant/10"
+          >
+            <img
+              alt="Jazz Session"
+              class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              data-alt="Blue moody jazz club atmosphere"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmks751dBGEOA_YDjZrsUntmKK3EXj8IRh6t-8WjZrDi_MwchxyVBIvGtEZ4HAI6zGAdVRc-BpiO0XKES6JeZvwF_ALchVh4AoQ-KXypiJ0iXX6bPQut2BZNlhlRCe0J2fkPOfUrDMXzWsr87HFKEgJ4HCK2kMbRXK2vrDYzBj7aqzQquJinziVwZULyWko_E8Mo5MsoqHkSDoIFMWdTNWzvERCgjalaZ37Cn9m-Pq292ZezSSgVuGaftUslQToXfH1o6vXzxu7YI1"
+            />
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"
+            ></div>
+            <div class="absolute inset-0 flex flex-col justify-end p-6">
+              <h3 class="font-headline text-xl font-bold">Jazz Sessions</h3>
+              <p class="text-xs text-on-surface/70 mt-1">124 Artists</p>
+            </div>
+          </div>
+          <div
+            class="aspect-[4/5] relative rounded-xl overflow-hidden group cursor-pointer border border-outline-variant/10"
+          >
+            <img
+              alt="Techno Producers"
+              class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              data-alt="Neon club lighting with smoke"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUBwZnjjYEPLk0iduATC388YL-bSPwnSH2CI-gC1LCRU-DfEj3EyWZsBSbFAZvpb6WXcflHmBk8iXCz84AQ2bURDQoAFedteVKjEZmHFCca9NEg-wVO9ZDPCHDLOcaDcAKyOIAb8M8nNdbJWsq95uFlF7wkumXKGiGWsmFucs-HWHLOf2TSKJ70SyCc8HJ8qAtKwPEYDGfCF7comEpLsFOf0kTYftWdfsC-tRWHMtCDsIedADSaEMbwkmKC0IZD9tsMsITY8oy3UzB"
+            />
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"
+            ></div>
+            <div class="absolute inset-0 flex flex-col justify-end p-6">
+              <h3 class="font-headline text-xl font-bold">Techno Producers</h3>
+              <p class="text-xs text-on-surface/70 mt-1">89 Artists</p>
+            </div>
+          </div>
+          <div
+            class="aspect-[4/5] relative rounded-xl overflow-hidden group cursor-pointer border border-outline-variant/10"
+          >
+            <img
+              alt="Ambient Texture"
+              class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              data-alt="Ethereal abstract lighting patterns"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfqMQhn4Zsa16jObVbKedgEhjns7h36V87JOUbixOFtj8HZjn5VkEvYhNHgIMjC21MoYA0r_rViQS_lhnSGb5ynkikREMYD5XMKF7J_KfAMnhlSeYkDdg4HHj3AplxKJL8oYkrU4TwA1vxHnM4CEQIBdbZLsOi9VfyLHP7vvJngPjItA-xiVsBfv_wXJQo7MVtcc9zvHPU6EPpNgTb6F-ivR0A4JxiKebiR60daTlQeJLExAaRqtnWitdgkdbIyEBunOvb0pivnd8-"
+            />
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"
+            ></div>
+            <div class="absolute inset-0 flex flex-col justify-end p-6">
+              <h3 class="font-headline text-xl font-bold">Ambient Textures</h3>
+              <p class="text-xs text-on-surface/70 mt-1">56 Artists</p>
+            </div>
+          </div>
+          <div
+            class="aspect-[4/5] relative rounded-xl overflow-hidden group cursor-pointer border border-outline-variant/10"
+          >
+            <img
+              alt="Rock Heavy"
+              class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              data-alt="Electric guitar strings extreme closeup"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2ChKCnWqepd_TnhVfmH-wq4FknVOGS29IHyxeCRYdZ7113yWopwx_A1MgvWBjFCxa-nzJkUw9b1cVvZRefUR4kwqGUWWe8hhkNA79m4ByUjXlqzzquYfWeiXXtxd3NLWCEmF6_pjvvVR8EwmwzR4dR13emvrusrfOolQqlbaF0BEqJPsJ_EE390h8hesbPF9vP81PpnCMB9V3KCkpN8pPbHUFHY3E_5HT9vk87izblDZrF4c6R_8uizA3z-0Lmf_QWEiqnbMSULiH"
+            />
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"
+            ></div>
+            <div class="absolute inset-0 flex flex-col justify-end p-6">
+              <h3 class="font-headline text-xl font-bold">Heavy Strings</h3>
+              <p class="text-xs text-on-surface/70 mt-1">210 Artists</p>
+            </div>
+          </div>
+          <div
+            class="aspect-[4/5] relative rounded-xl overflow-hidden group cursor-pointer border border-outline-variant/10"
+          >
+            <img
+              alt="Vocalists"
+              class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              data-alt="Studio microphone in soft lighting"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDITGS1TuOwwRirEcd5--4GePrL1CrlRsXAINlUGswMp9ecQowSKNALkCSWxOFfLGb_2S0M9rQ3zr_HqOiWc10X4x2exul6Al9KE_XCvQ3YUlH9xuKg4pwXWkjIqNXQmtdPnOKteR09_Bt3annDwZrrWoVHfxA12ACgha5ji7jrQcxms3fcZJW5Zv3hB8Y2d0qmX5GVculnZBCJTB4s0-mK0qQkgwQy5kWhmReWoZjfiySebIudyAEBCoxY8aCu8CF2bJi6m_Bx3Bex"
+            />
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"
+            ></div>
+            <div class="absolute inset-0 flex flex-col justify-end p-6">
+              <h3 class="font-headline text-xl font-bold">Elite Vocals</h3>
+              <p class="text-xs text-on-surface/70 mt-1">142 Artists</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Upcoming Events -->
+    <section class="py-24 max-w-[1440px] mx-auto px-8">
+      <div class="mb-16">
+        <span class="text-primary font-bold tracking-[0.2em] uppercase text-xs">The Network</span>
+        <h2 class="text-4xl md:text-5xl font-headline font-bold mt-2">UPCOMING SESSIONS</h2>
+      </div>
+      <div class="space-y-4">
+        <!-- Event Row 1 -->
+        <div
+          class="glass-panel p-6 rounded-lg border border-outline-variant/10 flex flex-col md:flex-row items-center gap-8 group hover:bg-surface-container-high transition-colors cursor-pointer"
+        >
+          <div class="flex-shrink-0 text-center md:w-24">
+            <span class="block text-3xl font-headline font-black text-on-surface">24</span>
+            <span class="block text-xs uppercase tracking-widest text-secondary font-bold"
+              >OCT</span
+            >
+          </div>
+          <div class="flex-1">
+            <h4 class="text-xl font-headline font-bold">Modular Synthesis Workshop</h4>
+            <p class="text-on-surface-variant font-light mt-1">
+              Hosted by Elena Vance • Berlin &amp; Online
+            </p>
+          </div>
+          <div class="flex -space-x-3">
+            <img
+              alt="User"
+              class="w-10 h-10 rounded-full border-2 border-background object-cover"
+              data-alt="Profile avatar small circle"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuCRXK5pOylaoUDufH6fAsENZ21Sbix45Sfi929yETbUqEBFvAfbnwSXcjmqpbdhSTbSkzvZhJMdN8WAOLFMLZAVsmfaNVNwUzC5InB0dAog8sTYgxddHl2zIRyg5ueyzjwB4OC6A9un-PjW6ZycYno1oQiutUM9ZBODanYSMs-1OgMVj0fEYaGJAfesCUOw28VcMjuqeXGEiuaZlVLq9YswJV87N1n5g_4b-dbjvmvolaUQb7sSAxS8YYI9gAc2wTho3FjyVek81g"
+            />
+            <img
+              alt="User"
+              class="w-10 h-10 rounded-full border-2 border-background object-cover"
+              data-alt="Profile avatar small circle"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxYcG8xI-9f45MPe1c7pl15sNH9l8AyZfXxoKvoRK5ToOPW8TndKrFZ7h-uiHuNcNlfFhEeNigIHFR0Z4b9c6aBxcvtWMPokER9DPF1lDL26JUjqb_iLxLJnaEtvKUXy0s52ntU8uo58ZDEXdjKg5awkxEiGrJHewrhIuEDBIHfUaMukBDyR4-JunrWJG-j2RGA8APzvv-b-t47Ndp3DeDRFYO4Ryhe-pP43TBXDU-xrgzDPQzFoOjkpv_Ty9vow58-jMRFg2NRo41"
+            />
+            <img
+              alt="User"
+              class="w-10 h-10 rounded-full border-2 border-background object-cover"
+              data-alt="Profile avatar small circle"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZEjJEeVMWzzy7KAG1AJRicakXaspSlXcB7Zmo81xsD9sQpmizFH-8y8kg_DIsc2HHclmh3Cz9K-fL1DoQZpkwffsHJTDioCldTlEgxcwhdWABM6Rv1bQWYfE3kpdwemyfURPMYQdRlDSptLQMWsTZ4uAjiTm-Bxn1PKpDMyT_NPFVfJjR143SMoIzh3L5H7ALxNxjEmPaFzE1LcUcaMjhFaoZGyfgCAshX-wiFbPxG-VeZnGArYSbEkQ4s7gSsgzopN9w72N3RpR7"
+            />
+            <div
+              class="w-10 h-10 rounded-full border-2 border-background bg-surface-container flex items-center justify-center text-[10px] font-bold"
+            >
+              +18
+            </div>
+          </div>
+          <button
+            class="border border-outline-variant px-6 py-2 rounded font-headline text-sm hover:border-tertiary transition-colors"
+          >
+            Join Waiting Room
           </button>
-        </form>
+        </div>
+        <!-- Event Row 2 -->
+        <div
+          class="glass-panel p-6 rounded-lg border border-outline-variant/10 flex flex-col md:flex-row items-center gap-8 group hover:bg-surface-container-high transition-colors cursor-pointer"
+        >
+          <div class="flex-shrink-0 text-center md:w-24">
+            <span class="block text-3xl font-headline font-black text-on-surface">02</span>
+            <span class="block text-xs uppercase tracking-widest text-secondary font-bold"
+              >NOV</span
+            >
+          </div>
+          <div class="flex-1">
+            <h4 class="text-xl font-headline font-bold">Night Gallery: Analog Jam</h4>
+            <p class="text-on-surface-variant font-light mt-1">
+              Live Improv Session • London Sound Lab
+            </p>
+          </div>
+          <div class="flex -space-x-3">
+            <img
+              alt="User"
+              class="w-10 h-10 rounded-full border-2 border-background object-cover"
+              data-alt="Profile avatar small circle"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAubidzx7yQe3DQv3uhKjGZmeolAKyTqyqcfeSoU8mbAU51ODH39y-Ts5oD8Jue4QLFDEM9YeqOA4K7l6C_0py6IttGgLObW05JT2IACuifs2PDCAvyo_4e3Lln47r_a0ombRda6Yk-IR5_xXYDe1OAtuwcZw319zQT3trDM2OwHRwp7CgRYKxzFmz3KQSLSJpdUa5troHj0V82Lx8QZOdAn7KncmTW-F2HXc9ojC15qrInOtY87QWOlpunGlN2io6dAAp-NZhyERki"
+            />
+            <img
+              alt="User"
+              class="w-10 h-10 rounded-full border-2 border-background object-cover"
+              data-alt="Profile avatar small circle"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoi7fwL3fxsDcarMJ5Hv8E0AaAhyDbB0DlpGMrPpkx4gvsGqcVcltMAzZB82YvcYwRx9Li47cY4p1OJmA-iHnSx_CF2o1FGPaTN3yad7m4aYVzmIie0wIGb8t5gRFGKZCHE52F-QMUGMxXinvUkHcK2CI1nzUfEZoCrDLH6551tAMQ0wBRCuBkH8uxDMNo4C-ms--3x8KWwG4TlYSWD0CqDtRCKIUcWFhHWwH0cSR9bh1vQC4akyG5M5lWzWcqY0ROIpnMfcrflB1X"
+            />
+            <div
+              class="w-10 h-10 rounded-full border-2 border-background bg-surface-container flex items-center justify-center text-[10px] font-bold"
+            >
+              +45
+            </div>
+          </div>
+          <button
+            class="border border-outline-variant px-6 py-2 rounded font-headline text-sm hover:border-tertiary transition-colors"
+          >
+            Get Tickets
+          </button>
+        </div>
+        <!-- Event Row 3 -->
+        <div
+          class="glass-panel p-6 rounded-lg border border-outline-variant/10 flex flex-col md:flex-row items-center gap-8 group hover:bg-surface-container-high transition-colors cursor-pointer"
+        >
+          <div class="flex-shrink-0 text-center md:w-24">
+            <span class="block text-3xl font-headline font-black text-on-surface">15</span>
+            <span class="block text-xs uppercase tracking-widest text-secondary font-bold"
+              >NOV</span
+            >
+          </div>
+          <div class="flex-1">
+            <h4 class="text-xl font-headline font-bold">Post-Production Masterclass</h4>
+            <p class="text-on-surface-variant font-light mt-1">
+              Digital Distribution Strategies • Global Webcast
+            </p>
+          </div>
+          <div class="flex -space-x-3">
+            <img
+              alt="User"
+              class="w-10 h-10 rounded-full border-2 border-background object-cover"
+              data-alt="Profile avatar small circle"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuF_G2INfEHXj4OGHx7HJs6jiKMVJnFGvMfpx4do2Lcbjx2KZgLxOywt3PE_Tt44HpbfI0LHLcB02JdG77AHFCktWMUAdocLTh9_gkovO1X2RKJx7C2kH_nWeVNNttFU5VdRLEVAD6O1GOTLmrRTuBrDIvJM3FSZVMLEgTYGgLXq0L51JlyJ7X4F5DtuA1dsqS-XAj4lwknp_mC1THbX_zTkmytclluUZDXtEbS1L9VS3Jn2tqHG-oK4RTbNN09xQcHiU8AjKW-hN6"
+            />
+            <div
+              class="w-10 h-10 rounded-full border-2 border-background bg-surface-container flex items-center justify-center text-[10px] font-bold"
+            >
+              +120
+            </div>
+          </div>
+          <button
+            class="border border-outline-variant px-6 py-2 rounded font-headline text-sm hover:border-tertiary transition-colors"
+          >
+            Register
+          </button>
+        </div>
       </div>
-
-      <nav
-        class="flex flex-wrap justify-center gap-3 text-xs font-medium uppercase tracking-widest text-slate-500"
-        aria-label="Popular searches"
-      >
-        <span aria-hidden="true">Popular:</span>
-        <a class="transition-colors hover:text-primary focus:text-primary outline-hidden" href="#"
-          >Synthwave</a
-        >
-        <span aria-hidden="true">•</span>
-        <a class="transition-colors hover:text-primary focus:text-primary outline-hidden" href="#"
-          >Lo-fi Beats</a
-        >
-        <span aria-hidden="true">•</span>
-        <a class="transition-colors hover:text-primary focus:text-primary outline-hidden" href="#"
-          >Session Bass</a
-        >
-      </nav>
-    </div>
-  </section>
-
-  <section class="relative z-10 mx-auto max-w-7xl px-6 pb-24">
-    <div class="mb-12 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-      <div class="space-y-2">
-        <h2
-          class="bg-linear-to-r from-primary via-purple-400 to-cyan-400 bg-clip-text text-3xl font-bold tracking-tight text-transparent"
-        >
-          Browse by Category
-        </h2>
-        <p class="text-slate-500">Explore talent across every sonic spectrum.</p>
-      </div>
-
-      <a
-        class="flex items-center gap-1 font-medium text-primary transition-all hover:opacity-80 focus:ring-2 focus:ring-primary focus:outline-hidden"
-        href="#"
-      >
-        View all categories
-        <span class="material-symbols-outlined text-sm" aria-hidden="true">arrow_forward</span>
-      </a>
-    </div>
-
-    <div class="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-6" role="list">
-      <button
-        type="button"
-        role="listitem"
-        class="group flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-black/30 p-8 backdrop-blur-md transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 focus:ring-2 focus:ring-primary focus:outline-hidden"
-      >
-        <div
-          class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary transition-all group-hover:bg-primary group-hover:text-white shadow-inner"
-        >
-          <span class="material-symbols-outlined text-3xl" aria-hidden="true">piano</span>
-        </div>
-        <h3 class="font-semibold text-slate-300 group-hover:text-white">Keys</h3>
-      </button>
-
-      <button
-        type="button"
-        role="listitem"
-        class="group flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-black/30 p-8 backdrop-blur-md transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 focus:ring-2 focus:ring-primary focus:outline-hidden"
-      >
-        <div
-          class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary transition-all group-hover:bg-primary group-hover:text-white shadow-inner"
-        >
-          <span class="material-symbols-outlined text-3xl" aria-hidden="true">mic</span>
-        </div>
-        <h3 class="font-semibold text-slate-300 group-hover:text-white">Vocals</h3>
-      </button>
-
-      <button
-        type="button"
-        role="listitem"
-        class="group flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-black/30 p-8 backdrop-blur-md transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 focus:ring-2 focus:ring-primary focus:outline-hidden"
-      >
-        <div
-          class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary transition-all group-hover:bg-primary group-hover:text-white shadow-inner"
-        >
-          <span class="material-symbols-outlined text-3xl" aria-hidden="true">potted_plant</span>
-        </div>
-        <h3 class="font-semibold text-slate-300 group-hover:text-white">Drums</h3>
-      </button>
-
-      <button
-        type="button"
-        role="listitem"
-        class="group flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-black/30 p-8 backdrop-blur-md transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 focus:ring-2 focus:ring-primary focus:outline-hidden"
-      >
-        <div
-          class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary transition-all group-hover:bg-primary group-hover:text-white shadow-inner"
-        >
-          <span class="material-symbols-outlined text-3xl" aria-hidden="true">music_note</span>
-        </div>
-        <h3 class="font-semibold text-slate-300 group-hover:text-white">Guitars</h3>
-      </button>
-
-      <button
-        type="button"
-        role="listitem"
-        class="group flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-black/30 p-8 backdrop-blur-md transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 focus:ring-2 focus:ring-primary focus:outline-hidden"
-      >
-        <div
-          class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary transition-all group-hover:bg-primary group-hover:text-white shadow-inner"
-        >
-          <span class="material-symbols-outlined text-3xl" aria-hidden="true">album</span>
-        </div>
-        <h3 class="font-semibold text-slate-300 group-hover:text-white">DJs</h3>
-      </button>
-
-      <button
-        type="button"
-        role="listitem"
-        class="group flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-black/30 p-8 backdrop-blur-md transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 focus:ring-2 focus:ring-primary focus:outline-hidden"
-      >
-        <div
-          class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary transition-all group-hover:bg-primary group-hover:text-white shadow-inner"
-        >
-          <span class="material-symbols-outlined text-3xl" aria-hidden="true">equalizer</span>
-        </div>
-        <h3 class="font-semibold text-slate-300 group-hover:text-white">Bass</h3>
-      </button>
-    </div>
-  </section>
-</main>
+    </section>
+  </main>
+</body>

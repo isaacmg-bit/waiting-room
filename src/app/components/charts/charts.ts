@@ -6,11 +6,10 @@ import {
   inject,
   effect,
   signal,
-  computed,
 } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
-import { CalendarService } from '../../services/calendar-service';
-import { SupabaseService } from '../../services/supabase-service';
+
+import { ChartService } from '../../services/chart-service';
 
 Chart.register(...registerables);
 
@@ -20,29 +19,14 @@ Chart.register(...registerables);
   styleUrls: ['./charts.css'],
 })
 export class Charts implements AfterViewInit {
-  private readonly barChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('barChart');
-  private readonly lineChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('lineChart');
-  private readonly gigsMiniCanvas = viewChild<ElementRef<HTMLCanvasElement>>('gigsMiniChart');
-  private readonly revMiniCanvas = viewChild<ElementRef<HTMLCanvasElement>>('revMiniChart');
-
-  private readonly calendarService = inject(CalendarService);
-  private readonly supabase = inject(SupabaseService);
+  readonly chartsService = inject(ChartService);
 
   private readonly chartsReady = signal(false);
-  readonly totalEventsCount = signal<number>(0);
-  readonly totalUsersRegistered = signal<number>(0);
-  readonly popularArtistName = signal<string>('');
-  readonly popularInstrumentData = signal<any[]>([]);
 
-  readonly topInstrumentName = computed(() => {
-    const data = this.popularInstrumentData();
-    return data && data.length > 0 ? data[0].name : '---';
-  });
-
-  private barChartInstance?: Chart<'bar'>;
-  private lineChartInstance?: Chart<'line'>;
-  private gigsMiniInstance?: Chart<'line'>;
-  private revMiniInstance?: Chart<'line'>;
+  readonly barChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('barChart');
+  readonly lineChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('lineChart');
+  readonly gigsMiniCanvas = viewChild<ElementRef<HTMLCanvasElement>>('gigsMiniChart');
+  readonly revMiniCanvas = viewChild<ElementRef<HTMLCanvasElement>>('revMiniChart');
 
   private readonly months = [
     'Jan',
@@ -62,47 +46,11 @@ export class Charts implements AfterViewInit {
   constructor() {
     effect(() => {
       if (this.chartsReady()) {
-        this.updateCharts();
+        this.chartsService.updateCharts();
       }
     });
 
-    this.loadDashboardStats();
-  }
-
-  private async loadDashboardStats() {
-    await Promise.all([
-      this.fetchTotalUsers(),
-      this.fetchPopularArtist(),
-      this.fetchPopularInstrument(),
-    ]);
-  }
-
-  private async fetchTotalUsers() {
-    const { count, error } = await this.supabase
-      .getClient()
-      .from('user_profile')
-      .select('*', { count: 'exact', head: true });
-
-    if (!error) this.totalUsersRegistered.set(count || 0);
-  }
-
-  private async fetchPopularInstrument() {
-    const { data, error } = await this.supabase.getClient().rpc('get_most_popular_instrument');
-    if (!error && data) this.popularInstrumentData.set(data);
-  }
-
-  private async fetchPopularArtist() {
-    const { data, error } = await this.supabase.getClient().rpc('get_public_user_bands');
-    if (error || !data || !Array.isArray(data)) return;
-
-    const counts = data.reduce((acc: Record<string, number>, item: any) => {
-      const name = item.name?.trim();
-      if (name) acc[name] = (acc[name] || 0) + 1;
-      return acc;
-    }, {});
-
-    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-    if (sorted.length > 0) this.popularArtistName.set(sorted[0][0]);
+    this.chartsService.loadDashboardStats();
   }
 
   ngAfterViewInit(): void {
@@ -131,7 +79,7 @@ export class Charts implements AfterViewInit {
       elements: { point: { radius: 0 }, line: { borderWidth: 2 } },
     };
 
-    this.barChartInstance = new Chart(barCtx, {
+    this.chartsService.barChartInstance = new Chart(barCtx, {
       type: 'bar',
       data: {
         labels: this.months,
@@ -140,7 +88,7 @@ export class Charts implements AfterViewInit {
       options: commonOptions,
     });
 
-    this.lineChartInstance = new Chart(lineCtx, {
+    this.chartsService.lineChartInstance = new Chart(lineCtx, {
       type: 'line',
       data: {
         labels: this.months,
@@ -158,82 +106,18 @@ export class Charts implements AfterViewInit {
       options: commonOptions,
     });
 
-    this.gigsMiniInstance = new Chart(gigsCtx, {
+    this.chartsService.gigsMiniInstance = new Chart(gigsCtx, {
       type: 'line',
       data: { labels: this.months, datasets: [{ data: [], borderColor: '#38bdf8', tension: 0.4 }] },
       options: miniOptions as any,
     });
 
-    this.revMiniInstance = new Chart(revCtx, {
+    this.chartsService.revMiniInstance = new Chart(revCtx, {
       type: 'line',
       data: { labels: this.months, datasets: [{ data: [], borderColor: '#10b981', tension: 0.4 }] },
       options: miniOptions as any,
     });
 
     this.chartsReady.set(true);
-  }
-
-  private async updateCharts(): Promise<void> {
-    const events = this.calendarService.userEventsSignal();
-    const eventsPublic = this.calendarService.userPublicEventsSignal();
-
-    const allEventsMap = new Map();
-    eventsPublic.forEach((e) => allEventsMap.set(e.id, e));
-    events.forEach((e) => allEventsMap.set(e.id, e));
-
-    const allEvents = Array.from(allEventsMap.values());
-
-    const eventMonthlyCounts = Array(12).fill(0);
-
-    allEvents.forEach((event) => {
-      if (event.event_date) {
-        const month = new Date(event.event_date).getMonth();
-        eventMonthlyCounts[month]++;
-      }
-    });
-
-    const { data: usersData, error: usersError } = await this.supabase
-      .getClient()
-      .from('user_profile')
-      .select('created_at');
-
-    const userMonthlyCounts = Array(12).fill(0);
-
-    if (!usersError && usersData) {
-      usersData.forEach((user) => {
-        if (user.created_at) {
-          const month = new Date(user.created_at).getMonth();
-          userMonthlyCounts[month]++;
-        }
-      });
-    }
-
-    const userGrowth = userMonthlyCounts.reduce<number[]>((acc, count, i) => {
-      acc[i] = (i === 0 ? 0 : acc[i - 1]) + count;
-      return acc;
-    }, Array(12).fill(0));
-
-    this.totalEventsCount.set(allEvents.length);
-    this.totalUsersRegistered.set(usersData?.length || 0);
-
-    if (this.barChartInstance) {
-      this.barChartInstance.data.datasets[0].data = eventMonthlyCounts;
-      this.barChartInstance.update();
-    }
-
-    if (this.lineChartInstance) {
-      this.lineChartInstance.data.datasets[0].data = userGrowth;
-      this.lineChartInstance.update();
-    }
-
-    if (this.gigsMiniInstance) {
-      this.gigsMiniInstance.data.datasets[0].data = eventMonthlyCounts;
-      this.gigsMiniInstance.update();
-    }
-
-    if (this.revMiniInstance) {
-      this.revMiniInstance.data.datasets[0].data = userGrowth;
-      this.revMiniInstance.update();
-    }
   }
 }
