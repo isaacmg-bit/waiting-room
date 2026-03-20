@@ -37,10 +37,7 @@ export class CalendarService {
   });
 
   readonly upcomingEvents = computed(() => {
-    const allEvents = [
-      ...this.userEventsSignal(),
-      ...this.userPublicEventsSignal(),
-    ];
+    const allEvents = [...this.userEventsSignal(), ...this.userPublicEventsSignal()];
 
     const seen = new Set<string>();
     return allEvents.filter((event) => {
