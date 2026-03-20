@@ -24,11 +24,9 @@ export class UserSearch implements OnInit {
   api = inject(ApiServiceBack);
 
   readonly currentPage = signal(0);
-
-  readonly distanceOptions = [5, 10, 20, 50];
   readonly musicTheoryOptions = ['Basic', 'Composition', 'Advanced Orchestration'];
 
-  readonly selectedDistance = signal<number | null>(null);
+  readonly selectedDistance = signal<number>(10);
   readonly selectedInstruments = signal<string[]>([]);
   readonly selectedMusicTheory = signal<string | null>(null);
   readonly selectedGenres = signal<string[]>([]);
@@ -156,6 +154,11 @@ export class UserSearch implements OnInit {
   onSearchBand(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.musicBrainzService.searchArtists(value);
+  }
+
+  onDistanceChange(event: Event): void {
+    const value = Number((event.target as HTMLInputElement).value);
+    this.selectedDistance.set(value);
   }
 
   isSelectedInstrument(instrumentName: string): boolean {
