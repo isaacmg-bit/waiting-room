@@ -47,7 +47,7 @@
           <h4 class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Genres</h4>
           <div class="flex flex-wrap gap-x-2">
             @for (genre of user.genres; track genre.id) {
-              <span class="text-sm text-slate-300">{{ genre.name }}</span>
+              <span class="text-sm text-slate-300">{{ genre.name }}{{ $last ? '' : ', ' }}</span>
             }
           </div>
         </section>

@@ -1,27 +1,24 @@
 import { inject } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { SupabaseService } from '../services/supabase-service';
-import { UserService } from '../services/user-service';
-import { firstValueFrom } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
+import { filter } from 'rxjs';
+import { take } from 'rxjs';
 
-export const profileGuard: CanActivateFn = async () => {
+export const profileGuard: CanActivateFn = () => {
   const router = inject(Router);
   const supabase = inject(SupabaseService);
-  const userService = inject(UserService);
 
-  const { data } = await supabase.getSession();
-
-  if (!data.session) {
-    router.navigate(['/login']);
-    return false;
-  }
-
-  const user = await firstValueFrom(userService.getMe());
-
-  if (!user.name) {
-    router.navigate(['/post-login']);
-    return false;
-  }
-
-  return true;
+  return toObservable(supabase.isReady).pipe(
+    filter((ready) => ready === true),
+    take(1),
+    map(() => {
+      const currentUserId = supabase.userId();
+      if (!currentUserId) {
+        return router.createUrlTree(['/login']);
+      }
+      return true;
+    }),
+  );
 };

@@ -1,5 +1,26 @@
+<section>
+  <div class="absolute inset-0 z-0">
+    <img
+      src="assets/img/postlogin.png"
+      class="h-full w-full object-cover opacity-60"
+      alt="Sala de ensayo"
+    />
+    <div class="absolute inset-0 bg-linear-to-t from-black via-transparent to-black/50"></div>
+  </div>
+
+  <div class="relative z-10 flex flex-col items-center text-center px-4">
+    <div class="mb-6 transform transition-hover hover:scale-105 duration-300">
+      <img
+        src="assets/img/logo.png"
+        class="mt-10 w-48 md:w-64 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+        alt="Waiting Room Logo"
+      />
+    </div>
+  </div>
+</section>
+
 <main
-  class="relative flex min-h-screen flex-col items-center justify-center bg-black p-4 font-display text-slate-100 selection:bg-primary/30"
+  class="flex min-h-screen flex-col items-center bg-black p-4 font-display text-slate-100 selection:bg-primary/30"
 >
   <div class="absolute inset-0 overflow-hidden pointer-events-none z-0" aria-hidden="true">
     <div
@@ -111,7 +132,7 @@
             <button
               type="submit"
               [disabled]="loading || form.invalid"
-              class="group w-full py-3 bg-primary hover:bg-primary/90 text-white font-black rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50  focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+              class="group w-full py-3 bg-primary hover:bg-primary/90 text-white font-black rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
             >
               <span>{{ loading ? 'Completing setup...' : 'Complete Setup' }}</span>
               <span

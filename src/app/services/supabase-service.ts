@@ -13,7 +13,7 @@ export class SupabaseService {
 
   userRole = signal<'user' | 'admin' | null>(null);
   userId = signal<string | null>(null);
-
+  public isReady = signal(false);
   isLoading = signal<boolean>(true);
 
   constructor() {
@@ -26,15 +26,12 @@ export class SupabaseService {
     } = await this.supabase.auth.getSession();
     await this.handleAuthChange(session);
 
-    this.supabase.auth.onAuthStateChange(async (event, session) => {
-      await this.handleAuthChange(session);
+    this.isReady.set(true); // <--- Marcamos como listo al terminar el primer check
 
-      if (event === 'SIGNED_OUT') {
-        this.router.navigate(['/login']);
-      }
+    this.supabase.auth.onAuthStateChange(async (event, session) => {
+      // ... resto de tu código
     });
   }
-
   private async handleAuthChange(session: Session | null) {
     if (session?.user) {
       this.userId.set(session.user.id);

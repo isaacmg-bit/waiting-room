@@ -8,6 +8,7 @@ import { UserLocation } from '../user-location/user-location';
 import { City } from '../../models/City';
 import * as L from 'leaflet';
 import { environment } from '../../../environments/environment';
+import { HeaderService } from '../../services/header-service';
 
 @Component({
   selector: 'app-post-login',
@@ -20,6 +21,8 @@ export class PostLogin implements OnInit {
   private readonly router = inject(Router);
   private readonly api = inject(ApiServiceBack);
   private readonly supabase = inject(SupabaseService);
+  private readonly headerService = inject(HeaderService);
+  userName = this.headerService.userName;
 
   selectedCity: City | null = null;
   private map: L.Map | null = null;
@@ -59,6 +62,8 @@ export class PostLogin implements OnInit {
     try {
       this.loading = true;
       const { name } = this.form.value;
+      this.headerService.userName.set(name!);
+
 
       await firstValueFrom(
         this.api.post('/users/profile-sync', {

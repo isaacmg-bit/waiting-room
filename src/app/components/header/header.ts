@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { HeaderService } from '../../services/header-service';
 
 @Component({
@@ -10,7 +10,6 @@ import { HeaderService } from '../../services/header-service';
 })
 export class Header {
   readonly headerService = inject(HeaderService);
-  private readonly router = inject(Router);
 
   isUserMenuOpen = signal(false);
 
@@ -20,7 +19,6 @@ export class Header {
   readonly userProfilePic = this.headerService.userProfilePic;
 
   async logout(): Promise<void> {
-    await this.headerService.logout();
-    this.router.navigate(['/login']);
+    this.headerService.logout();
   }
 }

@@ -23,7 +23,7 @@ export class UserSearch implements OnInit {
     this.userSearchService.initRandomUsers();
 
     if (this.userSearchService.selectedInstruments().length > 0) {
-      this.userSearchService.search();
+      this.userSearchService.search(true);
     } else {
       this.userSearchService.initRandomUsers();
     }

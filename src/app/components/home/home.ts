@@ -21,7 +21,12 @@ export class Home implements OnInit {
   readonly userInstrumentService = inject(UserInstrumentsService);
   readonly userGenresService = inject(UserGenresService);
 
+  clickCount = 0;
+  showEasterEgg = signal(false);
+  private clickTimer: any;
+
   readonly randomUsersHome = signal<any[]>([]);
+  readonly featuredUserHome = signal<any[]>([]);
 
   monthToString(monthNum: string): string {
     const months: Record<string, string> = {
@@ -45,15 +50,34 @@ export class Home implements OnInit {
     this.calendarService.loadPublicEvents();
     this.chartsService.fetchTotalUsers();
     this.userService.getRandomUsers().subscribe((results) => {
-      const transformed = results.map((user: any) => ({
+      const allUsers = results.map((user: any) => ({
         ...user,
         instruments: user.instruments ? user.instruments.split(', ') : [],
         genres: user.genres ? user.genres.split(', ') : [],
         bands: user.bands ? user.bands.split(', ') : [],
         pics: user.profile_photo_url ? user.profile_photo_url.split(',') : [],
       }));
-      this.randomUsersHome.set(transformed);
-      console.log(transformed);
+      const shuffled = allUsers.sort(() => Math.random() - 0.5);
+      this.featuredUserHome.set(shuffled.slice(0,1));
+      this.randomUsersHome.set(shuffled.slice(1, 5));
+      console.log(this.featuredUserHome())
+      console.log(this.randomUsersHome)
+
     });
+  }
+
+  handleLogoClick() {
+    clearTimeout(this.clickTimer);
+
+    this.clickCount++;
+
+    if (this.clickCount === 4) {
+      this.showEasterEgg.set(true);
+      this.clickCount = 0;
+    }
+
+    this.clickTimer = setTimeout(() => {
+      this.clickCount = 0;
+    }, 2000);
   }
 }

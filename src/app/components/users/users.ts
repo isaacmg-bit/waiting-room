@@ -40,7 +40,6 @@ export class Users {
 
   loadUserForEdit(user: User): void {
     this.userService.loadUserForEdit(user);
-    console.log(user.role);
     this.userForm.patchValue({
       name: user.name,
       email: user.email,

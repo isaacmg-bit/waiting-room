@@ -19,9 +19,9 @@ export class UserSearchService {
   router = inject(Router);
 
   readonly currentPage = signal(0);
-  readonly musicTheoryOptions = ['Basic', 'Composition', 'Advanced Orchestration'];
+  readonly musicTheoryOptions = ['None', 'Basic', 'Composition', 'Advanced Orchestration'];
 
-  readonly selectedDistance = signal<number | null>(null);
+  readonly selectedDistance = signal<number | null>(5);
   readonly tempDistance = signal<number | null>(5);
   readonly selectedInstruments = signal<string[]>([]);
   readonly selectedMusicTheory = signal<string | null>(null);
@@ -49,29 +49,23 @@ export class UserSearchService {
     });
   }
 
-  search(): void {
+  search(resetPage: boolean): void {
     const params = new URLSearchParams();
 
-    if (this.selectedDistance()) {
-      params.append('radiusKm', this.selectedDistance()!.toString());
-    }
-    if (this.selectedInstruments().length > 0) {
+    if (this.selectedDistance()) params.append('radiusKm', this.selectedDistance()!.toString());
+    if (this.selectedInstruments().length > 0)
       params.append('instruments', this.selectedInstruments().join(','));
-    }
-    if (this.selectedGenres().length > 0) {
-      params.append('genres', this.selectedGenres().join(','));
-    }
-    if (this.selectedMusicTheory()) {
-      params.append('theoryLevels', this.selectedMusicTheory()!);
-    }
-    if (this.selectedBands().length > 0) {
-      params.append('bands', this.selectedBands().join(','));
-    }
+    if (this.selectedGenres().length > 0) params.append('genres', this.selectedGenres().join(','));
+    if (this.selectedMusicTheory()) params.append('theoryLevels', this.selectedMusicTheory()!);
+    if (this.selectedBands().length > 0) params.append('bands', this.selectedBands().join(','));
 
     const url = `${environment.apiSearchMusicians}?${params.toString()}`;
+
     this.api.get(url).subscribe((results: any) => {
       this.searchResults.set(results);
-      this.currentPage.set(0);
+      if (resetPage) {
+        this.currentPage.set(0);
+      }
     });
   }
 
@@ -159,7 +153,7 @@ export class UserSearchService {
   clearDistance() {
     this.selectedDistance.set(null);
     this.tempDistance.set(5);
-    this.search();
+    this.search(true);
   }
 
   isSelectedInstrument(instrumentName: string): boolean {
@@ -228,12 +222,12 @@ export class UserSearchService {
   }
 
   navigateToSearch(): void {
-    this.search();
+    this.search(true);
     this.router.navigate(['/user-search']);
   }
 
   clearAllFilters(): void {
-    this.selectedDistance.set(null);
+    this.selectedDistance.set(5);
     this.selectedInstruments.set([]);
     this.selectedGenres.set([]);
     this.selectedBands.set([]);

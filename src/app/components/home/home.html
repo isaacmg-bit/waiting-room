@@ -1,29 +1,82 @@
 <body
   class="bg-black text-on-surface font-body selection:bg-primary selection:text-on-primary-container"
 >
-  <div class="absolute inset-0 z-0">
-    <img
-      src="assets/img/rehearsal.jpg"
-      class="h-full w-full object-cover opacity-60"
-      alt="Sala de ensayo"
-    />
-    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/50"></div>
-  </div>
-
-  <div class="relative z-10 flex flex-col items-center text-center px-4">
-    <div class="mb-6 transform transition-hover hover:scale-105 duration-300">
+  <section
+    class="relative h-[40vh] min-h-[300px] w-full overflow-hidden flex items-center justify-center"
+  >
+    <div class="absolute inset-0 z-0">
       <img
-        src="assets/img/logo.png"
-        class="mt-10 w-48 md:w-64 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
-        alt="Waiting Room Logo"
+        src="assets/img/rehearsal.jpg"
+        class="h-full w-full object-cover opacity-60"
+        alt="Sala de ensayo"
       />
+      <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/50"></div>
     </div>
-  </div>
+
+    <div class="relative z-10 flex flex-col items-center text-center px-4">
+      <div
+        class="group relative mb-6 transform transition-hover hover:scale-105 duration-300 cursor-pointer"
+        (click)="handleLogoClick()"
+      >
+        <img
+          src="assets/img/logo.png"
+          class="mt-10 w-48 md:w-64 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+          alt="Waiting Room Logo"
+        />
+
+        <div
+          class="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-[1000ms] pointer-events-none scale-95 group-hover:scale-100"
+        >
+          <div
+            class="bg-primary/90 text-white text-[10px] md:text-xs py-1.5 px-3 rounded-lg whitespace-nowrap shadow-xl border border-white/10 backdrop-blur-sm"
+          >
+            Maybe you should count us in: 1, 2, 3, 4...
+            <div
+              class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary/90 rotate-45"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if (showEasterEgg()) {
+      <div
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 backdrop-blur-sm"
+      >
+        <div
+          class="relative w-full max-w-4xl aspect-video border-2 border-primary/50 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(var(--primary-rgb),0.5)]"
+        >
+          <button
+            (click)="showEasterEgg.set(false)"
+            class="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white hover:bg-primary transition-colors"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+
+          <iframe
+            class="w-full h-full"
+            src="https://www.youtube.com/embed/SGJFWirQ3ks?autoplay=1&mute=1"
+            title="YouTube video player"
+            frameborder="0"
+            allow="
+              accelerometer;
+              autoplay;
+              clipboard-write;
+              encrypted-media;
+              gyroscope;
+              picture-in-picture;
+              web-share;
+            "
+            allowfullscreen
+          >
+          </iframe>
+        </div>
+      </div>
+    }
+  </section>
 
   <main>
-    <!-- Hero Section -->
     <section class="relative min-h-[870px] flex items-center overflow-hidden asymmetric-clip">
-      <!-- Neon Nocturne Background -->
       <div class="absolute inset-0 -z-10 bg-background">
         <div
           class="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-secondary-dim/20 rounded-full blur-[120px]"
@@ -46,8 +99,7 @@
           <h1
             class="text-5xl md:text-7xl font-headline font-bold text-on-surface leading-[0.9] tracking-tight"
           >
-            Come on and get up!
-            <br />
+            Come on and get up! <br />
             <span
               class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-tertiary"
               >GALLERY.</span
@@ -59,17 +111,15 @@
             Where amateur artists and talented musicians unite. Discover the rare talent behind the
             records.
           </p>
-          <!-- Smart Filter Bar -->
+
           <div
             class="glass-panel p-2 rounded-xl border border-outline-variant/15 flex flex-wrap lg:flex-nowrap items-center gap-2 max-w-4xl neon-glow-tertiary"
           >
             <div class="flex-1 min-w-[160px] px-4 py-3 group border-r border-outline-variant/10">
               <label
                 class="block text-[10px] uppercase tracking-widest text-secondary font-bold mb-1"
+                >Instrument</label
               >
-                Instrument
-              </label>
-
               <select
                 #instrumentSelect
                 (change)="userSearchService.selectedInstruments.set([instrumentSelect.value])"
@@ -83,7 +133,6 @@
                 >
                   Any instrument
                 </option>
-
                 @for (inst of userInstrumentService.filteredInstruments(); track inst.id) {
                   <option
                     [value]="inst.instrument_name"
@@ -99,24 +148,14 @@
             <div class="flex-1 min-w-[160px] px-4 py-3 group border-r border-outline-variant/10">
               <label
                 class="block text-[10px] uppercase tracking-widest text-tertiary font-bold mb-1"
+                >Location</label
               >
-                Location
-              </label>
-
               <div class="relative w-full">
                 <select
                   #distanceSelect
                   (change)="userSearchService.selectDistance(+distanceSelect.value)"
                   class="appearance-none truncate bg-transparent border-none p-0 pr-6 text-on-surface focus:ring-0 w-full font-headline text-lg cursor-pointer outline-none"
                 >
-                  <option
-                    value="null"
-                    [selected]="userSearchService.selectedDistance() === 1500"
-                    class="bg-neutral-900 text-on-surface/50"
-                  >
-                    Any distance
-                  </option>
-
                   <option
                     value="5"
                     [selected]="userSearchService.selectedDistance() === 5"
@@ -157,12 +196,9 @@
             </div>
 
             <div class="flex-1 min-w-[160px] px-4 py-3 group border-r border-outline-variant/10">
-              <label
-                class="block text-[10px] uppercase tracking-widest text-primary font-bold mb-1"
+              <label class="block text-[10px] uppercase tracking-widest text-primary font-bold mb-1"
+                >Theory Level</label
               >
-                Theory Level
-              </label>
-
               <div class="relative w-full">
                 <select
                   #theorySelect
@@ -176,7 +212,6 @@
                   >
                     Any level
                   </option>
-
                   @for (level of userSearchService.musicTheoryOptions; track level) {
                     <option
                       [value]="level"
@@ -193,10 +228,8 @@
             <div class="flex-1 min-w-[160px] px-4 py-3 group">
               <label
                 class="block text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1"
+                >Genre</label
               >
-                Genre
-              </label>
-
               <div class="relative w-full">
                 <select
                   #genreSelect
@@ -210,7 +243,6 @@
                   >
                     Any genre
                   </option>
-
                   @for (g of userGenresService.filteredGenres(); track g.id) {
                     <option
                       [value]="g.genre"
@@ -225,11 +257,10 @@
             </div>
 
             <button
+              (click)="userSearchService.navigateToSearch()"
               class="bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-8 py-4 rounded-lg font-headline font-bold hover:brightness-110 transition-all flex items-center gap-2 group"
             >
-              <button (click)="userSearchService.navigateToSearch()" class="...">
-                FIND TALENT
-              </button>
+              GO!
               <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform"
                 >arrow_forward</span
               >
@@ -242,10 +273,19 @@
           >
             @if (randomUsersHome().length > 0) {
               <img
+                #profilepic
                 alt="Random musician"
                 class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-110"
-                data-alt="Random musician profile picture"
-                src="{{ randomUsersHome()[0].profile_photo_url }}"
+                [src]="
+                  randomUsersHome()[0]?.profile_photo_url || 'assets/img/Portrait_Placeholder.png'
+                "
+                (error)="profilepic.src = 'assets/img/Portrait_Placeholder.png'"
+              />
+            } @else {
+              <img
+                src="assets/img/Portrait_Placeholder.png"
+                class="w-full h-full object-cover grayscale"
+                alt="Placeholder"
               />
             }
             <div
@@ -265,14 +305,13 @@
               </div>
             </div>
           </div>
-          <!-- Decorative Element -->
           <div
             class="absolute -top-12 -right-12 w-48 h-48 border-t-2 border-r-2 border-secondary/30 rounded-tr-[4rem]"
           ></div>
         </div>
       </div>
     </section>
-    <!-- Featured Talent (Bento Style) -->
+
     <section class="py-24 max-w-[1440px] mx-auto px-8">
       <div class="flex justify-between items-end mb-16">
         <div>
@@ -291,16 +330,16 @@
         </a>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <!-- Large Feature -->
         <div
           class="md:col-span-2 md:row-span-2 group relative overflow-hidden rounded-xl bg-surface-container-low aspect-square md:aspect-auto"
         >
-          @if (randomUsersHome()) {
+          @if (featuredUserHome()) {
             <img
               alt="Artist portrait"
               class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
-              data-alt="Modern musician portrait in cinematic lighting"
-              src="{{ randomUsersHome()[0].profile_photo_url }}"
+              [src]="
+                featuredUserHome()[0]?.profile_photo_url || 'assets/img/Portrait_Placeholder.png'
+              "
             />
             <div
               class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-80"
@@ -309,22 +348,23 @@
               <div class="flex gap-2 mb-4">
                 <span
                   class="px-3 py-1 bg-primary/20 text-primary text-[10px] font-bold rounded-full border border-primary/30"
-                  >{{ randomUsersHome()[0].theorylevels }}</span
+                  >{{ featuredUserHome()[0]?.theorylevels }}</span
                 >
-                <span
-                  class="px-3 py-1 bg-primary/20 text-primary text-[10px] font-bold rounded-full border border-primary/30"
-                >
-                  {{ randomUsersHome()[0].instruments[0] }}
-                </span>
+                @if (featuredUserHome()[0]?.instruments?.[3]) {
+                  <span
+                    class="px-3 py-1 bg-primary/20 text-primary text-[10px] font-bold rounded-full border border-primary/30"
+                    >{{ featuredUserHome()[0].instruments[3] }}</span
+                  >
+                }
               </div>
               <h3 class="text-3xl font-headline font-bold mb-2 truncate">
-                {{ randomUsersHome()[0].name }}
+                {{ featuredUserHome()[0]?.name }}
               </h3>
               <p class="text-on-surface-variant text-sm max-w-xs mb-6 font-light">
-                Into {{ randomUsersHome()[0].genres.join(', ') }}
+                Into {{ featuredUserHome()[0]?.genres?.join(', ') }}
               </p>
               <a
-                [routerLink]="['/public-profile', randomUsersHome()[0].id]"
+                [routerLink]="['/public-profile', featuredUserHome()[0]?.id]"
                 class="block w-full h-full"
               >
                 <button
@@ -336,7 +376,7 @@
             </div>
           }
         </div>
-        <!-- Regular Cards -->
+
         <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
           @for (user of randomUsersHome(); track user.id) {
             <div
@@ -347,8 +387,7 @@
                   <img
                     alt="Artist Profile"
                     class="w-full h-full object-cover"
-                    data-alt="Abstract music visualizer glow"
-                    src="{{ user.profile_photo_url }}"
+                    [src]="user?.profile_photo_url || 'assets/img/Portrait_Placeholder.png'"
                   />
                   <div
                     class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -357,25 +396,23 @@
               </div>
               <h4 class="text-xl font-headline font-bold mb-2 truncate">{{ user.name }}</h4>
               <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm" aria-hidden="true">
-                  location_on
-                </span>
+                <span class="material-symbols-outlined text-sm">location_on</span>
                 <h4 class="font-headline font-bold">{{ user.location }}</h4>
               </div>
-
               <p class="mt-4">
-                <span
-                  class="inline-block rounded-full border border-primary/20 bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-primary"
-                >
-                  {{ user.instruments[0] }}
-                </span>
+                @if (user.instruments?.[0]) {
+                  <span
+                    class="inline-block rounded-full border border-primary/20 bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-primary"
+                    >{{ user.instruments[0] }}</span
+                  >
+                }
               </p>
             </div>
           }
         </div>
       </div>
     </section>
-    <!-- Browse by Vibe -->
+
     <section class="bg-surface-container-low py-24">
       <div class="max-w-[1440px] mx-auto px-8">
         <div class="mb-16 text-center">
@@ -474,21 +511,17 @@
               class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2ChKCnWqepd_TnhVfmH-wq4FknVOGS29IHyxeCRYdZ7113yWopwx_A1MgvWBjFCxa-nzJkUw9b1cVvZRefUR4kwqGUWWe8hhkNA79m4ByUjXlqzzquYfWeiXXtxd3NLWCEmF6_pjvvVR8EwmwzR4dR13emvrusrfOolQqlbaF0BEqJPsJ_EE390h8hesbPF9vP81PpnCMB9V3KCkpN8pPbHUFHY3E_5HT9vk87izblDZrF4c6R_8uizA3z-0Lmf_QWEiqnbMSULiH"
             />
-
             <div
               class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"
             ></div>
-
             <div class="absolute inset-0 flex flex-col justify-end p-6">
               <h3 class="font-headline text-xl font-bold">Heavy Strings</h3>
-
               <p class="text-xs text-on-surface/70 mt-1">210 Artists</p>
             </div>
           </div>
-
           <div
             (click)="
-              userSearchService.selectedInstruments.set(['Vocals', 'Vocals']);
+              userSearchService.selectedInstruments.set(['Vocal']);
               userSearchService.selectedGenres.set([]);
               userSearchService.navigateToSearch()
             "
@@ -499,28 +532,24 @@
               class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDITGS1TuOwwRirEcd5--4GePrL1CrlRsXAINlUGswMp9ecQowSKNALkCSWxOFfLGb_2S0M9rQ3zr_HqOiWc10X4x2exul6Al9KE_XCvQ3YUlH9xuKg4pwXWkjIqNXQmtdPnOKteR09_Bt3annDwZrrWoVHfxA12ACgha5ji7jrQcxms3fcZJW5Zv3hB8Y2d0qmX5GVculnZBCJTB4s0-mK0qQkgwQy5kWhmReWoZjfiySebIudyAEBCoxY8aCu8CF2bJi6m_Bx3Bex"
             />
-
             <div
               class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"
             ></div>
-
             <div class="absolute inset-0 flex flex-col justify-end p-6">
               <h3 class="font-headline text-xl font-bold">Elite Vocals</h3>
-
               <p class="text-xs text-on-surface/70 mt-1">142 Artists</p>
             </div>
           </div>
         </div>
       </div>
     </section>
-    <!-- Upcoming Events -->
+
     <section class="py-24 max-w-[1440px] mx-auto px-8">
       <div class="mb-16">
         <span class="text-primary font-bold tracking-[0.2em] uppercase text-xs">The Network</span>
         <h2 class="text-4xl md:text-5xl font-headline font-bold mt-2">UPCOMING EVENTS</h2>
       </div>
       <div class="space-y-4">
-        <!-- Event Row 1 -->
         @for (event of calendarService.upcomingEvents(); track event.id) {
           <div
             class="glass-panel p-6 rounded-lg border border-outline-variant/10 flex flex-col md:flex-row items-center gap-8 group hover:bg-surface-container-high transition-colors cursor-pointer"
@@ -535,27 +564,22 @@
             </div>
             <div class="flex-1">
               <h4 class="text-xl font-headline font-bold">{{ event.title }}</h4>
-              <p class="text-on-surface-variant font-light mt-1">
-                {{ event.street }}
-              </p>
+              <p class="text-on-surface-variant font-light mt-1">{{ event.street }}</p>
             </div>
             <div class="flex -space-x-3">
               <img
                 alt="User"
                 class="w-10 h-10 rounded-full border-2 border-background object-cover"
-                data-alt="Profile avatar small circle"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuCRXK5pOylaoUDufH6fAsENZ21Sbix45Sfi929yETbUqEBFvAfbnwSXcjmqpbdhSTbSkzvZhJMdN8WAOLFMLZAVsmfaNVNwUzC5InB0dAog8sTYgxddHl2zIRyg5ueyzjwB4OC6A9un-PjW6ZycYno1oQiutUM9ZBODanYSMs-1OgMVj0fEYaGJAfesCUOw28VcMjuqeXGEiuaZlVLq9YswJV87N1n5g_4b-dbjvmvolaUQb7sSAxS8YYI9gAc2wTho3FjyVek81g"
               />
               <img
                 alt="User"
                 class="w-10 h-10 rounded-full border-2 border-background object-cover"
-                data-alt="Profile avatar small circle"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxYcG8xI-9f45MPe1c7pl15sNH9l8AyZfXxoKvoRK5ToOPW8TndKrFZ7h-uiHuNcNlfFhEeNigIHFR0Z4b9c6aBxcvtWMPokER9DPF1lDL26JUjqb_iLxLJnaEtvKUXy0s52ntU8uo58ZDEXdjKg5awkxEiGrJHewrhIuEDBIHfUaMukBDyR4-JunrWJG-j2RGA8APzvv-b-t47Ndp3DeDRFYO4Ryhe-pP43TBXDU-xrgzDPQzFoOjkpv_Ty9vow58-jMRFg2NRo41"
               />
               <img
                 alt="User"
                 class="w-10 h-10 rounded-full border-2 border-background object-cover"
-                data-alt="Profile avatar small circle"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZEjJEeVMWzzy7KAG1AJRicakXaspSlXcB7Zmo81xsD9sQpmizFH-8y8kg_DIsc2HHclmh3Cz9K-fL1DoQZpkwffsHJTDioCldTlEgxcwhdWABM6Rv1bQWYfE3kpdwemyfURPMYQdRlDSptLQMWsTZ4uAjiTm-Bxn1PKpDMyT_NPFVfJjR143SMoIzh3L5H7ALxNxjEmPaFzE1LcUcaMjhFaoZGyfgCAshX-wiFbPxG-VeZnGArYSbEkQ4s7gSsgzopN9w72N3RpR7"
               />
               <div
