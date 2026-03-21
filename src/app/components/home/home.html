@@ -1,7 +1,26 @@
 <body
-  class="bg-background text-on-surface font-body selection:bg-primary selection:text-on-primary-container"
+  class="bg-black text-on-surface font-body selection:bg-primary selection:text-on-primary-container"
 >
-  <main class="pt-20">
+  <div class="absolute inset-0 z-0">
+    <img
+      src="assets/img/rehearsal.jpg"
+      class="h-full w-full object-cover opacity-60"
+      alt="Sala de ensayo"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/50"></div>
+  </div>
+
+  <div class="relative z-10 flex flex-col items-center text-center px-4">
+    <div class="mb-6 transform transition-hover hover:scale-105 duration-300">
+      <img
+        src="assets/img/logo.png"
+        class="mt-10 w-48 md:w-64 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+        alt="Waiting Room Logo"
+      />
+    </div>
+  </div>
+
+  <main>
     <!-- Hero Section -->
     <section class="relative min-h-[870px] flex items-center overflow-hidden asymmetric-clip">
       <!-- Neon Nocturne Background -->
@@ -28,7 +47,7 @@
             class="text-5xl md:text-7xl font-headline font-bold text-on-surface leading-[0.9] tracking-tight"
           >
             Come on and get up!
- <br />
+            <br />
             <span
               class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-tertiary"
               >GALLERY.</span
@@ -47,61 +66,170 @@
             <div class="flex-1 min-w-[160px] px-4 py-3 group border-r border-outline-variant/10">
               <label
                 class="block text-[10px] uppercase tracking-widest text-secondary font-bold mb-1"
-                >Instrument</label
               >
+                Instrument
+              </label>
+
               <select
-                class="bg-transparent border-none p-0 text-on-surface focus:ring-0 w-full font-headline text-lg cursor-pointer"
+                #instrumentSelect
+                (change)="userSearchService.selectedInstruments.set([instrumentSelect.value])"
+                class="appearance-none truncate bg-transparent border-none p-0 pr-6 text-on-surface focus:ring-0 w-full font-headline text-lg cursor-pointer outline-none"
               >
-                <option>Analog Synth</option>
-                <option>Electric Guitar</option>
-                <option>Upright Bass</option>
-                <option>Modular Rack</option>
+                <option
+                  value=""
+                  [selected]="userSearchService.selectedInstruments().length === 0"
+                  disabled
+                  class="bg-neutral-800 text-slate-400"
+                >
+                  Any instrument
+                </option>
+
+                @for (inst of userInstrumentService.filteredInstruments(); track inst.id) {
+                  <option
+                    [value]="inst.instrument_name"
+                    [selected]="userSearchService.isSelectedInstrument(inst.instrument_name)"
+                    class="bg-neutral-800 text-on-surface"
+                  >
+                    {{ inst.instrument_name }}
+                  </option>
+                }
               </select>
             </div>
+
             <div class="flex-1 min-w-[160px] px-4 py-3 group border-r border-outline-variant/10">
               <label
                 class="block text-[10px] uppercase tracking-widest text-tertiary font-bold mb-1"
-                >Location</label
               >
-              <select
-                class="bg-transparent border-none p-0 text-on-surface focus:ring-0 w-full font-headline text-lg cursor-pointer"
-              >
-                <option>Berlin, DE</option>
-                <option>Brooklyn, NY</option>
-                <option>London, UK</option>
-                <option>Remote Only</option>
-              </select>
+                Location
+              </label>
+
+              <div class="relative w-full">
+                <select
+                  #distanceSelect
+                  (change)="userSearchService.selectDistance(+distanceSelect.value)"
+                  class="appearance-none truncate bg-transparent border-none p-0 pr-6 text-on-surface focus:ring-0 w-full font-headline text-lg cursor-pointer outline-none"
+                >
+                  <option
+                    value="null"
+                    [selected]="userSearchService.selectedDistance() === 1500"
+                    class="bg-neutral-900 text-on-surface/50"
+                  >
+                    Any distance
+                  </option>
+
+                  <option
+                    value="5"
+                    [selected]="userSearchService.selectedDistance() === 5"
+                    class="bg-neutral-900"
+                  >
+                    5 km
+                  </option>
+                  <option
+                    value="10"
+                    [selected]="userSearchService.selectedDistance() === 10"
+                    class="bg-neutral-900"
+                  >
+                    10 km
+                  </option>
+                  <option
+                    value="25"
+                    [selected]="userSearchService.selectedDistance() === 25"
+                    class="bg-neutral-900"
+                  >
+                    25 km
+                  </option>
+                  <option
+                    value="50"
+                    [selected]="userSearchService.selectedDistance() === 50"
+                    class="bg-neutral-900"
+                  >
+                    50 km
+                  </option>
+                  <option
+                    value="100"
+                    [selected]="userSearchService.selectedDistance() === 100"
+                    class="bg-neutral-900"
+                  >
+                    100 km
+                  </option>
+                </select>
+              </div>
             </div>
+
             <div class="flex-1 min-w-[160px] px-4 py-3 group border-r border-outline-variant/10">
-              <label class="block text-[10px] uppercase tracking-widest text-primary font-bold mb-1"
-                >Skill Level</label
+              <label
+                class="block text-[10px] uppercase tracking-widest text-primary font-bold mb-1"
               >
-              <select
-                class="bg-transparent border-none p-0 text-on-surface focus:ring-0 w-full font-headline text-lg cursor-pointer"
-              >
-                <option>Platinum Tier</option>
-                <option>Pro Session</option>
-                <option>Emerging</option>
-              </select>
+                Theory Level
+              </label>
+
+              <div class="relative w-full">
+                <select
+                  #theorySelect
+                  (change)="userSearchService.selectMusicTheory(theorySelect.value)"
+                  class="appearance-none truncate bg-transparent border-none p-0 pr-6 text-on-surface focus:ring-0 w-full font-headline text-lg cursor-pointer outline-none"
+                >
+                  <option
+                    value=""
+                    [selected]="userSearchService.selectedMusicTheory() === null"
+                    class="bg-neutral-900 text-on-surface/50"
+                  >
+                    Any level
+                  </option>
+
+                  @for (level of userSearchService.musicTheoryOptions; track level) {
+                    <option
+                      [value]="level"
+                      [selected]="userSearchService.selectedMusicTheory() === level"
+                      class="bg-neutral-900"
+                    >
+                      {{ level }}
+                    </option>
+                  }
+                </select>
+              </div>
             </div>
+
             <div class="flex-1 min-w-[160px] px-4 py-3 group">
               <label
                 class="block text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1"
-                >Genre</label
               >
-              <select
-                class="bg-transparent border-none p-0 text-on-surface focus:ring-0 w-full font-headline text-lg cursor-pointer"
-              >
-                <option>Techno</option>
-                <option>Neo-Jazz</option>
-                <option>Hyper-Pop</option>
-                <option>Ambient</option>
-              </select>
+                Genre
+              </label>
+
+              <div class="relative w-full">
+                <select
+                  #genreSelect
+                  (change)="userSearchService.selectGenre({ id: '', genre: genreSelect.value })"
+                  class="appearance-none truncate bg-transparent border-none p-0 pr-6 text-on-surface focus:ring-0 w-full font-headline text-lg cursor-pointer outline-none"
+                >
+                  <option
+                    value=""
+                    [selected]="userSearchService.selectedGenres().length === 0"
+                    class="bg-neutral-900 text-on-surface/50"
+                  >
+                    Any genre
+                  </option>
+
+                  @for (g of userGenresService.filteredGenres(); track g.id) {
+                    <option
+                      [value]="g.genre"
+                      [selected]="userSearchService.isSelectedGenre(g.genre)"
+                      class="bg-neutral-900"
+                    >
+                      {{ g.genre }}
+                    </option>
+                  }
+                </select>
+              </div>
             </div>
+
             <button
               class="bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-8 py-4 rounded-lg font-headline font-bold hover:brightness-110 transition-all flex items-center gap-2 group"
             >
-              <span>FIND TALENT</span>
+              <button (click)="userSearchService.navigateToSearch()" class="...">
+                FIND TALENT
+              </button>
               <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform"
                 >arrow_forward</span
               >
@@ -153,16 +281,17 @@
           >
           <h2 class="text-4xl md:text-5xl font-headline font-bold mt-2">FEATURED TALENT</h2>
         </div>
-        <a class="text-tertiary hover:underline font-label flex items-center gap-2 group" href="#">
-          View All Artists
-          <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform"
-            >arrow_right_alt</span
-          >
+        <a [routerLink]="['/user-search']">
+          <button class="text-tertiary cursor-pointer font-label flex items-center gap-2 group">
+            View All Artists
+            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform"
+              >arrow_right_alt</span
+            >
+          </button>
         </a>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <!-- Large Feature -->
-
         <div
           class="md:col-span-2 md:row-span-2 group relative overflow-hidden rounded-xl bg-surface-container-low aspect-square md:aspect-auto"
         >
@@ -257,29 +386,45 @@
         </div>
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div
+            (click)="
+              userSearchService.selectedInstruments.set([
+                'Saxophone',
+                'Trumpet',
+                'Trombone',
+                'Piano',
+                'Bass',
+                'Drums',
+                'Guitar',
+              ]);
+              userSearchService.selectedGenres.set(['Jazz']);
+              userSearchService.navigateToSearch()
+            "
             class="aspect-[4/5] relative rounded-xl overflow-hidden group cursor-pointer border border-outline-variant/10"
           >
             <img
               alt="Jazz Session"
               class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              data-alt="Blue moody jazz club atmosphere"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmks751dBGEOA_YDjZrsUntmKK3EXj8IRh6t-8WjZrDi_MwchxyVBIvGtEZ4HAI6zGAdVRc-BpiO0XKES6JeZvwF_ALchVh4AoQ-KXypiJ0iXX6bPQut2BZNlhlRCe0J2fkPOfUrDMXzWsr87HFKEgJ4HCK2kMbRXK2vrDYzBj7aqzQquJinziVwZULyWko_E8Mo5MsoqHkSDoIFMWdTNWzvERCgjalaZ37Cn9m-Pq292ZezSSgVuGaftUslQToXfH1o6vXzxu7YI1"
             />
             <div
               class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"
             ></div>
             <div class="absolute inset-0 flex flex-col justify-end p-6">
-              <h3 class="font-headline text-xl font-bold">Jazz Sessions</h3>
+              <h3 class="font-headline text-xl font-bold text-white">Jazz Sessions</h3>
               <p class="text-xs text-on-surface/70 mt-1">124 Artists</p>
             </div>
           </div>
           <div
+            (click)="
+              userSearchService.selectedInstruments.set(['Synthesizer', 'MIDI Controller']);
+              userSearchService.selectedGenres.set(['Techno']);
+              userSearchService.navigateToSearch()
+            "
             class="aspect-[4/5] relative rounded-xl overflow-hidden group cursor-pointer border border-outline-variant/10"
           >
             <img
               alt="Techno Producers"
               class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              data-alt="Neon club lighting with smoke"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUBwZnjjYEPLk0iduATC388YL-bSPwnSH2CI-gC1LCRU-DfEj3EyWZsBSbFAZvpb6WXcflHmBk8iXCz84AQ2bURDQoAFedteVKjEZmHFCca9NEg-wVO9ZDPCHDLOcaDcAKyOIAb8M8nNdbJWsq95uFlF7wkumXKGiGWsmFucs-HWHLOf2TSKJ70SyCc8HJ8qAtKwPEYDGfCF7comEpLsFOf0kTYftWdfsC-tRWHMtCDsIedADSaEMbwkmKC0IZD9tsMsITY8oy3UzB"
             />
             <div
@@ -291,12 +436,21 @@
             </div>
           </div>
           <div
+            (click)="
+              userSearchService.selectedInstruments.set([
+                'Synthesizer',
+                'Electric Guitar',
+                'Piano',
+                'MIDI Controller',
+              ]);
+              userSearchService.selectedGenres.set(['Ambient']);
+              userSearchService.navigateToSearch()
+            "
             class="aspect-[4/5] relative rounded-xl overflow-hidden group cursor-pointer border border-outline-variant/10"
           >
             <img
               alt="Ambient Texture"
               class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              data-alt="Ethereal abstract lighting patterns"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfqMQhn4Zsa16jObVbKedgEhjns7h36V87JOUbixOFtj8HZjn5VkEvYhNHgIMjC21MoYA0r_rViQS_lhnSGb5ynkikREMYD5XMKF7J_KfAMnhlSeYkDdg4HHj3AplxKJL8oYkrU4TwA1vxHnM4CEQIBdbZLsOi9VfyLHP7vvJngPjItA-xiVsBfv_wXJQo7MVtcc9zvHPU6EPpNgTb6F-ivR0A4JxiKebiR60daTlQeJLExAaRqtnWitdgkdbIyEBunOvb0pivnd8-"
             />
             <div
@@ -308,36 +462,51 @@
             </div>
           </div>
           <div
+            (click)="
+              userSearchService.selectedInstruments.set(['Electric Guitar', 'Bass', 'Drums']);
+              userSearchService.selectedGenres.set(['Rock', 'Metal']);
+              userSearchService.navigateToSearch()
+            "
             class="aspect-[4/5] relative rounded-xl overflow-hidden group cursor-pointer border border-outline-variant/10"
           >
             <img
               alt="Rock Heavy"
               class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              data-alt="Electric guitar strings extreme closeup"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2ChKCnWqepd_TnhVfmH-wq4FknVOGS29IHyxeCRYdZ7113yWopwx_A1MgvWBjFCxa-nzJkUw9b1cVvZRefUR4kwqGUWWe8hhkNA79m4ByUjXlqzzquYfWeiXXtxd3NLWCEmF6_pjvvVR8EwmwzR4dR13emvrusrfOolQqlbaF0BEqJPsJ_EE390h8hesbPF9vP81PpnCMB9V3KCkpN8pPbHUFHY3E_5HT9vk87izblDZrF4c6R_8uizA3z-0Lmf_QWEiqnbMSULiH"
             />
+
             <div
               class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"
             ></div>
+
             <div class="absolute inset-0 flex flex-col justify-end p-6">
               <h3 class="font-headline text-xl font-bold">Heavy Strings</h3>
+
               <p class="text-xs text-on-surface/70 mt-1">210 Artists</p>
             </div>
           </div>
+
           <div
+            (click)="
+              userSearchService.selectedInstruments.set(['Vocals', 'Vocals']);
+              userSearchService.selectedGenres.set([]);
+              userSearchService.navigateToSearch()
+            "
             class="aspect-[4/5] relative rounded-xl overflow-hidden group cursor-pointer border border-outline-variant/10"
           >
             <img
               alt="Vocalists"
               class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              data-alt="Studio microphone in soft lighting"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDITGS1TuOwwRirEcd5--4GePrL1CrlRsXAINlUGswMp9ecQowSKNALkCSWxOFfLGb_2S0M9rQ3zr_HqOiWc10X4x2exul6Al9KE_XCvQ3YUlH9xuKg4pwXWkjIqNXQmtdPnOKteR09_Bt3annDwZrrWoVHfxA12ACgha5ji7jrQcxms3fcZJW5Zv3hB8Y2d0qmX5GVculnZBCJTB4s0-mK0qQkgwQy5kWhmReWoZjfiySebIudyAEBCoxY8aCu8CF2bJi6m_Bx3Bex"
             />
+
             <div
               class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"
             ></div>
+
             <div class="absolute inset-0 flex flex-col justify-end p-6">
               <h3 class="font-headline text-xl font-bold">Elite Vocals</h3>
+
               <p class="text-xs text-on-surface/70 mt-1">142 Artists</p>
             </div>
           </div>
@@ -397,7 +566,7 @@
             </div>
             <a [routerLink]="['/events']">
               <button
-                class="border border-outline-variant px-6 py-2 rounded font-headline text-sm hover:border-tertiary transition-colors"
+                class="border cursor-pointer border-outline-variant px-6 py-2 rounded font-headline text-sm hover:border-tertiary transition-colors"
               >
                 See events
               </button>

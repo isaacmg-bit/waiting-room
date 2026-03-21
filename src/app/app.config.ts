@@ -1,5 +1,5 @@
 import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withInMemoryScrolling } from '@angular/router'; // Importa withInMemoryScrolling
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
 import { AuthInterceptor } from './interceptors/auth-interceptor';
@@ -18,7 +18,13 @@ export const appConfig: ApplicationConfig = {
       toastClass: 'ngx-toastr custom-toast',
     }),
     provideIcons({ heroHome, heroUser }),
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withInMemoryScrolling({
+        scrollPositionRestoration: 'enabled',
+        anchorScrolling: 'enabled',
+      }),
+    ),
     provideHttpClient(withInterceptors([AuthInterceptor])),
   ],
 };

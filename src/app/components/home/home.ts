@@ -3,6 +3,9 @@ import { RouterModule } from '@angular/router';
 import { UserService } from '../../services/user-service';
 import { ChartService } from '../../services/chart-service';
 import { CalendarService } from '../../services/calendar-service';
+import { UserSearchService } from '../../services/user-search-service';
+import { UserInstrumentsService } from '../../services/user-instruments-service';
+import { UserGenresService } from '../../services/user-genres-service';
 
 @Component({
   selector: 'app-home',
@@ -14,8 +17,12 @@ export class Home implements OnInit {
   userService = inject(UserService);
   chartsService = inject(ChartService);
   calendarService = inject(CalendarService);
+  readonly userSearchService = inject(UserSearchService);
+  readonly userInstrumentService = inject(UserInstrumentsService);
+  readonly userGenresService = inject(UserGenresService);
+
   readonly randomUsersHome = signal<any[]>([]);
-  
+
   monthToString(monthNum: string): string {
     const months: Record<string, string> = {
       '01': 'JAN',
@@ -35,6 +42,7 @@ export class Home implements OnInit {
     return months[monthNum];
   }
   ngOnInit() {
+    this.calendarService.loadPublicEvents();
     this.chartsService.fetchTotalUsers();
     this.userService.getRandomUsers().subscribe((results) => {
       const transformed = results.map((user: any) => ({

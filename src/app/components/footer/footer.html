@@ -1,129 +1,64 @@
-<footer class="mt-auto relative border-t border-white/10 bg-slate-950 py-16 px-6 overflow-hidden">
-  <div
-    class="absolute -top-20 left-1/2 -translate-x-1/2 w-125 h-75 bg-primary/10 blur-[140px] pointer-events-none"
-    aria-hidden="true"
-  ></div>
+<footer class="mt-auto relative border-t border-white/5 bg-black py-16 px-6 overflow-hidden">
+  
+  <div class="absolute inset-0 z-0 opacity-75 grayscale-[40%]">
+    <img
+      src="assets/img/backstage.png" class="h-full w-full object-cover" alt="Ambiente de estudio"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/60"></div>
+  </div>
 
-  <div
-    class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 relative z-10"
-  >
+  <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 relative z-10">
+    
     <div class="col-span-1 sm:col-span-2 space-y-6">
-      <div class="flex items-center gap-3 select-none">
-        <div class="bg-primary/10 p-2 rounded-xl flex items-center justify-center shadow-inner">
-          <ng-icon name="lucideDrum" class="text-primary text-xl"></ng-icon>
-        </div>
+      <img
+        class="w-40 h-auto object-contain brightness-90 hover:brightness-110 transition-all duration-500"
+        [src]="'assets/img/logoheader.png'"
+        alt="Logo"
+      />
 
-        <h2
-          class="text-lg font-black tracking-tight bg-linear-to-r from-primary via-purple-400 to-cyan-400 bg-clip-text text-transparent"
-        >
-          Waiting Room
-        </h2>
-      </div>
-
-      <p class="text-slate-500 max-w-sm leading-relaxed font-light">
+      <p class="text-slate-400 max-w-sm leading-relaxed font-light text-sm">
         Connecting independent musicians and creators in a digital space designed for collaboration.
-        <span class="block mt-2 text-primary/60 italic text-sm">Indie vibes only.</span>
+        <span class="block mt-2 text-primary/60 italic font-medium tracking-wide">Indie vibes only.</span>
       </p>
 
-      <nav class="flex gap-4" aria-label="Social media links">
-        <a
-          class="size-10 rounded-full bg-black/30 backdrop-blur-sm border border-white/10 flex items-center justify-center text-slate-400 hover:border-primary hover:text-primary hover:shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)] transition-all focus-visible:outline-primary focus-visible:outline-offset-4"
-          href="#"
-          aria-label="Instagram"
-        >
-          <span class="material-symbols-outlined text-xl" aria-hidden="true">camera</span>
+      <nav class="flex gap-4">
+        <a class="size-10 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-slate-400 hover:border-primary/50 hover:text-primary transition-all duration-300 shadow-lg shadow-black" href="#">
+          <span class="material-symbols-outlined text-xl">camera</span>
         </a>
-
-        <a
-          class="size-10 rounded-full bg-black/30 backdrop-blur-sm border border-white/10 flex items-center justify-center text-slate-400 hover:border-primary hover:text-primary hover:shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)] transition-all focus-visible:outline-primary focus-visible:outline-offset-4"
-          href="#"
-          aria-label="Threads"
-        >
-          <span class="material-symbols-outlined text-xl" aria-hidden="true">alternate_email</span>
+        <a class="size-10 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-slate-400 hover:border-primary/50 hover:text-primary transition-all duration-300 shadow-lg shadow-black" href="#">
+          <span class="material-symbols-outlined text-xl">alternate_email</span>
         </a>
-
-        <a
-          class="size-10 rounded-full bg-black/30 backdrop-blur-sm border border-white/10 flex items-center justify-center text-slate-400 hover:border-primary hover:text-primary hover:shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)] transition-all focus-visible:outline-primary focus-visible:outline-offset-4"
-          href="#"
-          aria-label="TikTok"
-        >
-          <span class="material-symbols-outlined text-xl" aria-hidden="true">music_video</span>
+        <a class="size-10 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-slate-400 hover:border-primary/50 hover:text-primary transition-all duration-300 shadow-lg shadow-black" href="#">
+          <span class="material-symbols-outlined text-xl">music_video</span>
         </a>
       </nav>
     </div>
 
-    <nav class="space-y-4" aria-labelledby="footer-platform-heading">
-      <h4 id="footer-platform-heading" class="font-bold text-white tracking-wide">Platform</h4>
-      <ul class="space-y-2 text-slate-500 text-sm">
-        <li>
-          <a
-            class="hover:text-primary transition-colors focus-visible:text-primary focus-visible:outline-hidden"
-            href="#"
-            >About Us</a
-          >
-        </li>
-        <li>
-          <a
-            class="hover:text-primary transition-colors focus-visible:text-primary focus-visible:outline-hidden"
-            href="#"
-            >Our Ethos</a
-          >
-        </li>
-        <li>
-          <a
-            class="hover:text-primary transition-colors focus-visible:text-primary focus-visible:outline-hidden"
-            href="#"
-            >Pricing</a
-          >
-        </li>
-        <li>
-          <a
-            class="hover:text-primary transition-colors focus-visible:text-primary focus-visible:outline-hidden"
-            href="#"
-            >Careers</a
-          >
-        </li>
+    <div class="space-y-4">
+      <h4 class="font-bold text-slate-200 tracking-[0.2em] uppercase text-[10px]">Platform</h4>
+      <ul class="space-y-3 text-slate-400 text-sm font-light">
+        <li><a class="hover:text-white transition-colors" href="#">About Us</a></li>
+        <li><a class="hover:text-white transition-colors" href="#">Our Ethos</a></li>
+        <li><a class="hover:text-white transition-colors" href="#">Pricing</a></li>
       </ul>
-    </nav>
+    </div>
 
-    <nav class="space-y-4" aria-labelledby="footer-resources-heading">
-      <h4 id="footer-resources-heading" class="font-bold text-white tracking-wide">Resources</h4>
-      <ul class="space-y-2 text-slate-500 text-sm">
-        <li>
-          <a
-            class="hover:text-primary transition-colors focus-visible:text-primary focus-visible:outline-hidden"
-            href="#"
-            >Privacy Policy</a
-          >
-        </li>
-        <li>
-          <a
-            class="hover:text-primary transition-colors focus-visible:text-primary focus-visible:outline-hidden"
-            href="#"
-            >Terms of Service</a
-          >
-        </li>
-        <li>
-          <a
-            class="hover:text-primary transition-colors focus-visible:text-primary focus-visible:outline-hidden"
-            href="#"
-            >Community Guidelines</a
-          >
-        </li>
-        <li>
-          <a
-            class="hover:text-primary transition-colors focus-visible:text-primary focus-visible:outline-hidden"
-            href="#"
-            >Support</a
-          >
-        </li>
+    <div class="space-y-4">
+      <h4 class="font-bold text-slate-200 tracking-[0.2em] uppercase text-[10px]">Resources</h4>
+      <ul class="space-y-3 text-slate-400 text-sm font-light">
+        <li><a class="hover:text-white transition-colors" href="#">Privacy Policy</a></li>
+        <li><a class="hover:text-white transition-colors" href="#">Terms of Service</a></li>
+        <li><a class="hover:text-white transition-colors" href="#">Support</a></li>
       </ul>
-    </nav>
+    </div>
   </div>
 
-  <div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/10 text-center relative z-10">
-    <p class="text-slate-600 text-xs tracking-widest uppercase">
-      © 2026 Waiting Room • Developed by <span class="text-slate-400">Isaac Malagón</span>
+  <div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/5 text-center relative z-10">
+    <p class="text-slate-500 text-[10px] tracking-[0.3em] uppercase">
+      © 2026 Waiting Room • Developed by 
+      <span class="text-slate-300 font-medium hover:text-primary transition-colors cursor-default">
+        Isaac Malagón
+      </span>
     </p>
   </div>
 </footer>
