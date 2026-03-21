@@ -11,7 +11,7 @@ import { CalendarService } from '../../services/calendar-service';
   styleUrl: './events.css',
 })
 export class Events {
-  calendarService = inject(CalendarService);
+  readonly calendarService = inject(CalendarService);
 
   monthToString(monthNum: string): string {
     const months: Record<string, string> = {
@@ -29,6 +29,6 @@ export class Events {
       '12': 'DEC',
     };
 
-    return months[monthNum];
+    return months[monthNum] ?? '';
   }
 }

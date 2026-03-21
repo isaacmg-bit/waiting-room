@@ -1,14 +1,15 @@
 <header
-  class="sticky top-0 z-50 w-full bg-black backdrop-blur-md px-4 md:px-10 py-3 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-linear-to-r after:from-transparent after:via-white/20 after:to-transparent"
+  class="sticky top-0 z-50 w-full backdrop-blur-md px-4 md:px-10 py-3 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-px after:bg-linear-to-r after:from-transparent after:via-white/20 after:to-transparent"
+  role="banner"
 >
   <div class="max-w-7xl mx-auto flex items-center justify-between">
     <div class="flex items-center gap-8">
       <div class="flex items-center gap-3 select-none">
         <img
           #logo
-          class="w-50 h-auto object-cover pointer-events-none"
+          class="w-40 sm:w-50 h-auto object-cover pointer-events-none"
           [src]="'assets/img/logoheader.png'"
-          alt="User profile"
+          alt="Waiting Room Logo"
         />
       </div>
 
@@ -17,35 +18,35 @@
           routerLink="/"
           routerLinkActive="text-white bg-white/5"
           [routerLinkActiveOptions]="{ exact: true }"
-          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1"
         >
           Home
         </a>
         <a
           routerLink="/user-search"
           routerLinkActive="text-white bg-white/5"
-          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1"
         >
           Search
         </a>
         <a
           routerLink="/events"
           routerLinkActive="text-white bg-white/5"
-          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1"
         >
           Events
         </a>
         <a
           routerLink="/register"
           routerLinkActive="text-white bg-white/5"
-          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1"
         >
           Register
         </a>
         <a
           routerLink="/login"
           routerLinkActive="text-white bg-white/5"
-          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50"
+          class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1"
         >
           Login
         </a>
@@ -53,7 +54,7 @@
           <a
             routerLink="/users"
             routerLinkActive="text-white bg-white/5"
-            class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50"
+            class="text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-all text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1"
           >
             Users
           </a>
@@ -63,16 +64,21 @@
 
     <div class="flex items-center gap-3">
       @if (userId()) {
-        <p class="hidden sm:block text-sm font-medium text-slate-400">Hello {{ userName() }}!</p>
+        <p class="hidden sm:block md:ml-5 text-sm font-medium text-slate-400">
+          Hello {{ userName() }}!
+        </p>
       } @else {
-        <p class="hidden sm:block text-sm font-medium text-slate-400">Hello stranger!</p>
+        <p class="hidden sm:block md:ml-5 text-sm font-medium text-slate-400">Hello stranger!</p>
       }
+
       <div class="relative">
         <button
           type="button"
           (click)="isUserMenuOpen.set(!isUserMenuOpen()); $event.stopPropagation()"
-          class="size-9 rounded-full border-2 border-primary/30 hover:border-primary overflow-hidden block transition-all cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
+          class="size-9 rounded-full border-2 border-primary/30 hover:border-primary overflow-hidden block transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
           [attr.aria-expanded]="isUserMenuOpen()"
+          aria-haspopup="true"
+          aria-label="User menu"
         >
           <img
             #img
@@ -82,6 +88,7 @@
             alt="User profile"
           />
         </button>
+
         @if (isUserMenuOpen() && userId()) {
           <div
             class="absolute top-12 right-0 w-48 glass-card rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-100 origin-top-right border border-white/10"
@@ -90,13 +97,68 @@
             (click)="$event.stopPropagation()"
             (keydown.escape)="isUserMenuOpen.set(false)"
           >
+            <nav class="md:hidden space-y-0" aria-label="Mobile navigation">
+              <a
+                routerLink="/"
+                routerLinkActive="bg-white/10 text-white"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="isUserMenuOpen.set(false); $event.stopPropagation()"
+                class="items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-none block w-full"
+                role="menuitem"
+              >
+                <span class="material-symbols-outlined text-base" aria-hidden="true">home</span>
+                Home
+              </a>
+
+              <a
+                routerLink="/user-search"
+                routerLinkActive="bg-white/10 text-white"
+                (click)="isUserMenuOpen.set(false); $event.stopPropagation()"
+                class="items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-none block w-full"
+                role="menuitem"
+              >
+                <span class="material-symbols-outlined text-base" aria-hidden="true">search</span>
+                Search
+              </a>
+
+              <a
+                routerLink="/events"
+                routerLinkActive="bg-white/10 text-white"
+                (click)="isUserMenuOpen.set(false); $event.stopPropagation()"
+                class="items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-none block w-full"
+                role="menuitem"
+              >
+                <span class="material-symbols-outlined text-base" aria-hidden="true">event</span>
+                Events
+              </a>
+
+              @if (userRole() === 'admin') {
+                <a
+                  routerLink="/users"
+                  routerLinkActive="bg-white/10 text-white"
+                  (click)="isUserMenuOpen.set(false); $event.stopPropagation()"
+                  class="items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-none block w-full"
+                  role="menuitem"
+                >
+                  <span class="material-symbols-outlined text-base" aria-hidden="true">people</span>
+                  Users
+                </a>
+              }
+            </nav>
+
+            <div
+              class="h-px bg-linear-to-r from-transparent via-white/10 to-transparent md:hidden"
+            ></div>
+
             <a
               routerLink="/edit-profile"
               (click)="isUserMenuOpen.set(false); $event.stopPropagation()"
-              class="flex items-center bg-gray-500 gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-hidden"
+              class="items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-none block w-full"
               role="menuitem"
             >
-              <span class="material-symbols-outlined text-base text-primary">manage_accounts</span>
+              <span class="material-symbols-outlined text-base text-primary" aria-hidden="true"
+                >manage_accounts</span
+              >
               Edit Profile
             </a>
 
@@ -105,10 +167,10 @@
             <button
               type="button"
               (click)="logout(); isUserMenuOpen.set(false); $event.stopPropagation()"
-              class="w-full flex items-center bg-gray-500 gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-red-500/10 hover:text-red-400 transition-all cursor-pointer focus:bg-red-500/10 focus:outline-hidden"
+              class="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-red-500/10 hover:text-red-400 transition-all cursor-pointer focus:bg-red-500/10 focus:outline-none"
               role="menuitem"
             >
-              <span class="material-symbols-outlined text-base">logout</span>
+              <span class="material-symbols-outlined text-base" aria-hidden="true">logout</span>
               Logout
             </button>
           </div>
@@ -122,22 +184,67 @@
             (click)="$event.stopPropagation()"
             (keydown.escape)="isUserMenuOpen.set(false)"
           >
+            <nav class="md:hidden space-y-0" aria-label="Mobile navigation">
+              <a
+                routerLink="/"
+                routerLinkActive="bg-white/10 text-white"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="isUserMenuOpen.set(false); $event.stopPropagation()"
+                class="items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-none block w-full"
+                role="menuitem"
+              >
+                <span class="material-symbols-outlined text-base" aria-hidden="true">home</span>
+                Home
+              </a>
+
+              <a
+                routerLink="/user-search"
+                routerLinkActive="bg-white/10 text-white"
+                (click)="isUserMenuOpen.set(false); $event.stopPropagation()"
+                class="items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-none block w-full"
+                role="menuitem"
+              >
+                <span class="material-symbols-outlined text-base" aria-hidden="true">search</span>
+                Search
+              </a>
+
+              <a
+                routerLink="/events"
+                routerLinkActive="bg-white/10 text-white"
+                (click)="isUserMenuOpen.set(false); $event.stopPropagation()"
+                class="items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-none block w-full"
+                role="menuitem"
+              >
+                <span class="material-symbols-outlined text-base" aria-hidden="true">event</span>
+                Events
+              </a>
+            </nav>
+
+            <div
+              class="h-px bg-linear-to-r from-transparent via-white/10 to-transparent md:hidden"
+            ></div>
+
             <a
               routerLink="/login"
               (click)="isUserMenuOpen.set(false); $event.stopPropagation()"
-              class="flex items-center bg-gray-500 gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-hidden"
+              class="items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-none block w-full"
               role="menuitem"
             >
-              <span class="material-symbols-outlined text-base text-primary">manage_accounts</span>
+              <span class="material-symbols-outlined text-base text-primary" aria-hidden="true"
+                >manage_accounts</span
+              >
               Login
             </a>
+
             <a
               routerLink="/register"
               (click)="isUserMenuOpen.set(false); $event.stopPropagation()"
-              class="flex items-center bg-gray-500 gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-hidden"
+              class="items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all focus:bg-white/5 focus:outline-none block w-full"
               role="menuitem"
             >
-              <span class="material-symbols-outlined text-base text-primary">manage_accounts</span>
+              <span class="material-symbols-outlined text-base text-primary" aria-hidden="true"
+                >manage_accounts</span
+              >
               Register
             </a>
 

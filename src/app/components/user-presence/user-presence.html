@@ -4,13 +4,15 @@
   </div>
 
   <div class="space-y-4" formArrayName="social_links">
-    @for (link of links.controls; track $index) {
+    @for (link of socialLinksArray.controls; track link; let index = $index) {
       <div
-        [formGroupName]="$index"
+        [formGroupName]="index"
         class="flex flex-col md:flex-row gap-2 md:gap-4 items-stretch md:items-center p-4 bg-white/5 rounded-2xl border border-white/5"
       >
         <div class="md:w-1/4">
+          <label class="sr-only" [for]="'platform-' + index">Select platform</label>
           <select
+            [id]="'platform-' + index"
             formControlName="platform"
             class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white outline-none focus:border-purple-500 transition-colors appearance-none"
           >
@@ -22,6 +24,7 @@
         </div>
 
         <div class="flex-1 relative flex items-center">
+          <label class="sr-only" [for]="'url-' + index">Enter username</label>
           <div
             class="flex items-center w-full bg-black/40 border border-white/10 rounded-xl overflow-hidden focus-within:border-purple-500 transition-colors"
           >
@@ -29,6 +32,7 @@
               {{ link.get('platform')?.value || 'link' }}.com/
             </span>
             <input
+              [id]="'url-' + index"
               formControlName="url"
               maxlength="30"
               placeholder="your_username"
@@ -39,9 +43,9 @@
 
         <button
           type="button"
-          (click)="removeLink($index)"
-          class="text-red-400 p-2 hover:bg-red-400/10 rounded-xl self-end md:self-center transition-colors"
-          title="Remove link"
+          (click)="removeLink(index)"
+          class="text-red-400 p-2 hover:bg-red-400/10 rounded-xl self-end md:self-center transition-colors focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:outline-hidden"
+          aria-label="Remove link"
         >
           <span class="material-symbols-outlined text-[20px]">delete</span>
         </button>
@@ -49,7 +53,7 @@
     }
 
     @if (presenceService.pendingLinks().length > 0) {
-      <span class="text-xs text-slate-600 block mt-2"> Enter your handle/username </span>
+      <span class="text-xs text-slate-600 block mt-2">Enter your handle/username</span>
     } @else {
       <div
         class="text-center py-4 text-slate-500 text-sm italic border border-dashed border-white/5 rounded-xl"
@@ -63,7 +67,8 @@
     <button
       type="button"
       (click)="addLink()"
-      class="flex-1 px-4 py-3 border border-dashed border-white/20 rounded-xl text-slate-400 hover:text-white hover:border-white/40 transition-all"
+      class="flex-1 px-4 py-3 border border-dashed border-white/20 rounded-xl text-slate-400 hover:text-white hover:border-white/40 transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+      aria-label="Add new social link"
     >
       + Add social
     </button>

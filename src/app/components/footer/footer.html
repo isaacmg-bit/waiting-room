@@ -1,64 +1,130 @@
-<footer class="mt-auto relative border-t border-white/5 bg-black py-16 px-6 overflow-hidden">
-  
-  <div class="absolute inset-0 z-0 opacity-75 grayscale-[40%]">
-    <img
-      src="assets/img/backstage.png" class="h-full w-full object-cover" alt="Ambiente de estudio"
-    />
-    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/60"></div>
+<footer
+  class="mt-auto relative border-t border-white/5 bg-black py-12 sm:py-16 px-4 sm:px-6 overflow-hidden"
+  role="contentinfo"
+>
+  <div class="absolute inset-0 z-0 opacity-75 grayscale-40" aria-hidden="true">
+    <img src="assets/img/backstage.png" class="h-full w-full object-cover" alt="" />
+    <div class="absolute inset-0 bg-linear-to-t from-black via-black/80 to-black/60"></div>
   </div>
 
-  <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 relative z-10">
-    
-    <div class="col-span-1 sm:col-span-2 space-y-6">
+  <div
+    class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 sm:gap-12 relative z-10"
+  >
+    <section class="col-span-1 sm:col-span-2 space-y-6" aria-label="Brand and social">
       <img
-        class="w-40 h-auto object-contain brightness-90 hover:brightness-110 transition-all duration-500"
+        class="w-36 sm:w-40 h-auto object-contain brightness-90 hover:brightness-110 transition-all duration-500"
         [src]="'assets/img/logoheader.png'"
-        alt="Logo"
+        alt="Waiting Room logo"
       />
 
       <p class="text-slate-400 max-w-sm leading-relaxed font-light text-sm">
         Connecting independent musicians and creators in a digital space designed for collaboration.
-        <span class="block mt-2 text-primary/60 italic font-medium tracking-wide">Indie vibes only.</span>
+        <span class="block mt-2 text-primary/60 italic font-medium tracking-wide">
+          Indie vibes only.
+        </span>
       </p>
 
-      <nav class="flex gap-4">
-        <a class="size-10 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-slate-400 hover:border-primary/50 hover:text-primary transition-all duration-300 shadow-lg shadow-black" href="#">
-          <span class="material-symbols-outlined text-xl">camera</span>
+      <nav class="flex gap-3 sm:gap-4" aria-label="Social links">
+        <a
+          href="#"
+          class="size-10 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-slate-400 hover:border-primary/50 hover:text-primary transition-all duration-300 shadow-lg shadow-black focus:outline-none focus:ring-2 focus:ring-primary/40"
+          aria-label="Instagram"
+        >
+          <span class="material-symbols-outlined text-xl" aria-hidden="true">camera</span>
         </a>
-        <a class="size-10 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-slate-400 hover:border-primary/50 hover:text-primary transition-all duration-300 shadow-lg shadow-black" href="#">
-          <span class="material-symbols-outlined text-xl">alternate_email</span>
+
+        <a
+          href="#"
+          class="size-10 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-slate-400 hover:border-primary/50 hover:text-primary transition-all duration-300 shadow-lg shadow-black focus:outline-none focus:ring-2 focus:ring-primary/40"
+          aria-label="Contact"
+        >
+          <span class="material-symbols-outlined text-xl" aria-hidden="true">
+            alternate_email
+          </span>
         </a>
-        <a class="size-10 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-slate-400 hover:border-primary/50 hover:text-primary transition-all duration-300 shadow-lg shadow-black" href="#">
-          <span class="material-symbols-outlined text-xl">music_video</span>
+
+        <a
+          href="#"
+          class="size-10 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-slate-400 hover:border-primary/50 hover:text-primary transition-all duration-300 shadow-lg shadow-black focus:outline-none focus:ring-2 focus:ring-primary/40"
+          aria-label="Media"
+        >
+          <span class="material-symbols-outlined text-xl" aria-hidden="true"> music_video </span>
         </a>
       </nav>
-    </div>
+    </section>
 
-    <div class="space-y-4">
-      <h4 class="font-bold text-slate-200 tracking-[0.2em] uppercase text-[10px]">Platform</h4>
+    <nav class="space-y-4" aria-label="Platform">
+      <h2 class="font-bold text-slate-200 tracking-[0.2em] uppercase text-[10px]">Platform</h2>
       <ul class="space-y-3 text-slate-400 text-sm font-light">
-        <li><a class="hover:text-white transition-colors" href="#">About Us</a></li>
-        <li><a class="hover:text-white transition-colors" href="#">Our Ethos</a></li>
-        <li><a class="hover:text-white transition-colors" href="#">Pricing</a></li>
+        <li>
+          <a
+            href="#"
+            class="hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 rounded-sm"
+          >
+            About us
+          </a>
+        </li>
+        <li>
+          <a
+            href="#"
+            class="hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 rounded-sm"
+          >
+            Our ethos
+          </a>
+        </li>
+        <li>
+          <a
+            href="#"
+            class="hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 rounded-sm"
+          >
+            Pricing
+          </a>
+        </li>
       </ul>
-    </div>
+    </nav>
 
-    <div class="space-y-4">
-      <h4 class="font-bold text-slate-200 tracking-[0.2em] uppercase text-[10px]">Resources</h4>
+    <nav class="space-y-4" aria-label="Resources">
+      <h2 class="font-bold text-slate-200 tracking-[0.2em] uppercase text-[10px]">Resources</h2>
       <ul class="space-y-3 text-slate-400 text-sm font-light">
-        <li><a class="hover:text-white transition-colors" href="#">Privacy Policy</a></li>
-        <li><a class="hover:text-white transition-colors" href="#">Terms of Service</a></li>
-        <li><a class="hover:text-white transition-colors" href="#">Support</a></li>
+        <li>
+          <a
+            href="#"
+            class="hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 rounded-sm"
+          >
+            Privacy policy
+          </a>
+        </li>
+        <li>
+          <a
+            href="#"
+            class="hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 rounded-sm"
+          >
+            Terms of service
+          </a>
+        </li>
+        <li>
+          <a
+            href="#"
+            class="hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 rounded-sm"
+          >
+            Support
+          </a>
+        </li>
       </ul>
-    </div>
+    </nav>
   </div>
 
-  <div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/5 text-center relative z-10">
+  <div
+    class="max-w-7xl mx-auto mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-white/5 text-center relative z-10"
+  >
     <p class="text-slate-500 text-[10px] tracking-[0.3em] uppercase">
-      © 2026 Waiting Room • Developed by 
- <a href="https://github.com/isaacmg-bit" class="text-slate-300 font-medium hover:text-primary transition-colors cursor-pointer">
-  Isaac Malagón
-</a>
+      © 2026 Waiting Room • Developed by
+      <a
+        href="https://github.com/isaacmg-bit"
+        class="text-slate-300 font-medium hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 rounded-sm"
+      >
+        Isaac Malagón
+      </a>
     </p>
   </div>
 </footer>

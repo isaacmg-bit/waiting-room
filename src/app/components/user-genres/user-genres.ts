@@ -10,7 +10,7 @@ import { Genre } from '../../models/Genre';
 export class UserGenres implements OnInit {
   readonly userGenresService = inject(UserGenresService);
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.userGenresService.loadUserGenres();
   }
 

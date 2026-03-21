@@ -7,11 +7,10 @@ import { finalize } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class GenresService {
   private readonly api = inject(ApiServiceBack);
+  private readonly BASE_URL: string = environment.apiGenresUrl;
 
   readonly genresSignal = signal<Genre[]>([]);
-  readonly loadingSignal = signal(false);
-
-  private readonly BASE_URL = environment.apiGenresUrl;
+  readonly loadingSignal = signal<boolean>(false);
 
   constructor() {
     this.loadGenres();
@@ -23,8 +22,8 @@ export class GenresService {
       .get<Genre[]>(this.BASE_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (genres) => this.genresSignal.set(genres),
-        error: (err) => console.error('Error loading genres:', err),
+        next: (genres: Genre[]) => this.genresSignal.set(genres),
+        error: (err: unknown) => console.error('Error loading genres:', err),
       });
   }
 }

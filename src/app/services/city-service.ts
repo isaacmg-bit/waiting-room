@@ -1,10 +1,10 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { City } from '../models/City';
+import { Street } from '../models/Street';
+import { NominatimResponse } from '../models/NominatimResponse';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { NominatimResponse } from '../models/NominatimResponse';
-import { Street } from '../models/Street';
 
 @Injectable({ providedIn: 'root' })
 export class CityService {
@@ -20,10 +20,9 @@ export class CityService {
   readonly selectedStreet = signal<Street | null>(null);
   readonly isModalOpen = signal<boolean>(false);
   readonly searchInput = signal<string>('');
+  readonly currentView = signal<'city' | 'street'>('city');
 
-  currentView = signal<'city' | 'street'>('city');
-
-  setView(view: 'city' | 'street') {
+  setView(view: 'city' | 'street'): void {
     this.currentView.set(view);
   }
 
@@ -66,7 +65,6 @@ export class CityService {
           },
         }),
       );
-
       const cities = this.processCitiesResponse(response, query);
       this.searchCache.set(cacheKey, cities);
       this.filteredCities.set(cities.slice(0, 8));
@@ -102,10 +100,8 @@ export class CityService {
       const streets = response.filter(
         (item) => item.class === 'highway' || item.type === 'route' || item.address.road,
       );
-
       const processedStreets = this.processStreetsResponse(streets, query);
       this.searchCacheStreets.set(cacheKey, processedStreets);
-
       this.filteredStreets.set(processedStreets.slice(0, 15));
     } catch (err: unknown) {
       console.error('Error searching streets:', err);
@@ -119,12 +115,17 @@ export class CityService {
     const cacheKey = cityName.toLowerCase();
     let cities: City[] = this.searchCache.get(cacheKey) || [];
 
-    if (cities.length === 0) {
+    if (!cities.length) {
       this.loadingSignal.set(true);
       try {
         const response = await firstValueFrom(
           this.http.get<NominatimResponse[]>(this.nominatimUrl, {
-            params: { q: cityName, format: 'json', addressdetails: '1', countrycodes: 'es' },
+            params: {
+              q: cityName,
+              format: 'json',
+              addressdetails: '1',
+              countrycodes: 'es',
+            },
           }),
         );
         cities = this.processCitiesResponse(response, cityName);
@@ -179,7 +180,6 @@ export class CityService {
         const addr = item.address;
         const cityName = addr.city || addr.town || addr.village || addr.hamlet;
         if (!cityName || !item.lat || !item.lon) return null;
-
         return {
           city: cityName,
           province: addr.state || addr.province || '',
@@ -201,21 +201,16 @@ export class CityService {
 
   private processStreetsResponse(response: NominatimResponse[], query: string): Street[] {
     const qLower = query.toLowerCase();
-
     return response
       .map((item): Street | null => {
         const addr = item.address;
-
         const streetName = addr.road;
         if (!streetName || !item.lat || !item.lon) return null;
 
         const houseNumber = addr.house_number;
-
         const municipality = addr.city || addr.town || addr.village || addr.hamlet || '';
         const province = addr.state || addr.province || '';
-
         const displayName = houseNumber ? `${streetName}, ${houseNumber}` : streetName;
-
         const displayLocation = municipality ? `${municipality}, ${province}` : province;
 
         return {

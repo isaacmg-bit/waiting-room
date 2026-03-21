@@ -1,9 +1,9 @@
-  <section>
+<section>
   <div class="absolute inset-0 z-0">
     <img
       src="assets/img/register.png"
       class="h-full w-full object-cover opacity-60"
-      alt="Sala de ensayo"
+      alt="Rehearsal room background"
     />
     <div class="absolute inset-0 bg-linear-to-t from-black via-transparent to-black/50"></div>
   </div>
@@ -19,15 +19,14 @@
   </div>
 </section>
 
-<main
-  class="flex min-h-screen justify-center p-4 bg-black overflow-hidden"
->
+<main class="flex min-h-screen justify-center p-4 bg-black overflow-hidden">
   <div
     class="absolute -top-20 -left-20 size-64 rounded-full bg-primary/10 blur-[120px] pointer-events-none"
+    aria-hidden="true"
   ></div>
-  
   <div
     class="absolute -bottom-20 -right-20 size-64 rounded-full bg-purple-500/10 blur-[120px] pointer-events-none"
+    aria-hidden="true"
   ></div>
 
   <div class="relative z-10 w-full max-w-md">
@@ -35,7 +34,9 @@
       class="glass-card overflow-hidden rounded-3xl shadow-2xl animate-in fade-in zoom-in-95 duration-500"
     >
       <div class="h-1 w-full bg-white/5">
-        <div class="h-full bg-linear-to-r from-primary to-purple-400 w-full"></div>
+        <div
+          class="h-full bg-linear-to-r from-primary to-purple-400 w-full transition-all duration-500"
+        ></div>
       </div>
 
       <header class="p-8 text-center">
@@ -63,9 +64,8 @@
             <span
               class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-primary"
               aria-hidden="true"
+              >email</span
             >
-              email
-            </span>
             <input
               id="reg-email"
               type="email"
@@ -77,9 +77,9 @@
           </div>
 
           @if (form.get('email')?.touched && form.get('email')?.invalid) {
-            <div class="min-h-5 animate-in slide-in-from-top-1 duration-200">
+            <div class="min-h-5 animate-in slide-in-from-top-1 duration-200" role="alert">
               <p class="text-xs text-red-400 flex items-center gap-1">
-                <span class="material-symbols-outlined text-xs">error</span>
+                <span class="material-symbols-outlined text-xs" aria-hidden="true">error</span>
                 @if (form.get('email')?.hasError('required')) {
                   Email is required
                 } @else if (form.get('email')?.hasError('email')) {
@@ -100,9 +100,8 @@
             <span
               class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-primary"
               aria-hidden="true"
+              >lock</span
             >
-              lock
-            </span>
             <input
               id="reg-password"
               type="password"
@@ -114,9 +113,9 @@
           </div>
 
           @if (form.get('password')?.touched && form.get('password')?.invalid) {
-            <div class="min-h-5 animate-in slide-in-from-top-1 duration-200">
+            <div class="min-h-5 animate-in slide-in-from-top-1 duration-200" role="alert">
               <p class="text-xs text-red-400 flex items-center gap-1">
-                <span class="material-symbols-outlined text-xs">error</span>
+                <span class="material-symbols-outlined text-xs" aria-hidden="true">error</span>
                 @if (form.get('password')?.hasError('required')) {
                   Password is required
                 } @else if (form.get('password')?.hasError('minlength')) {
@@ -130,16 +129,15 @@
         <div class="pt-2">
           <button
             type="submit"
-            [disabled]="loading || form.invalid"
-            class="group flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary py-3 font-black text-white shadow-lg shadow-primary/20 transition-all hover:brightness-110 active:scale-[0.98]  disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+            [disabled]="isLoading() || form.invalid"
+            class="group flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary py-3 font-black text-white shadow-lg shadow-primary/20 transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
           >
-            <span>{{ loading() ? 'Creating account...' : 'Register' }}</span>
+            <span>{{ isLoading() ? 'Creating account...' : 'Register' }}</span>
             <span
               class="material-symbols-outlined transition-transform group-hover:translate-x-1"
               aria-hidden="true"
+              >arrow_forward</span
             >
-              arrow_forward
-            </span>
           </button>
         </div>
 

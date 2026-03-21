@@ -23,7 +23,7 @@ export class CalendarService {
 
   readonly eventTitle = signal<string>('');
   readonly eventColor = signal<string>('');
-  readonly eventType = signal<string>('');
+  eventType = signal<string>('show');
   readonly selectedDate = signal<string>('');
   readonly selectedStreet = signal<Street | null>(null);
   readonly isPublicSignal = signal<boolean>(false);
@@ -45,6 +45,38 @@ export class CalendarService {
       seen.add(event.id);
       return true;
     });
+  });
+
+  readonly formattedEvents = computed(() => {
+    const myEvents = this.userEventsSignal();
+    const publicEvents = this.userPublicEventsSignal();
+    const combinedMap = new Map<string, any>();
+
+    publicEvents.forEach((event) => {
+      combinedMap.set(event.id, {
+        ...event,
+        displayTitle: `${event.title}`,
+        isMine: false,
+      });
+    });
+
+    myEvents.forEach((event) => {
+      combinedMap.set(event.id, {
+        ...event,
+        displayTitle: event.title,
+        isMine: true,
+      });
+    });
+
+    return Array.from(combinedMap.values()).map((event) => ({
+      id: event.id,
+      title: event.displayTitle,
+      start: event.event_date,
+      backgroundColor: this.getColorCode(event.color),
+      borderColor: this.getColorCode(event.color),
+      classNames: event.isMine ? [] : ['public-event-style'],
+      extendedProps: { ...event },
+    }));
   });
 
   constructor() {
@@ -194,7 +226,7 @@ export class CalendarService {
     this.selectedEvent.set(event);
     this.eventTitle.set(event.title || '');
     this.eventColor.set(event.color || '');
-    this.eventType.set(event.event_type || '');
+    this.eventType.set(event.event_type || 'show');
     this.isPublicSignal.set(event.is_public ?? false);
 
     const dateStr = event.event_date ? String(event.event_date).split('T')[0] : '';
@@ -237,7 +269,7 @@ export class CalendarService {
     this.eventTitle.set('');
     this.eventColor.set('');
     this.selectedDate.set('');
-    this.eventType.set('');
+    this.eventType.set('show');
     this.isPublicSignal.set(false);
     this.selectedEvent.set(null);
     this.selectedStreet.set(null);

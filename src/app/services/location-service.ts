@@ -2,16 +2,16 @@ import { Injectable, inject, signal } from '@angular/core';
 import { UserLocation } from '../models/UserLocation';
 import { environment } from '../../environments/environment';
 import { ApiServiceBack } from './apiservice-back';
-
 import { CalendarService } from './calendar-service';
 
 @Injectable({ providedIn: 'root' })
 export class LocationService {
   private readonly api = inject(ApiServiceBack);
+  readonly calendarService = inject(CalendarService);
+
   readonly locationsSignal = signal<UserLocation[]>([]);
   readonly loadingSignal = signal(false);
   readonly activeFilters = signal(['show', 'rehearsalspace']);
-  readonly calendarService = inject(CalendarService);
 
   loadLocations(): void {
     this.loadingSignal.set(true);

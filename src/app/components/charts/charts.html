@@ -1,112 +1,131 @@
-<main class="mb-10">
-  <div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-      <div
-        class="bg-slate-900/50 border border-white/5 p-5 rounded-3xl flex flex-col justify-between h-40 shadow-xl backdrop-blur-md"
-      >
-        <div class="flex justify-between items-start">
-          <div>
-            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest"
-              >Total events</span
-            >
-            <h2 class="text-3xl font-black text-white mt-1">{{ chartsService.totalEventsCount() }}</h2>
-          </div>
-          <span class="material-symbols-outlined text-sky-400 bg-sky-400/10 p-2 rounded-xl"
-            >calendar_month</span
-          >
-        </div>
-        <div class="h-12 w-full opacity-60">
-          <canvas #gigsMiniChart></canvas>
-        </div>
-      </div>
-
-      <div
-        class="bg-slate-900/50 border border-white/5 p-5 rounded-3xl flex flex-col justify-between h-40 shadow-xl backdrop-blur-md"
-      >
-        <div class="flex justify-between items-start">
-          <div>
-            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest"
-              >Registered users</span
-            >
-            <h2 class="text-3xl font-black text-white mt-1">{{ chartsService.totalUsersRegistered() }}</h2>
-          </div>
-          <span class="material-symbols-outlined text-emerald-400 bg-emerald-400/10 p-2 rounded-xl"
-            >group</span
-          >
-        </div>
-        <div class="h-12 w-full opacity-60">
-          <canvas #revMiniChart></canvas>
-        </div>
-      </div>
-
-      <div
-        class="bg-slate-900/50 border border-white/5 p-5 rounded-3xl flex flex-col justify-between h-40 shadow-xl backdrop-blur-md"
-      >
-        <div class="flex justify-between items-start">
-          <div>
-            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest"
-              >Top Artist</span
-            >
-            <h2 class="text-xl font-black text-white mt-2 max-w-40">
-              {{ chartsService.popularArtistName() || 'Calculating...' }}
-            </h2>
-          </div>
-          <span class="material-symbols-outlined text-amber-400 bg-amber-400/10 p-2 rounded-xl"
-            >star</span
-          >
-        </div>
-        <div class="text-[10px] text-slate-500 flex items-center gap-1">
-          <span class="text-amber-400">●</span> Trending this month
-        </div>
-      </div>
-
-      <div
-        class="bg-slate-900/50 border border-white/5 p-5 rounded-3xl flex flex-col justify-between h-40 shadow-xl backdrop-blur-md"
-      >
-        <div class="flex justify-between items-start">
-          <div>
-            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest"
-              >Top Instrument</span
-            >
-            <h2 class="text-xl font-black text-white mt-2 max-w-40">
-              {{ chartsService.topInstrumentName() }}
-            </h2>
-          </div>
-          <span class="material-symbols-outlined text-purple-400 bg-purple-400/10 p-2 rounded-xl"
-            >piano</span
-          >
-        </div>
-        <div class="text-[10px] text-slate-500">Most picked by community</div>
-      </div>
-    </div>
-
-    <div class="grid gap-8 md:grid-cols-2">
-      <section
-        class="bg-slate-900/40 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-sm"
-      >
-        <div class="px-8 py-6 border-b border-white/5 flex justify-between items-center">
-          <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400">
-            Activity Overview
+<main class="mb-10" role="main">
+  <section
+    aria-label="Dashboard statistics"
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10"
+  >
+    <article
+      tabindex="0"
+      class="bg-slate-900/50 border border-white/5 p-4 sm:p-5 rounded-3xl flex flex-col justify-between h-40 shadow-xl backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+    >
+      <header class="flex justify-between items-start">
+        <div>
+          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Total events</p>
+          <h2 class="text-3xl font-black text-white mt-1">
+            {{ chartsService.totalEventsCount() }}
           </h2>
-          <div class="flex gap-2">
-            <p class="px-3 py-1 bg-white/5 rounded-md text-[10px] text-white">Month</p>
-          </div>
         </div>
-        <div class="p-8 h-72">
-          <canvas #barChart></canvas>
-        </div>
-      </section>
+        <span
+          aria-hidden="true"
+          class="material-symbols-outlined text-sky-400 bg-sky-400/10 p-2 rounded-xl"
+        >
+          calendar_month
+        </span>
+      </header>
+      <div class="h-12 w-full opacity-60">
+        <canvas #gigsMiniChart aria-label="Events chart"></canvas>
+      </div>
+    </article>
 
-      <section
-        class="bg-slate-900/40 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-sm"
+    <article
+      tabindex="0"
+      class="bg-slate-900/50 border border-white/5 p-4 sm:p-5 rounded-3xl flex flex-col justify-between h-40 shadow-xl backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+    >
+      <header class="flex justify-between items-start">
+        <div>
+          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+            Registered users
+          </p>
+          <h2 class="text-3xl font-black text-white mt-1">
+            {{ chartsService.totalUsersRegistered() }}
+          </h2>
+        </div>
+        <span
+          aria-hidden="true"
+          class="material-symbols-outlined text-emerald-400 bg-emerald-400/10 p-2 rounded-xl"
+        >
+          group
+        </span>
+      </header>
+      <div class="h-12 w-full opacity-60">
+        <canvas #revMiniChart aria-label="Users chart"></canvas>
+      </div>
+    </article>
+
+    <article
+      tabindex="0"
+      class="bg-slate-900/50 border border-white/5 p-4 sm:p-5 rounded-3xl flex flex-col justify-between h-40 shadow-xl backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+    >
+      <header class="flex justify-between items-start">
+        <div>
+          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Top artist</p>
+          <h2 class="text-xl font-black text-white mt-2 max-w-40">
+            {{ chartsService.popularArtistName() || 'Calculating...' }}
+          </h2>
+        </div>
+        <span
+          aria-hidden="true"
+          class="material-symbols-outlined text-amber-400 bg-amber-400/10 p-2 rounded-xl"
+        >
+          star
+        </span>
+      </header>
+      <p class="text-[10px] text-slate-500 flex items-center gap-1">
+        <span class="text-amber-400">●</span> Trending this month
+      </p>
+    </article>
+
+    <article
+      tabindex="0"
+      class="bg-slate-900/50 border border-white/5 p-4 sm:p-5 rounded-3xl flex flex-col justify-between h-40 shadow-xl backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+    >
+      <header class="flex justify-between items-start">
+        <div>
+          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+            Top instrument
+          </p>
+          <h2 class="text-xl font-black text-white mt-2 max-w-40">
+            {{ chartsService.topInstrumentName() }}
+          </h2>
+        </div>
+        <span
+          aria-hidden="true"
+          class="material-symbols-outlined text-purple-400 bg-purple-400/10 p-2 rounded-xl"
+        >
+          piano
+        </span>
+      </header>
+      <p class="text-[10px] text-slate-500">Most picked by community</p>
+    </article>
+  </section>
+
+  <section aria-label="Charts" class="grid gap-6 sm:gap-8 md:grid-cols-2">
+    <article
+      class="bg-slate-900/40 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-sm transition-all"
+    >
+      <header
+        class="px-4 sm:px-6 lg:px-8 py-5 border-b border-white/5 flex justify-between items-center"
       >
-        <div class="px-8 py-6 border-b border-white/5">
-          <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400">Growth Trends</h2>
+        <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400">
+          Activity overview
+        </h2>
+        <div class="flex gap-2">
+          <span class="px-3 py-1 bg-white/5 rounded-md text-[10px] text-white"> Month </span>
         </div>
-        <div class="p-8 h-72">
-          <canvas #lineChart></canvas>
-        </div>
-      </section>
-    </div>
-  </div>
+      </header>
+      <div class="p-4 sm:p-6 lg:p-8 h-64 sm:h-72">
+        <canvas #barChart aria-label="Activity overview chart"></canvas>
+      </div>
+    </article>
+
+    <article
+      class="bg-slate-900/40 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-sm transition-all"
+    >
+      <header class="px-4 sm:px-6 lg:px-8 py-5 border-b border-white/5">
+        <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400">Growth trends</h2>
+      </header>
+      <div class="p-4 sm:p-6 lg:p-8 h-64 sm:h-72">
+        <canvas #lineChart aria-label="Growth trends chart"></canvas>
+      </div>
+    </article>
+  </section>
 </main>

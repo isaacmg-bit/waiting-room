@@ -1,9 +1,9 @@
 <main class="flex min-h-screen justify-center bg-slate-950 pt-20">
   <div class="w-full max-w-md px-4">
-    <div
+    <section
       class="overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500"
     >
-      <header class="border-b border-white/10 px-6 py-5">
+      <header class="border-b border-white/10 px-6 py-5 text-center">
         <h1 id="reset-heading" class="text-xl font-bold text-slate-100">Reset Password</h1>
         <p class="text-sm text-slate-500">Set your new password to regain access.</p>
       </header>
@@ -23,48 +23,50 @@
               formControlName="password"
               placeholder="Enter new password (min. 8 characters)"
               aria-describedby="password-error password-hint"
+              [attr.aria-invalid]="passwordControl.invalid && passwordControl.touched"
               class="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-slate-200 transition-all focus-visible:border-emerald-500/50 focus-visible:ring-2 focus-visible:ring-emerald-500/20 focus-visible:outline-hidden"
             />
             <p id="password-hint" class="text-xs text-slate-500">
               Password must be at least 8 characters long
             </p>
-            @if (passwordControl?.touched && passwordControl?.hasError('required')) {
+
+            @if (passwordControl.touched && passwordControl.hasError('required')) {
               <p id="password-error" class="text-xs text-red-400" role="alert">
                 Password is required
               </p>
             }
-            @if (passwordControl?.touched && passwordControl?.hasError('minlength')) {
+            @if (passwordControl.touched && passwordControl.hasError('minlength')) {
               <p id="password-error" class="text-xs text-red-400" role="alert">
                 Password must be at least 8 characters
               </p>
             }
           </div>
 
-          @if (errorMessage) {
+          @if (errorMessage()) {
             <div
               class="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400"
               role="alert"
             >
-              {{ errorMessage }}
+              {{ errorMessage() }}
             </div>
           }
 
-          @if (successMessage) {
+          @if (successMessage()) {
             <div
               class="rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 text-sm text-emerald-400"
               role="status"
             >
-              {{ successMessage }}
+              {{ successMessage() }}
             </div>
           }
 
           <button
             type="submit"
             [disabled]="passwordForm.invalid || isLoading"
-            class="mt-2 w-full cursor-pointer rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-900/20 transition-all hover:bg-emerald-500 hover:scale-105 active:scale-95 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-hidden disabled:opacity-50  disabled:hover:scale-100"
+            class="mt-2 w-full cursor-pointer rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-900/20 transition-all hover:bg-emerald-500 hover:scale-105 active:scale-95 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-hidden disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
           >
-            @if (isLoading) {
-              <span class="inline-block animate-spin mr-2">⟳</span>
+            @if (isLoading()) {
+              <span class="inline-block animate-spin text-white">⟳</span>
               Updating...
             } @else {
               Update Password
@@ -72,6 +74,6 @@
           </button>
         </form>
       </div>
-    </div>
+    </section>
   </div>
 </main>

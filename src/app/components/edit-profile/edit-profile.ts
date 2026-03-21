@@ -1,28 +1,46 @@
-import { Component, inject } from '@angular/core';
-import { UserService } from '../../services/user-service';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UploadService } from '../../services/upload-service';
-import { UserGallery } from '../user-gallery/user-gallery';
-import { UserLocation } from '../user-location/user-location';
-import { User } from '../../models/User';
-import { City } from '../../models/City';
-import { UserInstruments } from '../user-instruments/user-instruments';
-import { CityService } from '../../services/city-service';
-import { provideIcons } from '@ng-icons/core';
-import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
-import { UserGenres } from '../user-genres/user-genres';
-import { UserBands } from '../user-bands/user-bands';
+import { Component, inject, signal } from '@angular/core';
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators,
+  FormControl,
+  FormGroup,
+} from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
+import { provideIcons } from '@ng-icons/core';
+import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
+
+import { UserService } from '../../services/user-service';
+import { CityService } from '../../services/city-service';
+import { UploadService } from '../../services/upload-service';
 import { UserInstrumentsService } from '../../services/user-instruments-service';
 import { UserTheoryService } from '../../services/theory-service';
 import { UserBandsService } from '../../services/user-bands-service';
 import { UserGenresService } from '../../services/user-genres-service';
 import { UserProfilePicService } from '../../services/user-profilepic-service';
+import { UserPresenceService } from '../../services/user-presence-service';
+
+import { UserGallery } from '../user-gallery/user-gallery';
+import { UserLocation } from '../user-location/user-location';
+import { UserInstruments } from '../user-instruments/user-instruments';
+import { UserGenres } from '../user-genres/user-genres';
+import { UserBands } from '../user-bands/user-bands';
 import { UserProfilePicture } from '../user-profilepicture/user-profilepicture';
 import { UserPresence } from '../user-presence/user-presence';
-import { UserPresenceService } from '../../services/user-presence-service';
+
+import { User } from '../../models/User';
+import { City } from '../../models/City';
 import { SocialLinkHandle } from '../../models/SocialLinkHandle';
+
+interface ProfileForm {
+  name: FormControl<string>;
+  email: FormControl<string>;
+  location: FormControl<City | null>;
+  bio: FormControl<string>;
+  gear: FormControl<string>;
+  rehearsal_space: FormControl<string>;
+}
 
 @Component({
   selector: 'app-edit-profile',
@@ -53,56 +71,67 @@ export class EditProfile {
   private readonly userPresenceService = inject(UserPresenceService);
   private readonly toast = inject(ToastrService);
 
-  profilePhotoUrl = this.userProfilePicService.profilePhotoUrl;
-  private currentUser: User | null = null;
-  private initialFormValue: any;
-  socialLinks: SocialLinkHandle[] = [];
+  readonly profilePhotoUrl = this.userProfilePicService.profilePhotoUrl;
+  readonly socialLinks = signal<SocialLinkHandle[]>([]);
 
-  form = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(20)]],
-    email: [{ value: '', disabled: true }],
-    location: [null as City | null],
-    bio: ['', [Validators.maxLength(150)]],
-    gear: ['', [Validators.maxLength(150)]],
-    rehearsal_space: ['', [Validators.maxLength(150)]],
+  private currentUser: User | null = null;
+
+  readonly form: FormGroup<ProfileForm> = this.fb.group({
+    name: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(2), Validators.maxLength(20)],
+    }),
+    email: new FormControl({ value: '', disabled: true }, { nonNullable: true }),
+    location: new FormControl<City | null>(null),
+    bio: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(150)] }),
+    gear: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(150)] }),
+    rehearsal_space: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.maxLength(150)],
+    }),
   });
 
   constructor() {
     this.userService
       .getMe()
       .pipe(takeUntilDestroyed())
-      .subscribe(async (user) => {
-        this.currentUser = user;
+      .subscribe((user) => this.initializeUserData(user));
+  }
 
-        const city = user.location ? await this.cityService.getCityCoords(user.location) : null;
+  private async initializeUserData(user: User): Promise<void> {
+    this.currentUser = user;
 
-        this.initialFormValue = {
-          name: user.name,
-          email: user.email,
-          bio: user.bio,
-          gear: user.gear,
-          rehearsal_space: user.rehearsal_space,
-          location: city,
-        };
+    const city = user.location ? await this.cityService.getCityCoords(user.location) : null;
 
-        this.form.patchValue(this.initialFormValue);
+    this.form.patchValue({
+      name: user.name,
+      email: user.email,
+      bio: user.bio,
+      gear: user.gear,
+      rehearsal_space: user.rehearsal_space,
+      location: city,
+    });
 
-        this.userProfilePicService.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
+    this.userProfilePicService.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
 
-        this.userInstrumentsService.loadUserInstruments();
-        this.userTheoryService.loadUserTheory();
-        this.userBandsService.loadUserBands();
-        this.userGenresService.loadUserGenres();
-        this.userPresenceService.loadUserPresence();
-        this.uploadService.getGallery().subscribe({
-          next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
-          error: () => this.uploadService.galleryPhotosSignal.set([]),
-        });
-      });
+    this.loadAllUserData();
+  }
+
+  private loadAllUserData(): void {
+    this.userInstrumentsService.loadUserInstruments();
+    this.userTheoryService.loadUserTheory();
+    this.userBandsService.loadUserBands();
+    this.userGenresService.loadUserGenres();
+    this.userPresenceService.loadUserPresence();
+
+    this.uploadService.getGallery().subscribe({
+      next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
+      error: () => this.uploadService.galleryPhotosSignal.set([]),
+    });
   }
 
   saveProfile(): void {
-    if (!this.currentUser) return;
+    if (!this.currentUser || this.form.invalid) return;
 
     this.uploadService.savePendingPhotos();
     this.userInstrumentsService.savePendingInstruments();
@@ -111,55 +140,28 @@ export class EditProfile {
     this.userGenresService.saveUserGenres();
     this.userPresenceService.savePendingPresence();
 
+    const formValue = this.form.getRawValue();
     const payload: Partial<User> = {
-      name: this.form.value.name ?? undefined,
-      bio: this.form.value.bio ?? undefined,
-      gear: this.form.value.gear ?? undefined,
-      rehearsal_space: this.form.value.rehearsal_space ?? undefined,
+      name: formValue.name,
+      bio: formValue.bio,
+      gear: formValue.gear,
+      rehearsal_space: formValue.rehearsal_space,
     };
 
-    const city: City | null = this.form.value.location ?? null;
-
-    if (city) {
-      payload.location = city.city;
-      payload.location_point = `POINT(${city.lng} ${city.lat})`;
+    if (formValue.location) {
+      payload.location = formValue.location.city;
+      payload.location_point = `POINT(${formValue.location.lng} ${formValue.location.lat})`;
     }
 
     this.userService.editUser(this.currentUser.id, payload);
   }
 
   discardChanges(): void {
-    this.userService.getMe().subscribe(async (user) => {
-      this.currentUser = user;
-
-      const city = user.location ? await this.cityService.getCityCoords(user.location) : null;
-
-      this.initialFormValue = {
-        name: user.name,
-        email: user.email,
-        bio: user.bio,
-        gear: user.gear,
-        rehearsal_space: user.rehearsal_space,
-        location: city,
-      };
-
-      this.form.reset(this.initialFormValue);
+    this.userService.getMe().subscribe((user) => {
+      this.initializeUserData(user);
+      this.uploadService.discardPendingPhotos();
       this.form.markAsPristine();
       this.form.markAsUntouched();
-
-      this.userProfilePicService.profilePhotoUrl.set(`${user.profile_photo_url}?t=${Date.now()}`);
-
-      this.userInstrumentsService.loadUserInstruments();
-      this.userTheoryService.loadUserTheory();
-      this.userBandsService.loadUserBands();
-      this.userGenresService.loadUserGenres();
-      this.userPresenceService.loadUserPresence();
-      this.uploadService.discardPendingPhotos();
-      this.uploadService.getGallery().subscribe({
-        next: (photos) => this.uploadService.galleryPhotosSignal.set(photos),
-        error: () => this.uploadService.galleryPhotosSignal.set([]),
-      });
-
       this.toast.success('Changes discarded');
     });
   }

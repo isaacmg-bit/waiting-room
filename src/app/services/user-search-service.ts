@@ -37,6 +37,8 @@ export class UserSearchService {
   readonly searchResults = signal<any[]>([]);
   readonly randomUsers = signal<any[]>([]);
 
+  hasSearched = signal(false);
+
   initRandomUsers() {
     this.userService.getRandomUsers().subscribe((results) => {
       const transformed = results.map((user: any) => ({
@@ -50,6 +52,8 @@ export class UserSearchService {
   }
 
   search(resetPage: boolean): void {
+    this.hasSearched.set(true);
+
     const params = new URLSearchParams();
 
     if (this.selectedDistance()) params.append('radiusKm', this.selectedDistance()!.toString());
@@ -232,5 +236,8 @@ export class UserSearchService {
     this.selectedGenres.set([]);
     this.selectedBands.set([]);
     this.selectedMusicTheory.set(null);
+
+    this.hasSearched.set(false);
+    this.searchResults.set([]);
   }
 }

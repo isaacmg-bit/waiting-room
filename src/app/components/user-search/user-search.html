@@ -1,15 +1,10 @@
 <main class="min-h-screen bg-black font-display text-slate-100">
-  <!-- HERO / HEADER -->
   <section
-    class="relative h-[40vh] min-h-[300px] w-full overflow-hidden flex items-center justify-center"
+    class="relative h-[40vh] min-h-75 w-full overflow-hidden flex items-center justify-center"
   >
     <div class="absolute inset-0 z-0">
-      <img
-        src="assets/img/search.png"
-        class="h-full w-full object-cover opacity-60"
-        alt="Sala de ensayo"
-      />
-      <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
+      <img src="assets/img/search.png" class="h-full w-full object-cover opacity-60" alt="" />
+      <div class="absolute inset-0 bg-linear-to-t from-black via-transparent to-black/50"></div>
     </div>
 
     <div class="relative z-10 text-center px-4">
@@ -18,21 +13,19 @@
       >
         Find your new bandmates
       </h2>
-      <div class="mt-2 w-16 h-1 bg-primary mx-auto rounded-full"></div>
+      <div class="mt-2 w-16 h-1 bg-primary mx-auto rounded-full transition-all"></div>
     </div>
   </section>
 
-  <!-- SEARCH FILTERS -->
   <div class="mx-auto max-w-7xl px-4 py-6 md:px-8">
     <nav
       class="mb-6 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:justify-start"
       aria-label="Search filters"
     >
-      <!-- Distance filter -->
       <div
         class="relative flex-1 sm:flex-auto"
         appClickOutside
-        (clickOutside)="userSearchService.closeDistance(); userSearchService.search(false)"
+        (clickOutside)="userSearchService.closeDistance()"
       >
         <div
           class="flex items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2 transition-colors focus-within:border-primary"
@@ -41,7 +34,9 @@
           <button
             type="button"
             (click)="userSearchService.toggleDistance()"
-            class="flex-1 text-left text-sm text-slate-500"
+            class="flex-1 text-left text-sm text-slate-500 focus:outline-visible focus:ring-2 focus:ring-primary"
+            aria-haspopup="listbox"
+            [attr.aria-expanded]="userSearchService.isDistanceOpen()"
           >
             {{
               userSearchService.selectedDistance()
@@ -53,53 +48,51 @@
 
         @if (userSearchService.isDistanceOpen()) {
           <div
-            class="absolute inset-x-0 top-full z-50 mt-2 rounded-xl border border-border-dark bg-gray-500 p-4 shadow-xl"
+            class="absolute inset-x-0 top-full z-50 mt-2 rounded-xl border border-border-dark bg-gray-500 p-4 shadow-xl transition-all"
+            role="listbox"
           >
-            <div class="space-y-3">
-              <div class="text-sm text-slate-200">
-                Distance:
-                <span class="font-semibold text-white">
-                  {{ userSearchService.tempDistance() }} km
-                </span>
-              </div>
-
-              <input
-                type="range"
-                min="5"
-                max="100"
-                step="5"
-                [value]="userSearchService.tempDistance()"
-                (input)="userSearchService.onDistanceChange($event)"
-                class="w-full h-2 rounded-lg cursor-pointer accent-primary bg-gray-700"
-              />
-
-              <div class="flex justify-between text-xs text-slate-400">
-                <span>5 km</span>
-                <span>50 km</span>
-                <span>100 km</span>
-              </div>
-
-              <button
-                type="button"
-                (click)="
-                  userSearchService.selectedDistance.set(userSearchService.tempDistance());
-                  userSearchService.closeDistance();
-                  userSearchService.search(true)
-                "
-                class="w-full rounded-lg bg-primary py-2 text-sm font-semibold text-white"
+            <div class="space-y-3 text-sm text-slate-200">
+              Distance:
+              <span class="font-semibold text-white"
+                >{{ userSearchService.tempDistance() }} km</span
               >
-                Apply
-              </button>
             </div>
+
+            <input
+              type="range"
+              min="5"
+              max="100"
+              step="5"
+              [value]="userSearchService.tempDistance()"
+              (input)="userSearchService.onDistanceChange($event)"
+              class="w-full h-2 rounded-lg cursor-pointer accent-primary bg-gray-700"
+            />
+
+            <div class="flex justify-between text-xs text-slate-400">
+              <span>5 km</span>
+              <span>50 km</span>
+              <span>100 km</span>
+            </div>
+
+            <button
+              type="button"
+              (click)="
+                userSearchService.selectedDistance.set(userSearchService.tempDistance());
+                userSearchService.closeDistance();
+                userSearchService.search(true)
+              "
+              class="w-full rounded-lg bg-primary py-2 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
+            >
+              Apply
+            </button>
           </div>
         }
       </div>
 
-      <!-- Instruments / Music Theory / Genres / Bands -->
       <div
         class="flex-1 sm:flex-auto relative"
         appClickOutside
-        (clickOutside)="userSearchService.closeInstruments(); userSearchService.search(false)"
+        (clickOutside)="userSearchService.closeInstruments()"
       >
         <div
           class="flex items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
@@ -110,7 +103,8 @@
             (input)="userSearchService.onSearchInstrument($event)"
             (focus)="userSearchService.openInstruments()"
             placeholder="Instrument"
-            class="flex-1 bg-transparent text-sm text-slate-200"
+            class="flex-1 bg-transparent text-sm text-slate-200 focus:outline-visible focus:ring-1 focus:ring-primary"
+            aria-label="Search instrument"
           />
         </div>
         @if (
@@ -118,18 +112,19 @@
         ) {
           <ul
             class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded bg-gray-500 p-2 shadow-xl"
+            role="listbox"
           >
             @for (instrument of userInstrumentService.filteredInstruments(); track instrument.id) {
               @let isSel = userSearchService.isSelectedInstrument(instrument.instrument_name);
-              <li>
+              <li role="option" [attr.aria-selected]="isSel">
                 <button
                   (click)="
                     userSearchService.selectInstrument(instrument); userSearchService.search(true)
                   "
                   [class]="
                     isSel
-                      ? 'bg-gray-300 text-slate-900 w-full text-left px-3 py-2 rounded'
-                      : 'w-full text-left px-3 py-2 text-slate-200 hover:bg-primary/20 rounded'
+                      ? 'bg-gray-300 text-slate-900 w-full text-left px-3 py-2 rounded transition-colors'
+                      : 'w-full text-left px-3 py-2 text-slate-200 hover:bg-primary/20 rounded transition-colors'
                   "
                 >
                   {{ instrument.instrument_name }}
@@ -140,11 +135,10 @@
         }
       </div>
 
-      <!-- Music Theory -->
       <div
         class="flex-1 sm:flex-auto relative"
         appClickOutside
-        (clickOutside)="userSearchService.closeMusicTheory(); userSearchService.search(false)"
+        (clickOutside)="userSearchService.closeMusicTheory()"
       >
         <div
           class="flex items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
@@ -152,22 +146,28 @@
           <span class="material-symbols-outlined text-base text-slate-500">school</span>
           <button
             (click)="userSearchService.toggleMusicTheory()"
-            class="flex-1 text-left text-sm text-slate-500"
+            class="flex-1 text-left text-sm text-slate-500 focus:outline-visible focus:ring-2 focus:ring-primary"
+            aria-haspopup="listbox"
+            [attr.aria-expanded]="userSearchService.isMusicTheoryOpen()"
           >
             {{ userSearchService.selectedMusicTheory() || 'Music theory' }}
           </button>
         </div>
         @if (userSearchService.isMusicTheoryOpen()) {
-          <ul class="absolute inset-x-0 top-full z-50 mt-2 rounded bg-gray-500 p-2 shadow-xl">
+          <ul
+            class="absolute inset-x-0 top-full z-50 mt-2 rounded bg-gray-500 p-2 shadow-xl"
+            role="listbox"
+          >
             @for (theory of userSearchService.musicTheoryOptions; track theory) {
-              <li>
+              @let isSel = userSearchService.selectedMusicTheory() === theory;
+              <li role="option" [attr.aria-selected]="isSel">
                 <button
                   (click)="
                     userSearchService.selectMusicTheory(theory);
                     userSearchService.closeMusicTheory();
                     userSearchService.search(true)
                   "
-                  class="w-full text-left px-3 py-2 hover:bg-primary/20 rounded"
+                  class="w-full text-left px-3 py-2 hover:bg-primary/20 rounded transition-colors"
                 >
                   {{ theory }}
                 </button>
@@ -177,11 +177,10 @@
         }
       </div>
 
-      <!-- Genres -->
       <div
         class="flex-1 sm:flex-auto relative"
         appClickOutside
-        (clickOutside)="userSearchService.closeGenres(); userSearchService.search(false)"
+        (clickOutside)="userSearchService.closeGenres()"
       >
         <div
           class="flex items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
@@ -192,18 +191,21 @@
             (input)="userSearchService.onSearchGenre($event)"
             (focus)="userSearchService.openGenres()"
             placeholder="Genre"
-            class="flex-1 bg-transparent text-sm text-slate-200"
+            class="flex-1 bg-transparent text-sm text-slate-200 focus:outline-visible focus:ring-1 focus:ring-primary"
+            aria-label="Search genre"
           />
         </div>
         @if (userSearchService.isGenresOpen() && userGenresService.searchQuery().length > 0) {
           <ul
             class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded bg-gray-500 p-2 shadow-xl"
+            role="listbox"
           >
             @for (genre of userGenresService.filteredGenres(); track genre.id) {
-              <li>
+              @let isSel = userSearchService.selectedGenres().includes(genre.genre);
+              <li role="option" [attr.aria-selected]="isSel">
                 <button
                   (click)="userSearchService.selectGenre(genre); userSearchService.search(true)"
-                  class="w-full text-left px-3 py-2 text-slate-200 hover:bg-primary/20 rounded"
+                  class="w-full text-left px-3 py-2 text-slate-200 hover:bg-primary/20 rounded transition-colors"
                 >
                   {{ genre.genre }}
                 </button>
@@ -213,11 +215,10 @@
         }
       </div>
 
-      <!-- Bands -->
       <div
         class="flex-1 sm:flex-auto relative"
         appClickOutside
-        (clickOutside)="userSearchService.closeBands(); userSearchService.search(false)"
+        (clickOutside)="userSearchService.closeBands()"
       >
         <div
           class="flex items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
@@ -228,16 +229,21 @@
             (input)="userSearchService.onSearchBand($event)"
             (focus)="userSearchService.openBands()"
             placeholder="Band"
-            class="flex-1 bg-transparent text-sm text-slate-200"
+            class="flex-1 bg-transparent text-sm text-slate-200 focus:outline-visible focus:ring-1 focus:ring-primary"
+            aria-label="Search band"
           />
         </div>
         @if (userSearchService.isBandsOpen() && musicBrainzService.bandsSignal().length > 0) {
-          <ul class="absolute inset-x-0 top-full z-50 mt-2 rounded bg-gray-500 p-2 shadow-xl">
+          <ul
+            class="absolute inset-x-0 top-full z-50 mt-2 rounded bg-gray-500 p-2 shadow-xl"
+            role="listbox"
+          >
             @for (band of musicBrainzService.bandsSignal(); track band.id) {
-              <li>
+              @let isSel = userSearchService.selectedBands().includes(band.name);
+              <li role="option" [attr.aria-selected]="isSel">
                 <button
                   (click)="userSearchService.selectBand(band); userSearchService.search(true)"
-                  class="w-full text-left px-3 py-2 hover:bg-primary/20 rounded"
+                  class="w-full text-left px-3 py-2 hover:bg-primary/20 rounded transition-colors"
                 >
                   {{ band.name }}
                 </button>
@@ -247,18 +253,16 @@
         }
       </div>
 
-      <!-- Search button -->
       <div class="flex-1 sm:flex-none">
         <button
           (click)="userSearchService.search(true)"
-          class="w-full sm:w-auto rounded-xl bg-primary px-6 py-3 font-bold text-white"
+          class="w-full sm:w-auto rounded-xl bg-primary px-6 py-3 font-bold text-white hover:bg-primary/90 transition-colors focus:outline-visible focus:ring-2 focus:ring-primary"
         >
           Search
         </button>
       </div>
     </nav>
 
-    <!-- Selected filters -->
     <div class="mb-6 flex flex-wrap gap-2">
       @if (
         userSearchService.selectedDistance() ||
@@ -301,10 +305,11 @@
             <button (click)="userSearchService.selectedMusicTheory.set(null)">✕</button>
           </span>
         }
+
         @if (userSearchService.selectedDistance()! > 5) {
           <button
             (click)="userSearchService.clearAllFilters(); userSearchService.search(true)"
-            class="ml-2 text-xs text-red-400 hover:underline"
+            class="ml-2 text-xs text-red-400 hover:underline focus:outline-visible focus:ring-1 focus:ring-red-400"
           >
             Clear all
           </button>
@@ -312,21 +317,10 @@
       }
     </div>
 
-    <!-- Search results -->
     <section aria-labelledby="results-title" class="mb-12">
       @if (userSearchService.searchResults().length > 0) {
-        <div class="border-border-dark bg-surface-dark p-6 shadow-sm">
+        <div class="border-border-dark bg-surface-dark p-6 shadow-sm rounded-xl">
           <div class="flex items-center justify-between gap-4">
-            <button
-              type="button"
-              (click)="userSearchService.previousPage()"
-              [disabled]="userSearchService.currentPage() === 0"
-              class="shrink-0 cursor-pointer rounded-lg bg-primary p-3 text-white transition-transform hover:scale-110 disabled:opacity-30 focus-visible:outline-hidden"
-              aria-label="Previous page"
-            >
-              <span class="material-symbols-outlined block" aria-hidden="true">chevron_left</span>
-            </button>
-
             <div class="grid flex-1 grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               @for (user of userSearchService.paginatedResults(); track user.id) {
                 <article class="h-162.5">
@@ -334,26 +328,45 @@
                 </article>
               }
             </div>
-
-            <button
-              type="button"
-              (click)="userSearchService.nextPage()"
-              [disabled]="userSearchService.currentPage() === userSearchService.totalPages() - 1"
-              class="shrink-0 cursor-pointer rounded-lg bg-primary p-3 text-white transition-transform hover:scale-110 disabled:opacity-30 focus-visible:outline-hidden"
-              aria-label="Next page"
-            >
-              <span class="material-symbols-outlined block" aria-hidden="true">chevron_right</span>
-            </button>
           </div>
+        </div>
+      } @else if (userSearchService.hasSearched()) {
+        <div class="flex justify-center py-12">
+          <div
+            class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm"
+          >
+            <span class="material-symbols-outlined text-primary text-xl">search_off</span>
+            <span class="text-slate-400 font-medium italic"
+              >No musicians found. Try widening your filters.</span
+            >
+          </div>
+        </div>
+      } @else {
+        <div
+          class="flex flex-col items-center justify-center py-20 border-2 border-dashed border-white/5 rounded-3xl bg-white/1"
+        >
+          <div class="relative mb-6">
+            <span class="material-symbols-outlined text-7xl text-primary/20">explore</span>
+            <span
+              class="material-symbols-outlined text-4xl text-primary absolute inset-0 flex items-center justify-center animate-pulse"
+              >search</span
+            >
+          </div>
+          <h3 class="text-2xl font-bold text-white uppercase tracking-[0.2em]">
+            Start finding your future bandmates
+          </h3>
+          <p class="text-slate-500 mt-3 text-center max-w-md px-4">
+            Set a distance, add some instruments, bands... and start discovering talented musicians
+            ready to jam.
+          </p>
         </div>
       }
     </section>
 
-    <!-- Random musicians -->
     <section>
       <h2 class="mb-6 text-2xl font-bold">Random musicians</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        @for (user of userSearchService.randomUsers(); track user.id) {
+        @for (user of userSearchService.randomUsers().slice(0, 4); track user.id) {
           <app-user-card [randomUser]="user"></app-user-card>
         }
       </div>

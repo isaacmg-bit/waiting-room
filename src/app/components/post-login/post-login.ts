@@ -1,14 +1,25 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  Validators,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+} from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiServiceBack } from '../../services/apiservice-back';
-import { SupabaseService } from '../../services/supabase-service';
 import { firstValueFrom } from 'rxjs';
-import { UserLocation } from '../user-location/user-location';
-import { City } from '../../models/City';
 import * as L from 'leaflet';
 import { environment } from '../../../environments/environment';
+import { ApiServiceBack } from '../../services/apiservice-back';
+import { SupabaseService } from '../../services/supabase-service';
 import { HeaderService } from '../../services/header-service';
+import { UserLocation } from '../user-location/user-location';
+import { City } from '../../models/City';
+
+interface PostLoginForm {
+  name: FormControl<string>;
+  location: FormControl<City | null>;
+}
 
 @Component({
   selector: 'app-post-login',
@@ -22,15 +33,19 @@ export class PostLogin implements OnInit {
   private readonly api = inject(ApiServiceBack);
   private readonly supabase = inject(SupabaseService);
   private readonly headerService = inject(HeaderService);
-  userName = this.headerService.userName;
 
-  selectedCity: City | null = null;
+  readonly userName = this.headerService.userName;
+  isLoading = false;
+
   private map: L.Map | null = null;
-  loading = false;
+  selectedCity: City | null = null;
 
-  form = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(20)]],
-    location: [null as any, Validators.required],
+  readonly form: FormGroup<PostLoginForm> = this.fb.group({
+    name: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(2), Validators.maxLength(20)],
+    }),
+    location: new FormControl<City | null>(null, { validators: [Validators.required] }),
   });
 
   ngOnInit(): void {
@@ -47,10 +62,22 @@ export class PostLogin implements OnInit {
     }
 
     setTimeout(() => {
-      this.map = L.map('map-preview', { zoom: 12, zoomControl: false });
-      L.tileLayer(`${environment.leafletTileLayer}`).addTo(this.map);
-      this.map.setView([city.lat, city.lng], 12);
+      this.initializeMapPreview(city);
     }, 50);
+  }
+
+  private initializeMapPreview(city: City): void {
+    this.map = L.map('map-preview', {
+      zoom: 12,
+      zoomControl: false,
+      dragging: false,
+      scrollWheelZoom: false,
+    });
+
+    L.tileLayer(environment.leafletTileLayer).addTo(this.map);
+    this.map.setView([city.lat, city.lng], 12);
+
+    L.marker([city.lat, city.lng]).addTo(this.map);
   }
 
   async onSubmit(): Promise<void> {
@@ -59,11 +86,12 @@ export class PostLogin implements OnInit {
       return;
     }
 
-    try {
-      this.loading = true;
-      const { name } = this.form.value;
-      this.headerService.userName.set(name!);
+    const { name } = this.form.getRawValue();
 
+    try {
+      this.isLoading = true;
+
+      this.headerService.userName.set(name);
 
       await firstValueFrom(
         this.api.post('/users/profile-sync', {
@@ -73,17 +101,16 @@ export class PostLogin implements OnInit {
         }),
       );
 
-      const currentId = this.supabase.userId();
-
-      if (currentId) {
-        await this.supabase.loadUserRole(currentId);
+      const currentUserId = this.supabase.userId();
+      if (currentUserId) {
+        await this.supabase.loadUserRole(currentUserId);
       }
 
       this.router.navigate(['/']);
-    } catch (err) {
-      console.error('Error syncing profile:', err);
+    } catch (error) {
+      console.error('Profile sync error:', error);
     } finally {
-      this.loading = false;
+      this.isLoading = false;
     }
   }
 }

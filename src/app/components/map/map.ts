@@ -1,39 +1,90 @@
 import { Component, AfterViewInit, inject, signal, effect } from '@angular/core';
-import { LocationService } from '../../services/location-service';
 import * as L from 'leaflet';
 import { environment } from '../../../environments/environment';
+import { LocationService } from '../../services/location-service';
 import { CalendarService } from '../../services/calendar-service';
 
 @Component({
   selector: 'app-map',
-  imports: [],
   templateUrl: './map.html',
   styleUrl: './map.css',
 })
 export class Map implements AfterViewInit {
   readonly locationService = inject(LocationService);
-  readonly calendarService = inject(CalendarService);
+  private readonly calendarService = inject(CalendarService);
 
-  private map = signal<L.Map | null>(null);
-  private readonly savedMarkersLayer = L.layerGroup();
+  private readonly mapInstance = signal<L.Map | null>(null);
+  private readonly markersLayer = L.layerGroup();
 
-  private readonly iconUser = L.icon({
+  private readonly userIcon = L.icon({
     iconUrl: '/assets/icons/iconuser.png',
     shadowUrl: '/assets/icons/shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
   });
 
-  private getMarkerIcon(type: string): L.DivIcon {
-    const config: Record<string, { color: string; emoji: string }> = {
-      show: { color: '#ef4444', emoji: '🎤' },
-      rehearsalspace: { color: '#3b82f6', emoji: '🎸' },
+  constructor() {
+    effect(() => {
+      const currentMap = this.mapInstance();
+      if (!currentMap) return;
+
+      const filteredEvents = this.locationService.getFilteredEvents();
+      this.renderMarkers(filteredEvents);
+    });
+  }
+
+  ngAfterViewInit(): void {
+    navigator.geolocation.getCurrentPosition((position) => {
+      this.initializeMap(position.coords.latitude, position.coords.longitude);
+    });
+  }
+
+  private initializeMap(lat: number, lng: number): void {
+    if (this.mapInstance()) return;
+
+    const map = L.map('map', { center: [lat, lng], zoom: 13 });
+    this.mapInstance.set(map);
+
+    L.tileLayer(environment.leafletTileLayer).addTo(map);
+    L.marker([lat, lng], { icon: this.userIcon }).addTo(map);
+    this.markersLayer.addTo(map);
+
+    setTimeout(() => map.invalidateSize(), 0);
+    this.locationService.loadLocations();
+  }
+
+  private renderMarkers(events: any[]): void {
+    this.markersLayer.clearLayers();
+
+    events.forEach((event) => {
+      const lat = event.location_point?.lat;
+      const lng = event.location_point?.lng;
+      if (lat == null || lng == null) return;
+
+      const marker = L.marker([lat, lng], {
+        icon: this.createMarkerIcon(event.event_type),
+      });
+
+      marker.bindTooltip(this.createTooltipContent(event), {
+        direction: 'top',
+        offset: [0, -10],
+        opacity: 0.9,
+      });
+
+      marker.addTo(this.markersLayer);
+    });
+  }
+
+  private createMarkerIcon(type: string): L.DivIcon {
+    const config: Record<string, { color: string; label: string }> = {
+      show: { color: '#ef4444', label: 'Gig' },
+      rehearsalspace: { color: '#3b82f6', label: 'Studio' },
     };
 
-    const { color, emoji } = config[type] || { color: '#22c55e', emoji: '📍' };
+    const { color } = config[type] || { color: '#22c55e', label: 'Point' };
 
     return L.divIcon({
-      className: '',
+      className: 'custom-marker',
       html: `
         <div style="
           width: 26px;
@@ -43,65 +94,31 @@ export class Map implements AfterViewInit {
           transform: rotate(-45deg);
           position: relative;
           box-shadow: 0 0 12px ${color};
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        ">
-          <div style="transform: rotate(45deg); font-size: 12px;">${emoji}</div>
-        </div>
+        "></div>
       `,
       iconSize: [26, 26],
       iconAnchor: [13, 26],
     });
   }
 
-  constructor() {
-    effect(() => {
-      const map = this.map();
-      if (!map) return;
-
-      const filteredEvents = this.locationService.getFilteredEvents();
-
-      this.savedMarkersLayer.clearLayers();
-      filteredEvents.forEach((event) => {
-        const lat = event.location_point?.lat;
-        const lng = event.location_point?.lng;
-        if (lat == null || lng == null) return;
-
-        const marker = L.marker([lat, lng], { icon: this.getMarkerIcon(event.event_type) });
-        marker.bindTooltip(
-          `
-          <div style="font-size: 12px">
-            <strong>${event.title}</strong><br/>
-            ${event.event_type ?? ''}<br/>
-            ${event.street ?? ''}<br/>
-            ${event.event_date ?? ''}
-          </div>
-        `,
-          { direction: 'top', offset: [0, -10], opacity: 0.9 },
-        );
-        marker.addTo(this.savedMarkersLayer);
-      });
-    });
+  private createTooltipContent(event: any): string {
+    return `
+    <div style="font-size: 12px">
+      <strong>${event.title}</strong><br/>
+      ${this.formatEventType(event.event_type ?? '')}<br/>
+      ${event.street ?? ''}<br/>
+      ${event.event_date ?? ''}
+    </div>
+  `;
   }
 
-  ngAfterViewInit(): void {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const { latitude: myLat, longitude: myLng } = position.coords;
+  private formatEventType(type: string): string {
+    const typeMap: Record<string, string> = {
+      show: 'Show',
+      rehearsalspace: 'Rehearsal',
+    };
 
-      if (this.map()) return;
-
-      const mapInstance = L.map('map', { center: [myLat, myLng], zoom: 13 });
-      this.map.set(mapInstance);
-
-      L.tileLayer(environment.leafletTileLayer).addTo(mapInstance);
-      L.marker([myLat, myLng], { icon: this.iconUser }).addTo(mapInstance);
-      this.savedMarkersLayer.addTo(mapInstance);
-
-      setTimeout(() => mapInstance.invalidateSize(), 0);
-
-      this.locationService.loadLocations();
-    });
+    return typeMap[type?.toLowerCase()] || type || '';
   }
 
   toggleFilter(category: string): void {
@@ -110,8 +127,7 @@ export class Map implements AfterViewInit {
 
   get filteredPointsCount(): number {
     const activeFilters = this.locationService.activeFilters();
-    const allPoints = this.calendarService.upcomingEvents(); 
-
+    const allPoints = this.calendarService.upcomingEvents();
     return allPoints.filter((point) => activeFilters.includes(point.event_type)).length;
   }
 }

@@ -8,17 +8,17 @@ import { UserTheoryService } from '../../services/theory-service';
   styleUrl: './user-theory.css',
 })
 export class UserTheory implements OnInit {
-  readonly userTheoryService = inject(UserTheoryService);
+  protected readonly userTheoryService = inject(UserTheoryService);
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.userTheoryService.loadUserTheory();
   }
 
-  selectTheory() {
+  selectTheory(): void {
     this.userTheoryService.onTheoryChange();
   }
 
-  updateTheoryLevel(level: string) {
+  updateTheoryLevel(level: string): void {
     this.userTheoryService.onTheoryLevelChange(level);
   }
 }

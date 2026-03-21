@@ -1,4 +1,4 @@
-  <section>
+<section>
   <div class="absolute inset-0 z-0">
     <img
       src="assets/img/login.png"
@@ -106,10 +106,10 @@
         <div class="space-y-3 pt-2">
           <button
             type="submit"
-            [disabled]="loading() || form.invalid"
+            [disabled]="isLoading() || form.invalid"
             class="group cursor-pointer w-full py-3 bg-primary hover:bg-primary/90 text-white font-black rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
           >
-            <span>{{ loading() ? 'Logging in...' : 'Login' }}</span>
+            <span>{{ isLoading() ? 'Logging in...' : 'Login' }}</span>
             <span
               class="material-symbols-outlined transition-transform group-hover:translate-x-1"
               aria-hidden="true"
@@ -124,7 +124,7 @@
           >
             <button
               type="button"
-              [disabled]="loading()"
+              [disabled]="isLoading()"
               class="text-primary cursor-pointer hover:text-primary/80 transition-colors font-medium focus-visible:outline-primary disabled:opacity-50"
               (click)="resetPassword()"
             >
@@ -132,7 +132,7 @@
             </button>
             <button
               type="button"
-              [disabled]="loading()"
+              [disabled]="isLoading()"
               routerLink="/register"
               class="text-slate-500 hover:text-primary transition-colors focus-visible:outline-primary disabled:opacity-50"
             >

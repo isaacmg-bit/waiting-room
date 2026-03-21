@@ -15,7 +15,7 @@
       <span class="material-symbols-outlined text-base text-slate-500" aria-hidden="true">
         {{ cityService.currentView() === 'city' ? 'location_on' : 'add_road' }}
       </span>
-      
+
       @if (cityService.currentView() === 'city') {
         @let selectedCity = cityService.selectedCity();
         <span [class]="selectedCity ? 'text-slate-200' : 'text-slate-500'">
@@ -29,7 +29,7 @@
       }
     </span>
     <span class="material-symbols-outlined text-base text-slate-500" aria-hidden="true"
-    >chevron_right</span
+      >chevron_right</span
     >
   </button>
 </div>
@@ -41,12 +41,14 @@
     aria-labelledby="modal-title"
     (keydown.escape)="closeModal()"
     (click)="closeModal()"
-    class="fixed inset-0 z-9999 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm animate-in fade-in duration-200"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm animate-in fade-in duration-200"
   >
     <section
       tabindex="-1"
       class="relative w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl animate-in zoom-in-95 duration-200 focus:outline-hidden"
       (click)="$event.stopPropagation()"
+      (keydown.enter)="closeModal()"
+      (keydown.space)="closeModal()"
     >
       <header class="flex items-center justify-between border-b border-white/5 px-5 py-4">
         <h2 id="modal-title" class="font-bold text-slate-100">
@@ -55,7 +57,7 @@
         <button
           type="button"
           (click)="closeModal()"
-          class="cursor-pointer text-slate-500 transition-colors hover:text-slate-200"
+          class="cursor-pointer text-slate-500 transition-colors hover:text-slate-200 focus-visible:outline-hidden"
           aria-label="Close modal"
         >
           <span class="material-symbols-outlined" aria-hidden="true">close</span>
@@ -66,7 +68,9 @@
         <div
           class="flex items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2 transition-colors focus-within:border-primary"
         >
-          <span class="material-symbols-outlined text-base text-slate-500">search</span>
+          <span class="material-symbols-outlined text-base text-slate-500" aria-hidden="true"
+            >search</span
+          >
           <input
             id="city-search"
             type="text"
@@ -77,9 +81,12 @@
             "
             [disabled]="cityService.loadingSignal()"
             class="flex-1 border-none bg-transparent text-sm text-slate-200 placeholder-slate-500 focus:ring-0 focus:outline-hidden disabled:opacity-50"
+            aria-label="Search {{ cityService.currentView() === 'city' ? 'city' : 'street' }}"
           />
           @if (cityService.loadingSignal()) {
-            <span class="material-symbols-outlined animate-spin text-base text-slate-500"
+            <span
+              class="material-symbols-outlined animate-spin text-base text-slate-500"
+              aria-hidden="true"
               >sync</span
             >
           }
@@ -95,11 +102,12 @@
           @case ('city') {
             @for (city of cityService.filteredCities(); track city.city + city.province) {
               @let isCurrent = cityService.selectedCity()?.city === city.city;
-              <li role="option">
+              <li role="option" [attr.aria-selected]="isCurrent">
                 <button
                   type="button"
                   (click)="selectCity(city)"
-                  class="group flex w-full items-center justify-between border-b border-white/5 px-5 py-3 text-left hover:bg-primary/10 transition-colors"
+                  class="group flex w-full items-center justify-between border-b border-white/5 px-5 py-3 text-left hover:bg-primary/10 transition-colors focus-visible:bg-primary/20 focus-visible:outline-hidden"
+                  aria-label="Select city {{ city.city }}"
                 >
                   <span class="flex flex-col">
                     <span
@@ -109,7 +117,9 @@
                     <span class="text-xs text-slate-500">{{ city.province }}</span>
                   </span>
                   @if (isCurrent) {
-                    <span class="material-symbols-outlined text-primary text-sm animate-in zoom-in"
+                    <span
+                      class="material-symbols-outlined text-primary text-sm animate-in zoom-in"
+                      aria-hidden="true"
                       >check</span
                     >
                   }
@@ -125,11 +135,12 @@
           @case ('street') {
             @for (street of cityService.filteredStreets(); track street.name + street.lat) {
               @let isCurrent = cityService.selectedStreet()?.name === street.name;
-              <li role="option">
+              <li role="option" [attr.aria-selected]="isCurrent">
                 <button
                   type="button"
                   (click)="selectStreet(street)"
-                  class="group flex w-full items-center justify-between border-b border-white/5 px-5 py-3 text-left hover:bg-primary/10 transition-colors"
+                  class="group flex w-full items-center justify-between border-b border-white/5 px-5 py-3 text-left hover:bg-primary/10 transition-colors focus-visible:bg-primary/20 focus-visible:outline-hidden"
+                  aria-label="Select street {{ street.name }}"
                 >
                   <span class="flex flex-col">
                     <span
@@ -139,7 +150,9 @@
                     <span class="text-xs text-slate-500">{{ street.province }}</span>
                   </span>
                   @if (isCurrent) {
-                    <span class="material-symbols-outlined text-primary text-sm animate-in zoom-in"
+                    <span
+                      class="material-symbols-outlined text-primary text-sm animate-in zoom-in"
+                      aria-hidden="true"
                       >check</span
                     >
                   }

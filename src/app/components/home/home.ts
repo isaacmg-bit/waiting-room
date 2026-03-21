@@ -14,19 +14,43 @@ import { UserGenresService } from '../../services/user-genres-service';
   styleUrl: './home.css',
 })
 export class Home implements OnInit {
-  userService = inject(UserService);
-  chartsService = inject(ChartService);
-  calendarService = inject(CalendarService);
+  readonly userService = inject(UserService);
+  readonly chartsService = inject(ChartService);
+  readonly calendarService = inject(CalendarService);
+
   readonly userSearchService = inject(UserSearchService);
   readonly userInstrumentService = inject(UserInstrumentsService);
   readonly userGenresService = inject(UserGenresService);
 
-  clickCount = 0;
-  showEasterEgg = signal(false);
-  private clickTimer: any;
+  private clickCount = 0;
+  private clickTimer?: ReturnType<typeof setTimeout>;
 
+  readonly showEasterEgg = signal<boolean>(false);
   readonly randomUsersHome = signal<any[]>([]);
   readonly featuredUserHome = signal<any[]>([]);
+
+  ngOnInit(): void {
+    this.calendarService.loadPublicEvents();
+    this.chartsService.fetchTotalUsers();
+    this.loadUsers();
+  }
+
+  private loadUsers(): void {
+    this.userService.getRandomUsers().subscribe((results) => {
+      const allUsers = results.map((user: any) => ({
+        ...user,
+        instruments: user.instruments ? user.instruments.split(', ') : [],
+        genres: user.genres ? user.genres.split(', ') : [],
+        bands: user.bands ? user.bands.split(', ') : [],
+        pics: user.profile_photo_url ? user.profile_photo_url.split(',') : [],
+      }));
+
+      const shuffled = [...allUsers].sort(() => Math.random() - 0.5);
+
+      this.featuredUserHome.set(shuffled.slice(0, 1));
+      this.randomUsersHome.set(shuffled.slice(1, 5));
+    });
+  }
 
   monthToString(monthNum: string): string {
     const months: Record<string, string> = {
@@ -43,31 +67,13 @@ export class Home implements OnInit {
       '11': 'NOV',
       '12': 'DEC',
     };
-
-    return months[monthNum];
-  }
-  ngOnInit() {
-    this.calendarService.loadPublicEvents();
-    this.chartsService.fetchTotalUsers();
-    this.userService.getRandomUsers().subscribe((results) => {
-      const allUsers = results.map((user: any) => ({
-        ...user,
-        instruments: user.instruments ? user.instruments.split(', ') : [],
-        genres: user.genres ? user.genres.split(', ') : [],
-        bands: user.bands ? user.bands.split(', ') : [],
-        pics: user.profile_photo_url ? user.profile_photo_url.split(',') : [],
-      }));
-      const shuffled = allUsers.sort(() => Math.random() - 0.5);
-      this.featuredUserHome.set(shuffled.slice(0,1));
-      this.randomUsersHome.set(shuffled.slice(1, 5));
-      console.log(this.featuredUserHome())
-      console.log(this.randomUsersHome)
-
-    });
+    return months[monthNum] ?? '';
   }
 
-  handleLogoClick() {
-    clearTimeout(this.clickTimer);
+  handleLogoClick(): void {
+    if (this.clickTimer) {
+      clearTimeout(this.clickTimer);
+    }
 
     this.clickCount++;
 

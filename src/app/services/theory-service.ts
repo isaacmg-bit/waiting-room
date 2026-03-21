@@ -18,6 +18,7 @@ export class UserTheoryService {
   readonly currentKnowsTheory = computed<boolean>(
     () => this.pendingKnowsTheory() ?? this.userTheorySignal()?.knows_theory ?? false,
   );
+
   readonly currentTheoryLevel = computed<string | null>(
     () => this.pendingTheoryLevel() ?? this.userTheorySignal()?.theory_level ?? null,
   );
@@ -31,7 +32,7 @@ export class UserTheoryService {
       .get<UserTheory | UserTheory[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (theory: UserTheory | UserTheory[]) => this.setTheoryData(theory),
+        next: (theory) => this.setTheoryData(theory),
         error: (err: unknown) => {
           console.error('Error loading theory:', err);
           this.setTheoryData({ knows_theory: false, theory_level: null } as UserTheory);

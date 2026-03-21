@@ -1,4 +1,4 @@
-import { Injectable, effect, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, effect } from '@angular/core';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { User } from '../models/User';
@@ -45,7 +45,7 @@ export class UserService {
   addUser(user: User): void {
     this.api.post<User>(this.USERS_URL, user).subscribe({
       next: (createdUser: User) => {
-        this.usersSignal.update((users: User[]) => [...users, createdUser]);
+        this.usersSignal.update((users) => [...users, createdUser]);
         this.toast.success('User created successfully');
       },
       error: (err: unknown) => {
@@ -58,9 +58,7 @@ export class UserService {
   editUser(id: string, body: Partial<User>): void {
     this.api.patch<User>(`${this.USERS_URL}/${id}`, body).subscribe({
       next: (updatedUser: User) => {
-        this.usersSignal.update((users: User[]) =>
-          users.map((u: User) => (u.id === id ? updatedUser : u)),
-        );
+        this.usersSignal.update((users) => users.map((u) => (u.id === id ? updatedUser : u)));
         this.toast.success('User updated successfully');
       },
       error: (err: unknown) => {
@@ -71,18 +69,17 @@ export class UserService {
   }
 
   deleteUser(id: string): void {
-    if (confirm('Are you sure you want to delete this user?')) {
-      this.api.delete<void>(`${this.USERS_URL}/${id}`).subscribe({
-        next: () => {
-          this.usersSignal.update((users: User[]) => users.filter((u: User) => u.id !== id));
-          this.toast.success('User deleted successfully');
-        },
-        error: (err: unknown) => {
-          console.error('Error deleting user:', err);
-          this.toast.error('Error deleting user');
-        },
-      });
-    }
+    if (!confirm('Are you sure you want to delete this user?')) return;
+    this.api.delete<void>(`${this.USERS_URL}/${id}`).subscribe({
+      next: () => {
+        this.usersSignal.update((users) => users.filter((u) => u.id !== id));
+        this.toast.success('User deleted successfully');
+      },
+      error: (err: unknown) => {
+        console.error('Error deleting user:', err);
+        this.toast.error('Error deleting user');
+      },
+    });
   }
 
   loadUserForEdit(user: User): void {
@@ -118,7 +115,6 @@ export class UserService {
   }
 
   getRandomUsers(): Observable<User[]> {
-    const url = `${environment.apiSearchRandomMusicians}`;
-    return this.api.get<User[]>(url);
+    return this.api.get<User[]>(environment.apiSearchRandomMusicians);
   }
 }

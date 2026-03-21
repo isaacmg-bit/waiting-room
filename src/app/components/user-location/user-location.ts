@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 })
 export class UserLocation implements OnInit, OnDestroy {
   public readonly cityService = inject(CityService);
-  
+
   private searchSubject = new Subject<string>();
   private sub = new Subscription();
   router = inject(Router);

@@ -2,27 +2,24 @@
   class="relative min-h-screen overflow-hidden bg-black font-display text-slate-100 selection:bg-primary/30"
 >
   <section
-    class="relative h-[40vh] min-h-[300px] w-full overflow-hidden bg-black flex items-center justify-center"
+    class="relative h-[40vh] min-h-75 w-full overflow-hidden bg-black flex items-center justify-center"
+    aria-label="Events header"
   >
     <div class="absolute inset-0 z-0">
-      <img
-        src="assets/img/events.png"
-        class="h-full w-full object-cover opacity-60"
-        alt="Sala de ensayo"
-      />
-
-      <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
+      <img src="assets/img/events.png" class="h-full w-full object-cover opacity-60" alt="" />
+      <div class="absolute inset-0 bg-linear-to-b from-black via-transparent to-black"></div>
     </div>
 
-    <div class="relative z-10 text-center px-4">
-      <h2
+    <header class="relative z-10 text-center px-4">
+      <h1
         class="text-white text-3xl md:text-5xl font-bold uppercase tracking-widest drop-shadow-lg"
       >
         Plan your shows
-      </h2>
+      </h1>
       <div class="mt-2 w-16 h-1 bg-primary mx-auto rounded-full"></div>
-    </div>
+    </header>
   </section>
+
   <div
     class="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-primary/10 blur-[140px] pointer-events-none"
     aria-hidden="true"
@@ -32,71 +29,82 @@
     aria-hidden="true"
   ></div>
 
-  <main class="relative z-10 p-6 lg:p-10">
+  <main class="relative z-10 p-4 sm:p-6 lg:p-10" role="main">
     <div class="max-w-350 mx-auto space-y-8">
-      <header class="flex flex-col gap-4 md:flex-row md:items-end justify-between">
-        <div class="flex items-center gap-3">
-          <button
-            (click)="calendarService.openAddModalFromButton()"
-            class="rounded-xl bg-primary px-8 py-3 font-bold text-white shadow-lg shadow-primary/20 transition-all hover:brightness-110 active:scale-95"
-          >
-            + Create Event
-          </button>
-        </div>
-      </header>
+      <section aria-label="Charts">
+        <app-charts></app-charts>
+      </section>
 
-      <app-charts></app-charts>
+      <section class="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8">
+        <div class="xl:col-span-8 space-y-6 lg:space-y-8">
+          <section aria-label="Calendar">
+            <app-calendar></app-calendar>
+          </section>
 
-      <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
-        <div class="xl:col-span-8">
-          <app-calendar></app-calendar>
-          <app-map></app-map>
+          <section aria-label="Map">
+            <app-map></app-map>
+          </section>
         </div>
 
-        <div class="xl:col-span-4 space-y-8">
-          <div
-            class="rounded-2xl border border-white/10 bg-black/30 backdrop-blur-md overflow-hidden shadow-xl"
+        <aside class="xl:col-span-4 space-y-6 lg:space-y-8" aria-label="Upcoming events">
+          <section
+            class="rounded-2xl border border-white/10 bg-black/30 backdrop-blur-md overflow-hidden shadow-xl transition-all"
           >
-            <div class="p-6 border-b border-white/5 bg-white/2">
+            <header class="p-5 sm:p-6 border-b border-white/5 bg-white/2">
               <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">local_activity</span>
+                <span class="material-symbols-outlined text-primary" aria-hidden="true">
+                  local_activity
+                </span>
                 Upcoming events
               </h2>
-            </div>
-            <div class="divide-y divide-white/5">
+            </header>
+
+            <ul class="divide-y divide-white/5">
               @for (event of calendarService.upcomingEvents(); track event.id) {
-                <div
-                  class="flex items-center gap-4 p-5 hover:bg-white/5 transition-all group cursor-pointer"
-                >
-                  <div
-                    class="flex flex-col items-center justify-center h-14 w-14 rounded-2xl bg-primary/10 text-primary border border-primary/20 group-hover:bg-primary group-hover:text-white transition-all shadow-inner"
+                <li>
+                  <button
+                    type="button"
+                    class="w-full flex items-center gap-4 p-4 sm:p-5 hover:bg-white/5 transition-all group text-left focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    tabindex="0"
                   >
-                    <span class="text-base font-black">{{ event.event_date.slice(8, 10) }}</span>
-                    <span class="text-[9px] font-black uppercase tracking-tighter">{{
-                      monthToString(event.event_date.slice(5, 7))
-                    }}</span>
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <h4
-                      class="text-sm font-bold text-white truncate group-hover:text-primary transition-colors"
+                    <div
+                      class="flex flex-col items-center justify-center h-14 w-14 rounded-2xl bg-primary/10 text-primary border border-primary/20 group-hover:bg-primary group-hover:text-white transition-all shadow-inner"
                     >
-                      {{ event.title }}
-                    </h4>
-                    <p class="text-xs text-slate-500 flex items-center gap-1">
-                      <span class="material-symbols-outlined text-xs">location_on</span>
-                      {{ event.street }}
-                    </p>
-                  </div>
-                  <span
-                    class="material-symbols-outlined text-slate-600 group-hover:text-white transition-colors"
-                    >chevron_right</span
-                  >
-                </div>
+                      <span class="text-base font-black">
+                        {{ event.event_date.slice(8, 10) }}
+                      </span>
+                      <span class="text-[9px] font-black uppercase tracking-tighter">
+                        {{ monthToString(event.event_date.slice(5, 7)) }}
+                      </span>
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+                      <h3
+                        class="text-sm font-bold text-white truncate group-hover:text-primary transition-colors"
+                      >
+                        {{ event.title }}
+                      </h3>
+                      <p class="text-xs text-slate-500 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-xs" aria-hidden="true">
+                          location_on
+                        </span>
+                        {{ event.street }}
+                      </p>
+                    </div>
+
+                    <span
+                      class="material-symbols-outlined text-slate-600 group-hover:text-white transition-colors"
+                      aria-hidden="true"
+                    >
+                      chevron_right
+                    </span>
+                  </button>
+                </li>
               }
-            </div>
-          </div>
-        </div>
-      </div>
+            </ul>
+          </section>
+        </aside>
+      </section>
     </div>
   </main>
 </div>

@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, effect } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { SupabaseService } from './supabase-service';
 import { UserService } from './user-service';
 import { UserProfilePicService } from './user-profilepic-service';

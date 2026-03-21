@@ -23,11 +23,12 @@ import { UserBand } from '../../models/UserBand';
 export class PublicProfile {
   private readonly route = inject(ActivatedRoute);
   private readonly userService = inject(UserService);
-  readonly uploadService = inject(UploadService);
   private readonly userInstrumentsService = inject(UserInstrumentsService);
   private readonly userGenresService = inject(UserGenresService);
   private readonly userTheoryService = inject(UserTheoryService);
   private readonly userBandsService = inject(UserBandsService);
+
+  readonly uploadService = inject(UploadService);
 
   readonly user = signal<User | null>(null);
   readonly galleryPhotos = signal<GalleryPhoto[]>([]);
@@ -35,10 +36,10 @@ export class PublicProfile {
   readonly userGenres = signal<UserGenre[]>([]);
   readonly userTheory = signal<UserTheory | null>(null);
   readonly userBands = signal<UserBand[]>([]);
-  readonly loading = signal(true);
+  readonly isLoading = signal<boolean>(true);
 
   readonly filteredSocialLinks = computed(() => {
-    return this.user()?.social_links?.filter((l) => l.platform && l.url) ?? [];
+    return this.user()?.social_links?.filter((link) => link.platform && link.url) ?? [];
   });
 
   constructor() {
@@ -60,7 +61,7 @@ export class PublicProfile {
             }),
           );
         }),
-        finalize(() => this.loading.set(false)),
+        finalize(() => this.isLoading.set(false)),
         takeUntilDestroyed(),
       )
       .subscribe({
@@ -71,7 +72,7 @@ export class PublicProfile {
           this.userBands.set(bands);
           this.userTheory.set(Array.isArray(theory) ? theory[0] : theory);
         },
-        error: (err) => console.error('Error loading profile:', err),
+        error: (error: Error) => console.error('Error loading profile:', error),
       });
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, signal, inject, computed } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { ApiServiceBack } from './apiservice-back';
 import { UserGenre } from '../models/UserGenre';
 import { Genre } from '../models/Genre';
@@ -22,10 +22,9 @@ export class UserGenresService {
   readonly pendingDeletes = signal<string[]>([]);
 
   readonly filteredGenres = computed<Genre[]>(() => {
-    const q: string = this.searchQuery().toLowerCase();
-    const allGenres: Genre[] = this.genresService.genresSignal();
-    if (!q) return allGenres;
-    return allGenres.filter((i: Genre) => i.genre.toLowerCase().includes(q));
+    const query = this.searchQuery().toLowerCase();
+    const all = this.genresService.genresSignal();
+    return query ? all.filter((g) => g.genre.toLowerCase().includes(query)) : all;
   });
 
   readonly allGenres = computed<UserGenre[]>(() => [
@@ -42,7 +41,7 @@ export class UserGenresService {
       .get<UserGenre[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (genres: UserGenre[]) => {
+        next: (genres) => {
           this.userGenreSignal.set(genres);
           this.discardPendingGenres();
         },
@@ -51,37 +50,35 @@ export class UserGenresService {
   }
 
   addPendingGenre(genre: Genre): void {
-    const isDuplicate = [...this.userGenreSignal(), ...this.pendingGenres()].some(
+    const exists = [...this.userGenreSignal(), ...this.pendingGenres()].some(
       (ug) => ug.genre_id === genre.id,
     );
-
-    if (isDuplicate) {
+    if (exists) {
       this.toast.warning('Genre already added');
       return;
     }
 
-    const tempId = `temp-${Date.now()}`;
     const newPending: UserGenre = {
-      id: tempId,
+      id: `temp-${Date.now()}`,
       genre_id: genre.id,
       genres: genre,
     };
 
-    this.pendingGenres.update((list: UserGenre[]) => [...list, newPending]);
+    this.pendingGenres.update((list) => [...list, newPending]);
   }
 
   deletePendingGenre(id: string): void {
-    this.pendingGenres.update((list: UserGenre[]) => list.filter((g: UserGenre) => g.id !== id));
+    this.pendingGenres.update((list) => list.filter((g) => g.id !== id));
   }
 
   deleteUserGenre(id: string): void {
-    if (this.pendingGenres().some((g: UserGenre) => g.id === id)) {
+    if (this.pendingGenres().some((g) => g.id === id)) {
       this.deletePendingGenre(id);
       return;
     }
 
-    this.pendingDeletes.update((list: string[]) => [...list, id]);
-    this.userGenreSignal.update((list: UserGenre[]) => list.filter((g: UserGenre) => g.id !== id));
+    this.pendingDeletes.update((list) => [...list, id]);
+    this.userGenreSignal.update((list) => list.filter((g) => g.id !== id));
   }
 
   discardPendingGenres(): void {
@@ -97,7 +94,7 @@ export class UserGenresService {
         const created = await firstValueFrom(
           this.api.post<UserGenre>(this.BASE_URL, { genre_id: g.genre_id }),
         );
-        this.userGenreSignal.update((list: UserGenre[]) => [...list, created]);
+        this.userGenreSignal.update((list) => [...list, created]);
       } catch (err: unknown) {
         console.error('Error saving genre:', err);
       }
@@ -136,7 +133,7 @@ export class UserGenresService {
   }
 
   getGenres(): Observable<UserGenre[]> {
-    return this.api.get<UserGenre[]>('/user-genres/me');
+    return this.api.get<UserGenre[]>(this.ME_URL);
   }
 
   getGenresByUserId(userId: string): Observable<UserGenre[]> {

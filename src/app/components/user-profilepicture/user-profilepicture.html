@@ -2,23 +2,25 @@
   <div class="relative group">
     <button
       type="button"
-      class="size-48 rounded-full overflow-hidden border-4 border-primary/20 p-1 cursor-pointer focus:outline-none"
+      class="size-48 rounded-full overflow-hidden border-4 border-primary/20 p-1 cursor-pointer focus:outline-visible focus:ring-2 focus:ring-primary"
       (click)="profileFileInput.click()"
+      aria-label="Change profile photo"
     >
       <img
         #img
-        class="w-full h-full object-cover rounded-full opacity-80 group-hover:opacity-100 transition-opacity"
+        class="w-full h-full object-cover rounded-full opacity-80 group-hover:opacity-100 transition-opacity duration-300"
         [src]="profilePicService.profilePhotoUrl() || 'assets/img/Portrait_Placeholder.png'"
         (error)="img.src = 'assets/img/Portrait_Placeholder.png'"
         alt="Profile photo"
       />
     </button>
 
-    @if (hasRealPhoto) {
+    @if (hasRealPhoto()) {
       <button
         type="button"
         (click)="removeProfilePhoto()"
-        class="absolute cursor-pointer top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-600 z-10 flex items-center justify-center"
+        class="absolute top-1 right-1 z-10 flex items-center justify-center rounded-full bg-black/50 p-1 text-white hover:bg-red-600 focus:outline-visible focus:ring-2 focus:ring-red-400"
+        aria-label="Remove profile photo"
       >
         <ng-icon name="heroTrash" size="16" />
       </button>
@@ -30,6 +32,8 @@
       hidden
       accept="image/*"
       (change)="onProfileSelected($event)"
+      aria-hidden="true"
+      tabindex="-1"
     />
   </div>
 </div>

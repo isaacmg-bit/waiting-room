@@ -12,31 +12,33 @@ import { SupabaseService } from '../../services/supabase-service';
   styleUrl: './users.css',
 })
 export class Users {
-  readonly userService = inject(UserService);
-  readonly supabase = inject(SupabaseService);
+  protected readonly userService = inject(UserService);
+  protected readonly supabase = inject(SupabaseService);
   private readonly fb = inject(FormBuilder);
+
   readonly userId = signal<string | null>(null);
-  userRole = this.supabase.userRole();
+  readonly userRole = this.supabase.userRole;
+
+  readonly userForm = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(2)]],
+    email: ['', [Validators.required, Validators.email]],
+    location: ['', [Validators.required, Validators.minLength(2)]],
+    role: ['user'],
+  });
 
   constructor() {
     effect(() => {
       this.supabase.getSession().then(({ data: { session } }) => {
         if (session?.user.id) {
-          this.userId.set(session.user.id);
-          this.supabase.loadUserRole(this.userId()!);
+          const id = session.user.id;
+          this.userId.set(id);
+          this.supabase.loadUserRole(id);
         } else {
           this.userId.set(null);
         }
       });
     });
   }
-
-  userForm = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(2)]],
-    email: ['', [Validators.required, Validators.email]],
-    location: ['', [Validators.required, Validators.minLength(2)]],
-    role: ['user'],
-  });
 
   loadUserForEdit(user: User): void {
     this.userService.loadUserForEdit(user);
@@ -54,7 +56,10 @@ export class Users {
   }
 
   onSubmit(): void {
-    if (this.userForm.invalid) return;
+    if (this.userForm.invalid) {
+      this.userForm.markAllAsTouched();
+      return;
+    }
     const userData = this.userForm.getRawValue() as User;
     this.userService.submitUser(userData);
     this.resetForm();
@@ -64,22 +69,22 @@ export class Users {
     this.userService.deleteUser(id);
   }
 
-  private resetForm(): void {
-    this.userForm.reset();
-  }
-
   getFieldError(fieldName: string): string {
     const control = this.userForm.get(fieldName);
-    if (!control) return '';
+    if (!control || !control.touched) return '';
 
     if (control.hasError('required')) return `${this.capitalize(fieldName)} is required`;
     if (control.hasError('minlength')) {
-      const minLength = control.getError('minlength')?.requiredLength;
+      const minLength = control.errors?.['minlength']?.requiredLength;
       return `${this.capitalize(fieldName)} must be at least ${minLength} characters`;
     }
     if (control.hasError('email')) return `Invalid ${this.capitalize(fieldName)} format`;
 
     return '';
+  }
+
+  private resetForm(): void {
+    this.userForm.reset({ role: 'user' });
   }
 
   private capitalize(str: string): string {

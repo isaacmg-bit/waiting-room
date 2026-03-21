@@ -1,7 +1,17 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+  FormControl,
+  FormGroup,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupabaseService } from '../../services/supabase-service';
+
+interface ResetPasswordForm {
+  password: FormControl<string>;
+}
 
 @Component({
   selector: 'app-reset-pass',
@@ -9,58 +19,61 @@ import { SupabaseService } from '../../services/supabase-service';
   templateUrl: './reset-pass.html',
 })
 export class ResetPass implements OnInit {
-  private readonly supabase = inject(SupabaseService);
+  private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly fb = inject(FormBuilder);
+  private readonly supabase = inject(SupabaseService);
 
-  passwordForm = this.fb.group({
-    password: ['', [Validators.required, Validators.minLength(8)]],
+  readonly isLoading = signal<boolean>(false);
+  readonly errorMessage = signal<string>('');
+  readonly successMessage = signal<string>('');
+
+  readonly passwordForm: FormGroup<ResetPasswordForm> = this.fb.group({
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(8)],
+    }),
   });
-
-  isLoading = false;
-  errorMessage = '';
-  successMessage = '';
 
   ngOnInit(): void {
     const fragment = this.route.snapshot.fragment;
-    this.supabase.setSessionFromFragment(fragment);
+    if (fragment) {
+      this.supabase.setSessionFromFragment(fragment);
+    }
   }
 
   async updatePassword(): Promise<void> {
     if (this.passwordForm.invalid) {
+      this.passwordForm.markAllAsTouched();
       return;
     }
 
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+    this.successMessage.set('');
 
-    const password = this.passwordForm.get('password')?.value;
+    const { password } = this.passwordForm.getRawValue();
 
-    if (!password) {
-      this.errorMessage = 'Password is required';
-      this.isLoading = false;
-      return;
+    try {
+      const { error } = await this.supabase.updatePassword(password);
+
+      if (error) {
+        throw error;
+      }
+
+      this.successMessage.set('Password updated successfully');
+
+      setTimeout(() => {
+        this.router.navigate(['/login'], { replaceUrl: true });
+      }, 1500);
+    } catch (error: any) {
+      this.errorMessage.set(error.message || 'Error updating password');
+    } finally {
+      this.isLoading.set(false);
     }
-
-    const { error } = await this.supabase.updatePassword(password);
-
-    if (error) {
-      this.errorMessage = `Error updating password: ${error.message}`;
-      this.isLoading = false;
-      return;
-    }
-
-    this.successMessage = 'Password updated successfully';
-    this.isLoading = false;
-
-    setTimeout(() => {
-      this.router.navigate(['/login'], { replaceUrl: true });
-    }, 1500);
   }
 
   get passwordControl() {
-    return this.passwordForm.get('password');
+    return this.passwordForm.controls.password;
   }
 }

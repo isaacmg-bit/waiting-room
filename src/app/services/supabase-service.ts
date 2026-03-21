@@ -26,11 +26,9 @@ export class SupabaseService {
     } = await this.supabase.auth.getSession();
     await this.handleAuthChange(session);
 
-    this.isReady.set(true); // <--- Marcamos como listo al terminar el primer check
+    this.isReady.set(true);
 
-    this.supabase.auth.onAuthStateChange(async (event, session) => {
-      // ... resto de tu código
-    });
+    this.supabase.auth.onAuthStateChange(async (event, session) => {});
   }
   private async handleAuthChange(session: Session | null) {
     if (session?.user) {
@@ -51,8 +49,12 @@ export class SupabaseService {
     return this.supabase.auth.getSession();
   }
 
-  signUp(email: string, password: string) {
-    return this.supabase.auth.signUp({ email, password });
+  async signUp(email: string, password: string) {
+    return this.supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: 'http://localhost:4200/post-login' },
+    });
   }
 
   signIn(email: string, password: string) {

@@ -1,8 +1,8 @@
 import { Component, inject, viewChild, ElementRef } from '@angular/core';
-import { UploadService } from '../../services/upload-service';
-import { GalleryPhoto } from '../../models/GalleryPhoto';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
+import { UploadService } from '../../services/upload-service';
+import { GalleryPhoto } from '../../models/GalleryPhoto';
 
 @Component({
   selector: 'app-user-gallery',
@@ -14,11 +14,14 @@ import { heroTrash, heroArrowDownTray } from '@ng-icons/heroicons/outline';
 export class UserGallery {
   readonly uploadService = inject(UploadService);
 
-  galleryFileInput = viewChild.required<ElementRef<HTMLInputElement>>('galleryFileInput');
+  readonly galleryFileInput = viewChild.required<ElementRef<HTMLInputElement>>('galleryFileInput');
 
   async onGallerySelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
-    await this.uploadService.addPendingPhotos(input.files || new FileList());
+    if (input.files) {
+      await this.uploadService.addPendingPhotos(input.files);
+      input.value = '';
+    }
   }
 
   openPhoto(url: string): void {
@@ -30,7 +33,7 @@ export class UserGallery {
   }
 
   async removePhoto(photo: GalleryPhoto): Promise<void> {
-    this.uploadService.deletePhoto(photo);
+    await this.uploadService.deletePhoto(photo);
   }
 
   triggerFileInput(): void {

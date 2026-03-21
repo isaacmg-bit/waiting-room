@@ -1,13 +1,15 @@
-    <div class="absolute inset-0 z-0">
-      <img
-        src="assets/img/publicprofile.jpg"
-        class="h-full w-full object-cover opacity-60"
-        alt="Sala de ensayo"
-      />
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/50"></div>
-    </div>
+<section class="h-26 sm:h-24 lg:h-22 ">
+<div class="absolute inset-0 z-0 ">
+  <img
+    src="assets/img/publicprofile.jpg"
+    class="h-full w-full object-cover opacity-60"
+    alt="Rehearsal room background"
+  />
+  <div class="absolute inset-0 bg-linear-to-t from-black via-transparent to-black/50 "></div>
+</div>
+</section>
 
-<main class="min-h-screen bg-black font-display text-slate-100 selection:bg-primary/30">
+<main class="min-h-screen bg-black font-display text-slate-100 selection:bg-primary/30 ">
   <div class="mx-auto max-w-5xl px-4 py-12 md:px-8">
     <div class="space-y-8">
       <header
@@ -31,7 +33,9 @@
         </div>
 
         <div class="flex flex-col items-center gap-2">
-          <h1 class="text-2xl font-black tracking-tight md:text-4xl truncate max-w-175">{{ user()?.name }}</h1>
+          <h1 class="text-2xl font-black tracking-tight md:text-4xl truncate max-w-175">
+            {{ user()?.name }}
+          </h1>
           <div class="flex items-center gap-2 text-primary">
             <span class="material-symbols-outlined text-lg" aria-hidden="true">location_on</span>
             <p class="text-lg font-medium">{{ user()?.location }}</p>
@@ -75,6 +79,7 @@
               </button>
             }
           </div>
+
           @if (uploadService.selectedPhoto()) {
             <div
               role="dialog"
@@ -96,7 +101,6 @@
                   class="w-full rounded-lg shadow-2xl animate-in zoom-in-95 duration-300"
                   alt="Full size view"
                 />
-
                 <button
                   type="button"
                   (click)="uploadService.closePhoto()"
@@ -131,7 +135,7 @@
         <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
           <div class="space-y-6">
             <div>
-              <p class="mb-3 block text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+              <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
                 Music Theory
               </p>
               <span
@@ -148,7 +152,7 @@
             </div>
 
             <div>
-              <p class="mb-3 block text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+              <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
                 Instruments
               </p>
               <div class="flex flex-wrap gap-2">
@@ -165,7 +169,7 @@
 
           <div class="space-y-6">
             <div>
-              <p class="mb-3 block text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+              <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
                 Genres
               </p>
               <div class="flex flex-wrap gap-2">
@@ -180,7 +184,7 @@
             </div>
 
             <div>
-              <p class="mb-3 block text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+              <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
                 Influences
               </p>
               <div class="flex flex-wrap gap-2">
@@ -238,9 +242,9 @@
                 <div
                   class="size-14 rounded-2xl flex items-center justify-center text-slate-200 transition-all duration-300 shadow-lg bg-slate-800 group-hover:bg-[#1DB954] group-focus-visible:bg-[#1DB954]"
                 >
-                  <span class="material-symbols-outlined text-2xl" aria-hidden="true">
-                    music_note
-                  </span>
+                  <span class="material-symbols-outlined text-2xl" aria-hidden="true"
+                    >music_note</span
+                  >
                 </div>
               }
 
@@ -248,9 +252,9 @@
                 <div
                   class="size-14 rounded-2xl flex items-center justify-center text-slate-200 transition-all duration-300 shadow-lg bg-slate-800 group-hover:bg-[#E1306C] group-focus-visible:bg-[#E1306C]"
                 >
-                  <span class="material-symbols-outlined text-2xl" aria-hidden="true">
-                    photo_camera
-                  </span>
+                  <span class="material-symbols-outlined text-2xl" aria-hidden="true"
+                    >photo_camera</span
+                  >
                 </div>
               }
 
@@ -258,7 +262,7 @@
                 <div
                   class="size-14 rounded-2xl flex items-center justify-center text-slate-200 transition-all duration-300 shadow-lg bg-slate-800 group-hover:bg-[#FF5500] group-focus-visible:bg-[#FF5500]"
                 >
-                  <span class="material-symbols-outlined text-2xl" aria-hidden="true"> cloud </span>
+                  <span class="material-symbols-outlined text-2xl" aria-hidden="true">cloud</span>
                 </div>
               }
 
@@ -266,9 +270,9 @@
                 <div
                   class="size-14 rounded-2xl flex items-center justify-center text-slate-200 transition-all duration-300 shadow-lg bg-slate-800 group-hover:bg-[#FF0000] group-focus-visible:bg-[#FF0000]"
                 >
-                  <span class="material-symbols-outlined text-2xl" aria-hidden="true">
-                    play_circle
-                  </span>
+                  <span class="material-symbols-outlined text-2xl" aria-hidden="true"
+                    >play_circle</span
+                  >
                 </div>
               }
 

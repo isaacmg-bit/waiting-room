@@ -1,10 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators, FormControl } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 import { SupabaseService } from '../../services/supabase-service';
 import { UserService } from '../../services/user-service';
-import { ToastrService } from 'ngx-toastr';
-import { firstValueFrom } from 'rxjs';
+
+interface LoginForm {
+  email: FormControl<string>;
+  password: FormControl<string>;
+}
 
 @Component({
   selector: 'app-login',
@@ -18,11 +23,14 @@ export class LoginComponent {
   private readonly userService = inject(UserService);
   private readonly toast = inject(ToastrService);
 
-  readonly loading = signal(false);
+  readonly isLoading = signal<boolean>(false);
 
-  form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]],
+  readonly form = this.fb.group<LoginForm>({
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
+    password: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
 
   async onSubmit(): Promise<void> {
@@ -32,11 +40,10 @@ export class LoginComponent {
     }
 
     const { email, password } = this.form.getRawValue();
-
-    this.loading.set(true);
+    this.isLoading.set(true);
 
     try {
-      const { error } = await this.supabase.signIn(email!, password!);
+      const { error } = await this.supabase.signIn(email, password);
       if (error) throw error;
 
       const { data } = await this.supabase.getSession();
@@ -45,37 +52,36 @@ export class LoginComponent {
       }
 
       const user = await firstValueFrom(this.userService.getMe());
+
       this.toast.success('Login successful');
       this.router.navigate([user.name ? '/' : '/post-login']);
-    } catch (err) {
-      console.error('Login error:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Login failed';
-      this.toast.error(errorMessage);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Login failed';
+      this.toast.error(message);
     } finally {
-      this.loading.set(false);
+      this.isLoading.set(false);
     }
   }
 
   async resetPassword(): Promise<void> {
-    const email = this.form.get('email')?.value;
+    const email = this.form.controls.email.value;
 
-    if (!email) {
-      this.toast.warning('Please enter your email address');
+    if (!email || this.form.controls.email.invalid) {
+      this.toast.warning('Please enter a valid email address');
       return;
     }
 
-    this.loading.set(true);
+    this.isLoading.set(true);
 
     try {
       const { error } = await this.supabase.resetPassword(email);
       if (error) throw error;
       this.toast.success('Check your email for the reset link');
-    } catch (err) {
-      console.error('Password reset error:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Error sending reset email';
-      this.toast.error(errorMessage);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error sending reset email';
+      this.toast.error(message);
     } finally {
-      this.loading.set(false);
+      this.isLoading.set(false);
     }
   }
 }

@@ -9,9 +9,9 @@ import { HeaderService } from '../../services/header-service';
   styleUrl: './header.css',
 })
 export class Header {
-  readonly headerService = inject(HeaderService);
+  private readonly headerService = inject(HeaderService);
 
-  isUserMenuOpen = signal(false);
+  readonly isUserMenuOpen = signal<boolean>(false);
 
   readonly userId = this.headerService.userId;
   readonly userName = this.headerService.userName;
@@ -19,6 +19,6 @@ export class Header {
   readonly userProfilePic = this.headerService.userProfilePic;
 
   async logout(): Promise<void> {
-    this.headerService.logout();
+    await this.headerService.logout();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, inject, signal, effect, OnDestroy } from '@angular/core';
 import { UserBandsService } from '../../services/user-bands-service';
 import { Band } from '../../models/Band';
 
@@ -7,20 +7,22 @@ import { Band } from '../../models/Band';
   templateUrl: './user-bands.html',
   styleUrls: ['./user-bands.css'],
 })
-export class UserBands {
+export class UserBands implements OnDestroy {
   readonly userBandsService = inject(UserBandsService);
 
-  readonly searchInput = signal('');
-  private searchTimeout: any;
+  readonly searchInput = signal<string>('');
+  private searchTimeout?: ReturnType<typeof setTimeout>;
 
   constructor() {
     effect(() => {
-      const query = this.searchInput();
+      const query = this.searchInput().trim();
 
-      if (this.searchTimeout) clearTimeout(this.searchTimeout);
+      if (this.searchTimeout) {
+        clearTimeout(this.searchTimeout);
+      }
 
       this.searchTimeout = setTimeout(() => {
-        if (query.trim()) {
+        if (query) {
           this.userBandsService.onSearch(query);
         } else {
           this.userBandsService.loadUserBands();
@@ -48,5 +50,11 @@ export class UserBands {
 
   closeModal(): void {
     this.userBandsService.closeModal();
+  }
+
+  ngOnDestroy(): void {
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
   }
 }

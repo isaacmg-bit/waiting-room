@@ -1,8 +1,7 @@
-import { Component, Input, signal, inject, OnInit } from '@angular/core';
+import { Component, Input, inject, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user-service';
-import { ActivatedRoute } from '@angular/router';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-user-card',
@@ -11,20 +10,18 @@ import { RouterLink } from '@angular/router';
   styleUrl: './user-card.css',
 })
 export class UserCard implements OnInit {
-  userService = inject(UserService);
-  private readonly route = inject(ActivatedRoute);
+  private readonly userService = inject(UserService);
 
   @Input() user: any;
   @Input() randomUser: any;
 
-  userSignal = signal<User | null>(null);
+  readonly userSignal = signal<User | null>(null);
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.user?.id) {
       this.userService.getUserById(this.user.id).subscribe({
-        next: (user) => {
-          this.userSignal.set(user);
-        },
+        next: (userData) => this.userSignal.set(userData),
+        error: (err) => console.error('Card fetch failed:', err),
       });
     }
   }

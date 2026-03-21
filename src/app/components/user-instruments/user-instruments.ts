@@ -10,9 +10,9 @@ import { UserTheory } from '../user-theory/user-theory';
   styleUrl: './user-instruments.css',
 })
 export class UserInstruments implements OnInit {
-  readonly userInstrumentService = inject(UserInstrumentsService);
+  protected readonly userInstrumentService = inject(UserInstrumentsService);
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.userInstrumentService.loadUserInstruments();
   }
 

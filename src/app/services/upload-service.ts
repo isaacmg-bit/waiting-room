@@ -3,7 +3,7 @@ import { SupabaseService } from './supabase-service';
 import { ApiServiceBack } from './apiservice-back';
 import { GalleryPhoto } from '../models/GalleryPhoto';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { firstValueFrom, finalize, Observable } from 'rxjs';
+import { firstValueFrom, Observable, finalize } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -33,7 +33,7 @@ export class UploadService {
       .get<GalleryPhoto[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (photos: GalleryPhoto[]) => this.galleryPhotosSignal.set(photos),
+        next: (photos) => this.galleryPhotosSignal.set(photos),
         error: (err: unknown) => console.error('Error loading gallery:', err),
       });
   }
@@ -47,11 +47,9 @@ export class UploadService {
       await Promise.all(
         Array.from(files).map(async (file, i) => {
           const fileName = `${session.user.id}/${Date.now()}-${i}.jpg`;
-
           const { data, error } = await this.supabase.storage
             .from('gallery')
             .upload(fileName, file, { cacheControl: '0', upsert: true });
-
           if (error) throw error;
 
           const { data: publicUrl } = this.supabase.storage.from('gallery').getPublicUrl(data.path);
@@ -85,6 +83,7 @@ export class UploadService {
 
   async discardPendingPhotos(): Promise<void> {
     this.loadingSignal.set(true);
+
     await Promise.all(
       this.pendingPhotos().map((photo) =>
         this.deleteFromStorage(photo.url.split('/gallery/')[1]).catch(() => null),
@@ -143,7 +142,7 @@ export class UploadService {
     return this.allPhotos().length < 4;
   }
 
-  getGallery() {
+  getGallery(): Observable<GalleryPhoto[]> {
     return this.api.get<GalleryPhoto[]>(this.ME_URL);
   }
 

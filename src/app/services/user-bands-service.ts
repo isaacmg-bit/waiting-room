@@ -1,9 +1,9 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { environment } from '../../environments/environment';
 import { ApiServiceBack } from './apiservice-back';
 import { MusicBrainzService } from './bands-service';
 import { UserBand } from '../models/UserBand';
 import { Band } from '../models/Band';
+import { environment } from '../../environments/environment';
 import { finalize, firstValueFrom, Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 
@@ -21,9 +21,7 @@ export class UserBandsService {
   readonly pendingBands = signal<UserBand[]>([]);
   readonly pendingDeletes = signal<string[]>([]);
 
-  readonly filteredBands = computed<Band[]>(() => {
-    return this.bandsService.bandsSignal();
-  });
+  readonly filteredBands = computed<Band[]>(() => this.bandsService.bandsSignal());
 
   readonly allBands = computed<UserBand[]>(() => [
     ...this.userBandsSignal(),
@@ -39,7 +37,7 @@ export class UserBandsService {
       .get<UserBand[]>(this.ME_URL)
       .pipe(finalize(() => this.loadingSignal.set(false)))
       .subscribe({
-        next: (bands: UserBand[]) => {
+        next: (bands) => {
           this.userBandsSignal.set(bands);
           this.discardPendingBands();
         },
@@ -48,35 +46,30 @@ export class UserBandsService {
   }
 
   addPendingBand(band: Band): void {
-    const isDuplicate = [...this.userBandsSignal(), ...this.pendingBands()].some(
+    const exists = [...this.userBandsSignal(), ...this.pendingBands()].some(
       (ub) => ub.id === band.id,
     );
-
-    if (isDuplicate) {
+    if (exists) {
       this.toast.warning('You are already in this band');
       return;
     }
 
-    const newPending: UserBand = {
-      id: band.id,
-      name: band.name,
-    };
-
-    this.pendingBands.update((list: UserBand[]) => [...list, newPending]);
+    const newPending: UserBand = { id: band.id, name: band.name };
+    this.pendingBands.update((list) => [...list, newPending]);
   }
 
   deletePendingBand(id: string): void {
-    this.pendingBands.update((list: UserBand[]) => list.filter((b: UserBand) => b.id !== id));
+    this.pendingBands.update((list) => list.filter((b) => b.id !== id));
   }
 
   deleteUserBand(id: string): void {
-    if (this.pendingBands().some((b: UserBand) => b.id === id)) {
+    if (this.pendingBands().some((b) => b.id === id)) {
       this.deletePendingBand(id);
       return;
     }
 
-    this.pendingDeletes.update((list: string[]) => [...list, id]);
-    this.userBandsSignal.update((list: UserBand[]) => list.filter((b: UserBand) => b.id !== id));
+    this.pendingDeletes.update((list) => [...list, id]);
+    this.userBandsSignal.update((list) => list.filter((b) => b.id !== id));
   }
 
   discardPendingBands(): void {
@@ -90,12 +83,9 @@ export class UserBandsService {
     for (const band of this.pendingBands()) {
       try {
         const created = await firstValueFrom(
-          this.api.post<UserBand>(this.BASE_URL, {
-            band_id: band.id,
-            name: band.name,
-          }),
+          this.api.post<UserBand>(this.BASE_URL, { band_id: band.id, name: band.name }),
         );
-        this.userBandsSignal.update((list: UserBand[]) => [...list, created]);
+        this.userBandsSignal.update((list) => [...list, created]);
       } catch (err: unknown) {
         console.error('Error saving band:', err);
       }

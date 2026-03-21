@@ -7,8 +7,7 @@ import {
   effect,
   signal,
 } from '@angular/core';
-import { Chart, registerables } from 'chart.js';
-
+import { Chart, registerables, ChartConfiguration, ChartOptions } from 'chart.js';
 import { ChartService } from '../../services/chart-service';
 
 Chart.register(...registerables);
@@ -21,14 +20,14 @@ Chart.register(...registerables);
 export class Charts implements AfterViewInit {
   readonly chartsService = inject(ChartService);
 
-  private readonly chartsReady = signal(false);
+  private readonly isChartsReady = signal<boolean>(false);
 
-  readonly barChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('barChart');
-  readonly lineChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('lineChart');
-  readonly gigsMiniCanvas = viewChild<ElementRef<HTMLCanvasElement>>('gigsMiniChart');
-  readonly revMiniCanvas = viewChild<ElementRef<HTMLCanvasElement>>('revMiniChart');
+  private readonly barChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('barChart');
+  private readonly lineChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('lineChart');
+  private readonly gigsMiniCanvas = viewChild<ElementRef<HTMLCanvasElement>>('gigsMiniChart');
+  private readonly revMiniCanvas = viewChild<ElementRef<HTMLCanvasElement>>('revMiniChart');
 
-  private readonly months = [
+  private readonly months: string[] = [
     'Jan',
     'Feb',
     'Mar',
@@ -44,8 +43,9 @@ export class Charts implements AfterViewInit {
   ];
 
   constructor() {
+    
     effect(() => {
-      if (this.chartsReady()) {
+      if (this.isChartsReady()) {
         this.chartsService.updateCharts();
       }
     });
@@ -54,41 +54,69 @@ export class Charts implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.initCharts();
+    this.initializeCharts();
   }
 
-  private initCharts() {
-    const barCtx = this.barChartCanvas()?.nativeElement;
-    const lineCtx = this.lineChartCanvas()?.nativeElement;
-    const gigsCtx = this.gigsMiniCanvas()?.nativeElement;
-    const revCtx = this.revMiniCanvas()?.nativeElement;
+  private initializeCharts(): void {
+    const barElement = this.barChartCanvas()?.nativeElement;
+    const lineElement = this.lineChartCanvas()?.nativeElement;
+    const gigsElement = this.gigsMiniCanvas()?.nativeElement;
+    const revElement = this.revMiniCanvas()?.nativeElement;
 
-    if (!barCtx || !lineCtx || !gigsCtx || !revCtx) return;
+    if (!barElement || !lineElement || !gigsElement || !revElement) {
+      return;
+    }
 
-    const commonOptions = {
+    const commonBarOptions: ChartOptions<'bar'> = {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#94a3b8' } } },
+      plugins: {
+        legend: { labels: { color: '#94a3b8' } },
+      },
     };
 
-    const miniOptions = {
+    const commonLineOptions: ChartOptions<'line'> = {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { enabled: false } },
-      scales: { x: { display: false }, y: { display: false } },
-      elements: { point: { radius: 0 }, line: { borderWidth: 2 } },
+      plugins: {
+        legend: { labels: { color: '#94a3b8' } },
+      },
     };
 
-    this.chartsService.barChartInstance = new Chart(barCtx, {
+    const miniLineOptions: ChartOptions<'line'> = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false },
+      },
+      scales: {
+        x: { display: false },
+        y: { display: false },
+      },
+      elements: {
+        point: { radius: 0 },
+        line: { borderWidth: 2 },
+      },
+    };
+
+    const barConfig: ChartConfiguration<'bar'> = {
       type: 'bar',
       data: {
         labels: this.months,
-        datasets: [{ label: 'Events', data: [], backgroundColor: '#38bdf8', borderRadius: 6 }],
+        datasets: [
+          {
+            label: 'Events',
+            data: [],
+            backgroundColor: '#38bdf8',
+            borderRadius: 6,
+          },
+        ],
       },
-      options: commonOptions,
-    });
+      options: commonBarOptions,
+    };
 
-    this.chartsService.lineChartInstance = new Chart(lineCtx, {
+    const lineConfig: ChartConfiguration<'line'> = {
       type: 'line',
       data: {
         labels: this.months,
@@ -103,21 +131,44 @@ export class Charts implements AfterViewInit {
           },
         ],
       },
-      options: commonOptions,
-    });
+      options: commonLineOptions,
+    };
 
-    this.chartsService.gigsMiniInstance = new Chart(gigsCtx, {
+    const gigsConfig: ChartConfiguration<'line'> = {
       type: 'line',
-      data: { labels: this.months, datasets: [{ data: [], borderColor: '#38bdf8', tension: 0.4 }] },
-      options: miniOptions as any,
-    });
+      data: {
+        labels: this.months,
+        datasets: [
+          {
+            data: [],
+            borderColor: '#38bdf8',
+            tension: 0.4,
+          },
+        ],
+      },
+      options: miniLineOptions,
+    };
 
-    this.chartsService.revMiniInstance = new Chart(revCtx, {
+    const revConfig: ChartConfiguration<'line'> = {
       type: 'line',
-      data: { labels: this.months, datasets: [{ data: [], borderColor: '#10b981', tension: 0.4 }] },
-      options: miniOptions as any,
-    });
+      data: {
+        labels: this.months,
+        datasets: [
+          {
+            data: [],
+            borderColor: '#10b981',
+            tension: 0.4,
+          },
+        ],
+      },
+      options: miniLineOptions,
+    };
 
-    this.chartsReady.set(true);
+    this.chartsService.barChartInstance = new Chart(barElement, barConfig);
+    this.chartsService.lineChartInstance = new Chart(lineElement, lineConfig);
+    this.chartsService.gigsMiniInstance = new Chart(gigsElement, gigsConfig);
+    this.chartsService.revMiniInstance = new Chart(revElement, revConfig);
+
+    this.isChartsReady.set(true);
   }
 }
