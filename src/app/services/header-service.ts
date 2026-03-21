@@ -24,6 +24,7 @@ export class HeaderService {
         this.userService.getMe().subscribe({
           next: (user) => {
             this.userName.set(user.name);
+            this.userRole.set(user.role);
             const photoUrl = `${user.profile_photo_url}?t=${Date.now()}`;
             this.userProfilePic.set(photoUrl);
             this.userProfilePicService.profilePhotoUrl.set(photoUrl);

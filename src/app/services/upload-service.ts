@@ -58,7 +58,7 @@ export class UploadService {
 
           this.pendingPhotos.update((p) => [
             ...p,
-            { id: tempId, url, position: this.allPhotos().length + 1 },
+            { id: tempId, url, position: this.allPhotos().length },
           ]);
         }),
       );
@@ -103,7 +103,7 @@ export class UploadService {
     for (const photo of this.pendingPhotos()) {
       try {
         const created = await firstValueFrom(
-          this.api.post<GalleryPhoto>(this.BASE_URL, { url: photo.url, position: photo.position }),
+          this.api.post<GalleryPhoto>(this.BASE_URL, { url: photo.url }),
         );
         this.galleryPhotosSignal.update((p) => [...p, created]);
       } catch (err: unknown) {
