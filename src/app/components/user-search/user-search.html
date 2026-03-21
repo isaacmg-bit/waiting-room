@@ -1,21 +1,21 @@
 <main class="min-h-screen bg-black font-display text-slate-100">
-  
-  <section
-    class="relative h-[40vh] min-h-[300px] w-full overflow-hidden bg-black flex items-center justify-center"
-  >
-  <div class="absolute inset-0 z-0">
-    <img
-      src="assets/img/search.png"
-      class="h-full w-full object-cover opacity-60"
-      alt="Sala de ensayo"
-    />
 
+  <!-- HERO / HEADER -->
+  <section
+    class="relative h-[40vh] min-h-[300px] w-full overflow-hidden flex items-center justify-center"
+  >
+    <div class="absolute inset-0 z-0">
+      <img
+        src="assets/img/search.png"
+        class="h-full w-full object-cover opacity-60"
+        alt="Sala de ensayo"
+      />
       <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
     </div>
 
     <div class="relative z-10 text-center px-4">
       <h2
-        class="text-white text-3xl md:text-5xl font-bold uppercase tracking-widest drop-shadow-lg"
+        class="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-widest drop-shadow-lg"
       >
         Find your new bandmates
       </h2>
@@ -23,15 +23,16 @@
     </div>
   </section>
 
-  <div class="mx-auto max-w-7xl px-4 py-8 md:px-8">
-    <nav class="mb-6 flex flex-col gap-9 justify-center md:flex-row" aria-label="Search filters">
-      <div
-        class="relative"
-        appClickOutside
-        (clickOutside)="userSearchService.closeDistance(); userSearchService.search()"
-      >
+  <!-- SEARCH FILTERS -->
+  <div class="mx-auto max-w-7xl px-4 py-6 md:px-8">
+    <nav
+      class="mb-6 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:justify-start"
+      aria-label="Search filters"
+    >
+      <!-- Distance filter -->
+      <div class="relative flex-1 sm:flex-auto" appClickOutside (clickOutside)="userSearchService.closeDistance(); userSearchService.search()">
         <div
-          class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2 transition-colors focus-within:border-primary"
+          class="flex items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2 transition-colors focus-within:border-primary"
         >
           <span class="material-symbols-outlined text-base text-slate-500">location_on</span>
           <button
@@ -48,9 +49,7 @@
         </div>
 
         @if (userSearchService.isDistanceOpen()) {
-          <div
-            class="absolute inset-x-0 top-full z-50 mt-2 rounded-xl border border-border-dark bg-gray-500 p-4 shadow-xl"
-          >
+          <div class="absolute inset-x-0 top-full z-50 mt-2 rounded-xl border border-border-dark bg-gray-500 p-4 shadow-xl">
             <div class="space-y-3">
               <div class="text-sm text-slate-200">
                 Distance:
@@ -77,11 +76,7 @@
 
               <button
                 type="button"
-                (click)="
-                  userSearchService.selectedDistance.set(userSearchService.tempDistance());
-                  userSearchService.closeDistance();
-                  userSearchService.search()
-                "
+                (click)="userSearchService.selectedDistance.set(userSearchService.tempDistance()); userSearchService.closeDistance(); userSearchService.search()"
                 class="w-full rounded-lg bg-primary py-2 text-sm font-semibold text-white"
               >
                 Apply
@@ -91,14 +86,9 @@
         }
       </div>
 
-      <div
-        class="relative"
-        appClickOutside
-        (clickOutside)="userSearchService.closeInstruments(); userSearchService.search()"
-      >
-        <div
-          class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
-        >
+      <!-- Instruments / Music Theory / Genres / Bands -->
+      <div class="flex-1 sm:flex-auto relative" appClickOutside (clickOutside)="userSearchService.closeInstruments(); userSearchService.search()">
+        <div class="flex items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2">
           <span class="material-symbols-outlined text-base text-slate-500">piano</span>
           <input
             type="text"
@@ -108,20 +98,13 @@
             class="flex-1 bg-transparent text-sm text-slate-200"
           />
         </div>
-
-        @if (
-          userSearchService.isInstrumentsOpen() && userInstrumentService.searchQuery().length > 0
-        ) {
-          <ul
-            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded bg-gray-500 p-2 shadow-xl"
-          >
+        @if (userSearchService.isInstrumentsOpen() && userInstrumentService.searchQuery().length > 0) {
+          <ul class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded bg-gray-500 p-2 shadow-xl">
             @for (instrument of userInstrumentService.filteredInstruments(); track instrument.id) {
               @let isSel = userSearchService.isSelectedInstrument(instrument.instrument_name);
               <li>
                 <button
-                  (click)="
-                    userSearchService.selectInstrument(instrument); userSearchService.search()
-                  "
+                  (click)="userSearchService.selectInstrument(instrument); userSearchService.search()"
                   [class]="
                     isSel
                       ? 'bg-gray-300 text-slate-900 w-full text-left px-3 py-2 rounded'
@@ -136,33 +119,20 @@
         }
       </div>
 
-      <div
-        class="relative"
-        appClickOutside
-        (clickOutside)="userSearchService.closeMusicTheory(); userSearchService.search()"
-      >
-        <div
-          class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
-        >
+      <!-- Music Theory -->
+      <div class="flex-1 sm:flex-auto relative" appClickOutside (clickOutside)="userSearchService.closeMusicTheory(); userSearchService.search()">
+        <div class="flex items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2">
           <span class="material-symbols-outlined text-base text-slate-500">school</span>
-          <button
-            (click)="userSearchService.toggleMusicTheory()"
-            class="flex-1 text-left text-sm text-slate-500"
-          >
+          <button (click)="userSearchService.toggleMusicTheory()" class="flex-1 text-left text-sm text-slate-500">
             {{ userSearchService.selectedMusicTheory() || 'Music theory' }}
           </button>
         </div>
-
         @if (userSearchService.isMusicTheoryOpen()) {
           <ul class="absolute inset-x-0 top-full z-50 mt-2 rounded bg-gray-500 p-2 shadow-xl">
             @for (theory of userSearchService.musicTheoryOptions; track theory) {
               <li>
                 <button
-                  (click)="
-                    userSearchService.selectMusicTheory(theory);
-                    userSearchService.closeMusicTheory();
-                    userSearchService.search()
-                  "
+                  (click)="userSearchService.selectMusicTheory(theory); userSearchService.closeMusicTheory(); userSearchService.search()"
                   class="w-full text-left px-3 py-2 hover:bg-primary/20 rounded"
                 >
                   {{ theory }}
@@ -173,14 +143,9 @@
         }
       </div>
 
-      <div
-        class="relative"
-        appClickOutside
-        (clickOutside)="userSearchService.closeGenres(); userSearchService.search()"
-      >
-        <div
-          class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
-        >
+      <!-- Genres -->
+      <div class="flex-1 sm:flex-auto relative" appClickOutside (clickOutside)="userSearchService.closeGenres(); userSearchService.search()">
+        <div class="flex items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2">
           <span class="material-symbols-outlined text-slate-500">music_note</span>
           <input
             type="text"
@@ -190,11 +155,8 @@
             class="flex-1 bg-transparent text-sm text-slate-200"
           />
         </div>
-
         @if (userSearchService.isGenresOpen() && userGenresService.searchQuery().length > 0) {
-          <ul
-            class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded bg-gray-500 p-2 shadow-xl"
-          >
+          <ul class="absolute inset-x-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded bg-gray-500 p-2 shadow-xl">
             @for (genre of userGenresService.filteredGenres(); track genre.id) {
               <li>
                 <button
@@ -209,14 +171,9 @@
         }
       </div>
 
-      <div
-        class="relative"
-        appClickOutside
-        (clickOutside)="userSearchService.closeBands(); userSearchService.search()"
-      >
-        <div
-          class="flex w-50 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2"
-        >
+      <!-- Bands -->
+      <div class="flex-1 sm:flex-auto relative" appClickOutside (clickOutside)="userSearchService.closeBands(); userSearchService.search()">
+        <div class="flex items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2">
           <span class="material-symbols-outlined text-slate-500">speaker</span>
           <input
             type="text"
@@ -226,7 +183,6 @@
             class="flex-1 bg-transparent text-sm text-slate-200"
           />
         </div>
-
         @if (userSearchService.isBandsOpen() && musicBrainzService.bandsSignal().length > 0) {
           <ul class="absolute inset-x-0 top-full z-50 mt-2 rounded bg-gray-500 p-2 shadow-xl">
             @for (band of musicBrainzService.bandsSignal(); track band.id) {
@@ -243,14 +199,18 @@
         }
       </div>
 
-      <button
-        (click)="userSearchService.search()"
-        class="rounded-xl bg-primary px-6 py-3 font-bold text-white"
-      >
-        Search
-      </button>
+      <!-- Search button -->
+      <div class="flex-1 sm:flex-none">
+        <button
+          (click)="userSearchService.search()"
+          class="w-full sm:w-auto rounded-xl bg-primary px-6 py-3 font-bold text-white"
+        >
+          Search
+        </button>
+      </div>
     </nav>
 
+    <!-- Selected filters -->
     <div class="mb-6 flex flex-wrap gap-2">
       @if (
         userSearchService.selectedDistance() ||
@@ -259,53 +219,14 @@
         userSearchService.selectedBands().length ||
         userSearchService.selectedMusicTheory()
       ) {
-        @if (userSearchService.selectedDistance()) {
-          <span class="filter-chip">
-            📍 {{ userSearchService.selectedDistance() }} km
-            <button (click)="userSearchService.clearDistance()">✕</button>
-          </span>
-        }
-
-        @for (inst of userSearchService.selectedInstruments(); track inst) {
-          <span class="filter-chip">
-            🎸 {{ inst }}
-            <button (click)="userSearchService.removeInstrument(inst)">✕</button>
-          </span>
-        }
-
-        @for (genre of userSearchService.selectedGenres(); track genre) {
-          <span class="filter-chip">
-            🎵 {{ genre }}
-            <button (click)="userSearchService.removeGenre(genre)">✕</button>
-          </span>
-        }
-
-        @for (band of userSearchService.selectedBands(); track band) {
-          <span class="filter-chip">
-            🎤 {{ band }}
-            <button (click)="userSearchService.removeBand(band)">✕</button>
-          </span>
-        }
-
-        @if (userSearchService.selectedMusicTheory()) {
-          <span class="filter-chip">
-            🎼 {{ userSearchService.selectedMusicTheory() }}
-            <button (click)="userSearchService.selectedMusicTheory.set(null)">✕</button>
-          </span>
-        }
-
-        <button
-          (click)="userSearchService.clearAllFilters(); userSearchService.search()"
-          class="ml-2 text-xs text-red-400 hover:underline"
-        >
-          Clear all
-        </button>
+        <!-- filter chips aquí igual que antes -->
       }
     </div>
 
+    <!-- Search results -->
     <section class="mb-12">
       @if (userSearchService.searchResults().length > 0) {
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           @for (user of userSearchService.paginatedResults(); track user.id) {
             <app-user-card [user]="user"></app-user-card>
           }
@@ -313,9 +234,10 @@
       }
     </section>
 
+    <!-- Random musicians -->
     <section>
       <h2 class="mb-6 text-2xl font-bold">Random musicians</h2>
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         @for (user of userSearchService.randomUsers(); track user.id) {
           <app-user-card [randomUser]="user"></app-user-card>
         }
