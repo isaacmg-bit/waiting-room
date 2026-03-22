@@ -54,7 +54,7 @@ export class SupabaseService {
     return this.supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: 'http://localhost:4200/post-login' },
+      options: { emailRedirectTo: '/post-login' },
     });
   }
 
