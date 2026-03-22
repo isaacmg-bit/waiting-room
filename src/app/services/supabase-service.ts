@@ -27,8 +27,9 @@ export class SupabaseService {
     await this.handleAuthChange(session);
 
     this.isReady.set(true);
-
-    this.supabase.auth.onAuthStateChange(async (event, session) => {});
+    this.supabase.auth.onAuthStateChange(async (event, session) => {
+      await this.handleAuthChange(session);
+    });
   }
   private async handleAuthChange(session: Session | null) {
     if (session?.user) {
