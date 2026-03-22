@@ -1,7 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { ApiServiceBack } from './apiservice-back';
 import { Instrument } from '../models/Instrument';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.local';
 import { finalize } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })

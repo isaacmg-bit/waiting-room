@@ -5,7 +5,7 @@ import { MusicBrainzService } from './bands-service';
 import { UserGenresService } from './user-genres-service';
 import { UserService } from './user-service';
 import { ApiServiceBack } from './apiservice-back';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.local';
 import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })

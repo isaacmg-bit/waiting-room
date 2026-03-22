@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { ApiServiceBack } from './apiservice-back';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.local';
 import { firstValueFrom } from 'rxjs';
 import { SocialLinkHandle } from '../models/SocialLinkHandle';
 import { User } from '../models/User';

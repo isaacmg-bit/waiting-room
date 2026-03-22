@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { UserEvent } from '../models/UserEvent';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.local';
 import { ApiServiceBack } from './apiservice-back';
 import { firstValueFrom } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';

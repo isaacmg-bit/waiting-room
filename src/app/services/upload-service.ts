@@ -4,7 +4,7 @@ import { ApiServiceBack } from './apiservice-back';
 import { GalleryPhoto } from '../models/GalleryPhoto';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { firstValueFrom, Observable, finalize } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.local';
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {

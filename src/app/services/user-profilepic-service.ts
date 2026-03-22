@@ -2,7 +2,7 @@ import { Injectable, inject, signal, effect } from '@angular/core';
 import { SupabaseService } from './supabase-service';
 import { UserService } from './user-service';
 import { User } from '../models/User';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.local';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable({ providedIn: 'root' })

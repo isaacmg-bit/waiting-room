@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { UserLocation } from '../models/UserLocation';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.local';
 import { ApiServiceBack } from './apiservice-back';
 import { CalendarService } from './calendar-service';
 

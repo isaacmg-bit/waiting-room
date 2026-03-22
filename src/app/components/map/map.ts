@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, inject, signal, effect } from '@angular/core';
 import * as L from 'leaflet';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.local';
 import { LocationService } from '../../services/location-service';
 import { CalendarService } from '../../services/calendar-service';
 

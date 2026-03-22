@@ -4,7 +4,7 @@ import { UserGenre } from '../models/UserGenre';
 import { Genre } from '../models/Genre';
 import { GenresService } from './genres-service';
 import { finalize, Observable, firstValueFrom } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.local';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable({ providedIn: 'root' })

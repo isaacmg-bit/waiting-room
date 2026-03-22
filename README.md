@@ -1,18 +1,19 @@
-# Waiting Room - Base
+# Waiting Room
 
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 ![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
 ![NestJS](https://img.shields.io/badge/NestJS-11-E0234E?logo=nestjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB_Atlas-8-47A248?logo=mongodb&logoColor=white)
-![Vitest](https://img.shields.io/badge/Vitest-3-6E9F18?logo=vitest&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-2-3ECF8E?logo=supabase&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4-06B6D4?logo=tailwindcss&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-4-6E9F18?logo=vitest&logoColor=white)
 ![Leaflet](https://img.shields.io/badge/Leaflet-1.9-199900?logo=leaflet&logoColor=white)
 ![Chart.js](https://img.shields.io/badge/Chart.js-4-FF6384?logo=chartdotjs&logoColor=white)
-![Jest](https://img.shields.io/badge/Jest-29-C21325?logo=jest&logoColor=white)
+![Jest](https://img.shields.io/badge/Jest-30-C21325?logo=jest&logoColor=white)
 ![FullCalendar](https://img.shields.io/badge/FullCalendar-6-4285F4)
 ![License: CC BY-NC](https://img.shields.io/badge/license-CC--BY--NC-orange)
 
-**Base platform for my musician marketplace built with Angular and NestJS, featuring event management, interactive maps, and user administration**
+**Full-stack musician networking and discovery platform built with Angular 21, NestJS and Supabase, featuring advanced geospatial search, profile management, event calendar, and interactive maps**
 
 ---
 
@@ -34,9 +35,9 @@
 
 ## Background
 
-Waiting Room was developed as the foundational module set for 'Waiting Room' — a platform where musicians can organize their agenda, discover rehearsal spaces and venues near them, and connect with other artists.
+Waiting Room is a musician networking and discovery platform where artists can build detailed profiles, find other musicians by instrument, genre, music theory level, and geographic proximity, and manage their schedule and events.
 
-The application explores Angular Signals, reactive state management, REST API integration with NestJS and MongoDB Atlas, interactive maps with Leaflet, data visualization with Chart.js and event management with FullCalendar.
+The application is built on Angular Signals and standalone components for reactive state management, a NestJS REST API with JWT authentication via Supabase Auth, a PostgreSQL + PostGIS database for geospatial queries, and integrates FullCalendar, Leaflet, Chart.js, and MusicBrainz for a complete musician-first experience.
 
 ---
 
@@ -45,67 +46,86 @@ The application explores Angular Signals, reactive state management, REST API in
 ### Frontend
 
 - HTML5
-- CSS3
+- CSS3 / Tailwind CSS 4
 - TypeScript 5
-- Angular 21
-- FullCalendar (event management)
-- Leaflet (interactive maps)
-- Chart.js (data visualization)
-- Vitest (unit testing)
+- Angular 21 (standalone components, Signals)
+- FullCalendar 6 (event management)
+- Leaflet 1.9 (interactive maps)
+- Chart.js 4 (data visualization)
+- ng-icons (Heroicons, Lucide, Tabler)
+- ngx-toastr (notifications)
+- Vitest 4 (unit testing)
 
 ### Backend
 
 - NestJS 11
-- MongoDB Atlas
-- Mongoose
-- Jest (unit testing)
+- Supabase (PostgreSQL + PostGIS)
+- Passport JWT / jwks-rsa
+- Swagger / OpenAPI
+- class-validator / class-transformer
+- Jest 30 (unit testing)
 
 ---
 
 ## Structure
 
 ```text
-waiting-room/
-├── frontend/                        # Angular application
-│   ├── src/
-│   │   └── app/
-│   │       ├── components/          # UI components
-│   │       │   ├── calendar/        # Event calendar (FullCalendar)
-│   │       │   ├── charts/          # Event statistics (Chart.js)
-│   │       │   ├── header/          # Navigation header
-│   │       │   ├── home/            # Home page
-│   │       │   ├── map/             # Interactive map (Leaflet)
-│   │       │   └── users/           # User management
-│   │       ├── models/              # Data models
-│   │       │   ├── User.ts
-│   │       │   ├── UserEvent.ts
-│   │       │   └── UserLocation.ts
-│   │       └── services/            # Application services
-│   │           ├── apiservice.ts
-│   │           ├── calendar-service.ts
-│   │           ├── location-service.ts
-│   │           └── user-service.ts
-│   └── ...config files
+waiting-room/                        # Frontend — Angular application
+├── src/
+│   ├── app/
+│   │   ├── components/
+│   │   │   ├── calendar/            # Event calendar (FullCalendar)
+│   │   │   ├── charts/              # Event statistics (Chart.js)
+│   │   │   ├── edit-profile/        # Profile editor (photo, links, genres…)
+│   │   │   ├── events/              # Event management
+│   │   │   ├── footer/              # App footer
+│   │   │   ├── header/              # Navigation header with user menu
+│   │   │   ├── home/                # Home page
+│   │   │   ├── login-component/     # Login form
+│   │   │   ├── map/                 # Interactive map (Leaflet)
+│   │   │   ├── post-login/          # Initial setup after registration
+│   │   │   ├── public-profile/      # Public musician profile view
+│   │   │   ├── register-component/  # Registration form
+│   │   │   ├── reset-pass/          # Password reset
+│   │   │   ├── user-bands/          # User bands (MusicBrainz)
+│   │   │   ├── user-card/           # Musician summary card
+│   │   │   ├── user-gallery/        # Photo gallery
+│   │   │   ├── user-genres/         # Musical genres
+│   │   │   ├── user-instruments/    # Instruments
+│   │   │   ├── user-location/       # Geolocation (Nominatim)
+│   │   │   ├── user-presence/       # Availability
+│   │   │   ├── user-profilepicture/ # Profile picture management
+│   │   │   ├── user-search/         # Advanced search engine
+│   │   │   ├── user-theory/         # Music theory level
+│   │   │   └── users/               # User listing (admin)
+│   │   ├── directives/              # ClickOutsideDirective
+│   │   ├── guards/                  # authGuard, profileGuard, adminGuard, postLoginGuard
+│   │   ├── interceptors/            # AuthInterceptor (JWT injection)
+│   │   ├── models/                  # TypeScript interfaces
+│   │   └── services/                # One service per domain
+│   ├── assets/
+│   │   ├── icons/
+│   │   └── img/
+│   └── environments/
+│       └── environment.ts           # ⚠️ Gitignored — create manually
 │
-└── backend/                         # NestJS API
-    └── src/
-        ├── events/                  # Events module
-        │   ├── dto/
-        │   ├── entities/
-        │   ├── events.controller.ts
-        │   └── events.service.ts
-        ├── locations/               # Locations module
-        │   ├── dto/
-        │   ├── entities/
-        │   ├── locations.controller.ts
-        │   ├── locations.module.ts
-        │   └── locations.service.ts
-        └── users/                   # Users module
-            ├── dto/
-            ├── entities/
-            ├── users.controller.ts
-            ├── users.module.ts
-            └── users.service.ts
+waiting-room-backend/                # Backend — NestJS API
+└── src/
+    ├── auth/                        # JWT strategy (Passport)
+    ├── city/                        # City autocomplete
+    ├── events/                      # Event CRUD
+    ├── gallery/                     # User photo gallery
+    ├── genres/                      # Genre catalogue
+    ├── instruments/                 # Instrument catalogue
+    ├── locations/                   # Geographic location (PostGIS WKT)
+    ├── musicbrainz-proxy/           # MusicBrainz API proxy (bands)
+    ├── musician-search/             # Advanced search (ST_DWithin / ST_Distance)
+    ├── supabase/                    # Supabase client module
+    ├── user-bands/                  # User bands
+    ├── user-genres/                 # User genres
+    ├── user-instruments/            # User instruments
+    ├── user-theory/                 # User music theory
+    └── users/                       # User profile and role
 ```
 
 ---
@@ -116,7 +136,7 @@ waiting-room/
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/waiting-room.git
+git clone https://github.com/isaacmg-bit/waiting-room.git
 
 # Navigate to the frontend folder
 cd waiting-room
@@ -125,10 +145,10 @@ cd waiting-room
 npm install
 
 # Set up environment variables
-# Edit src/environments/environment.ts with your API URL
+# Create src/environments/environment.ts (see API Configuration below)
 
 # Start development server
-ng serve
+npm start
 
 # Open http://localhost:4200 in your browser
 ```
@@ -136,6 +156,9 @@ ng serve
 ### Backend
 
 ```bash
+# Clone the repository
+git clone https://github.com/isaacmg-bit/waiting-room-backend.git
+
 # Navigate to the backend folder
 cd waiting-room-backend
 
@@ -143,10 +166,13 @@ cd waiting-room-backend
 npm install
 
 # Set up environment variables
-# Create a .env file with your MongoDB Atlas connection string
+# Create a .env file in the root (see API Configuration below)
 
 # Start development server
 npm run start:dev
+
+# API available at http://localhost:3000
+# Swagger UI at http://localhost:3000/api
 ```
 
 ---
@@ -155,75 +181,140 @@ npm run start:dev
 
 ### Environment — Frontend
 
+> ⚠️ `src/environments/environment.ts` is gitignored. Create it manually after cloning.
+
 ```typescript
 // src/environments/environment.ts
 export const environment = {
+  production: false,
+  apiToken: '',
+  appUrl: 'http://localhost:4200',
   apiUrl: 'http://localhost:3000',
-  apiEventUrl: '/events/',
-  apiLocationUrl: '/locations/',
-  apiUserUrl: '/users/',
+  apiUserUrl: '/users',
+  apiLocationUrl: '/locations',
+  apiEventUrl: '/events',
+  apiResetPass: '/reset-pass',
+  apiMeUrl: '/me',
+  apiMusicBrainz: 'http://localhost:3000/api/musicbrainz/search',
+  apiGenresUrl: '/genres',
+  apiInstrumentsUrl: '/instruments',
+  apiUserTheoryUrl: '/user-theory',
+  apiGalleryUrl: '/gallery',
+  apiUserBandsUrl: '/user-bands',
+  apiUserGenresUrl: '/user-genres',
+  apiUserInstrumentsUrl: '/user-instruments',
+  apiSearchMusicians: '/search/musicians/advanced',
+  apiSearchRandomMusicians: '/search/musicians/random',
+  profilePicUrl: '/profilepicture.jpg',
+  leafletTileLayer: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  socialPlatforms: {
+    instagram: 'https://instagram.com/',
+    youtube: 'https://youtube.com/@',
+    spotify: 'https://open.spotify.com/user/',
+    soundcloud: 'https://soundcloud.com/',
+  },
+  nominatimUrl: 'http://localhost:3000/cities/search',
+  supabaseUrl: 'https://otfzbljpjqojoiojfvrq.supabase.co',
+  supabaseAnonKey:
+    '<anonApiKey here>',
 };
+
 ```
 
 ### Environment — Backend
 
 ```env
 # .env
-MONGODB_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/waiting-room
 PORT=3000
+SUPABASE_URL=https://otfzbljpjqojoiojfvrq.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=<serviceRoleKey here>
 ```
+
+> The backend requires the **service role key**. Never expose it on the frontend.
 
 ### API Endpoints
 
-| Method | Endpoint         | Description       |
-| ------ | ---------------- | ----------------- |
-| GET    | `/events`        | Get all events    |
-| POST   | `/events`        | Create an event   |
-| PATCH  | `/events/:id`    | Update an event   |
-| DELETE | `/events/:id`    | Delete an event   |
-| DELETE | `/events/all`    | Delete all events |
-| GET    | `/locations`     | Get all locations |
-| POST   | `/locations`     | Create a location |
-| PATCH  | `/locations/:id` | Update a location |
-| DELETE | `/locations/:id` | Delete a location |
-| GET    | `/users`         | Get all users     |
-| POST   | `/users`         | Create a user     |
-| PATCH  | `/users/:id`     | Update a user     |
-| DELETE | `/users/:id`     | Delete a user     |
+| Method | Endpoint                   | Description                       |
+| ------ | -------------------------- | --------------------------------- |
+| GET    | `/users/me`                | Get authenticated user profile    |
+| PATCH  | `/users/me`                | Update authenticated user profile |
+| GET    | `/instruments`             | Get instrument catalogue          |
+| GET    | `/instruments/me`          | Get current user's instruments    |
+| GET    | `/instruments/:userId`     | Get instruments by user ID        |
+| POST   | `/instruments/me`          | Save current user's instruments   |
+| GET    | `/genres`                  | Get genre catalogue               |
+| GET    | `/genres/me`               | Get current user's genres         |
+| GET    | `/genres/:userId`          | Get genres by user ID             |
+| POST   | `/genres/me`               | Save current user's genres        |
+| GET    | `/user-bands/me`           | Get current user's bands          |
+| GET    | `/user-bands/:userId`      | Get bands by user ID              |
+| POST   | `/user-bands/me`           | Save current user's bands         |
+| GET    | `/user-theory/me`          | Get current user's theory level   |
+| GET    | `/user-theory/:userId`     | Get theory level by user ID       |
+| POST   | `/user-theory/me`          | Save current user's theory level  |
+| GET    | `/gallery/me`              | Get current user's gallery        |
+| GET    | `/gallery/:userId`         | Get gallery by user ID            |
+| POST   | `/gallery/me`              | Upload photo to gallery           |
+| DELETE | `/gallery/me/:photoId`     | Delete photo from gallery         |
+| GET    | `/locations/me`            | Get current user's location       |
+| POST   | `/locations/me`            | Save current user's location      |
+| GET    | `/events`                  | Get all events                    |
+| POST   | `/events`                  | Create an event                   |
+| PATCH  | `/events/:id`              | Update an event                   |
+| DELETE | `/events/:id`              | Delete an event                   |
+| GET    | `/musician-search`         | Advanced musician search          |
+| GET    | `/city`                    | City autocomplete                 |
+| GET    | `/musicbrainz-proxy/bands` | Search bands via MusicBrainz      |
+
+All protected endpoints require:
+
+```
+Authorization: Bearer <supabase-jwt>
+```
 
 ---
 
 ## Features
 
+- **Musician Profiles**
+  - Profile photo, bio, and social links (stored as JSONB)
+  - Photo gallery with optimistic upload and pending discard
+  - Instruments, genres, bands, and music theory level
+  - Geographic location set via interactive city search (Nominatim)
+
+- **Advanced Search Engine**
+  - Filter musicians by instrument, genre, theory level, band, and geographic radius
+  - Powered by a Supabase RPC using PostGIS `ST_DWithin` and `ST_Distance`
+  - Reactive filter assembly with Angular `computed()` signals
+
 - **Event Calendar**
   - Monthly calendar view powered by FullCalendar
-  - Create, edit, and delete events by clicking on dates
-  - Color-coded events
-  - Reactive state with Angular Signals
+  - Create, edit, and delete events
+  - Reactive data refresh via Angular `effect()` and `api.refetchEvents()`
 
 - **Interactive Map**
-  - Leaflet map centered on the user's geolocation
-  - Save locations with name, description, and category
-  - Filter markers by category (shows, rehearsal spaces)
-  - Click any marker to view or edit its details
+  - Leaflet map displaying events by geographic location
+  - Geocoding via Nominatim (OpenStreetMap)
 
 - **Event Statistics**
   - Bar and line charts showing events per month
   - Automatically updated when calendar data changes
   - Powered by Chart.js
 
-- **User Management**
-  - Full CRUD for platform users
-  - Reactive form validation (name, email, location)
-  - Inline edit mode
+- **Authentication & Authorization**
+  - Full auth flow: register, login, password reset, and session persistence
+  - JWT validation via Supabase Auth + `passport-jwt` + `jwks-rsa`
+  - Role-based access: `admin` role stored in `user_profile`
+  - Route guards: `authGuard`, `profileGuard`, `adminGuard`, `postLoginGuard`
 
 - **REST API**
-  - NestJS backend with full CRUD for events, locations, and users
-  - MongoDB Atlas for persistent cloud storage
+  - NestJS backend with full CRUD for all domains
+  - Supabase (PostgreSQL + PostGIS) for persistent and geospatial storage
+  - Swagger UI available at `/api`
   - DTO validation on all endpoints
 
 - **Testing**
-  - Frontend unit tests with Vitest + Angular Testing Library
+  - Frontend unit tests with Vitest
   - Backend unit tests with Jest
   - Services, controllers, and components covered
 
@@ -231,32 +322,37 @@ PORT=3000
 
 ## Usage
 
+### Search
+
+1. Navigate to the **Search** section
+2. Select filters: instrument, genre, theory level, band, and/or radius
+3. Results update reactively as filters change
+4. Click any musician card to view their public profile
+
+### Profile
+
+1. Navigate to **Edit Profile**
+2. Update your photo, bio, social links, instruments, genres, bands, theory level, and location
+3. Changes are saved per section — unsaved changes can be discarded
+
 ### Calendar
 
 1. Navigate to the **Calendar** section
 2. Click on any day to create a new event
-3. Fill in the title and choose a color
+3. Fill in the title and date
 4. Click on an existing event to edit or delete it
 
 ### Map
 
-1. Navigate to the **Map** section — the map centers on your location automatically
-2. Click anywhere on the map to save a new location
-3. Input name, description and choose a category: **Show** or **Rehearsal Space**
-4. Click any saved marker to edit or delete it
-
-### Users
-
-1. Navigate to the **Users** section
-2. Fill in the form to add a new user
-3. Click the edit button on any user to load their data into the form
-4. Submit to save changes or cancel to discard them
+1. Navigate to the **Map** section
+2. Browse musicians pinned to their saved locations
+3. Click any marker to view the musician's profile card
 
 ### Running Tests
 
 ```bash
 # Frontend (Vitest)
-ng test
+npm test
 
 # Backend (Jest)
 npm run test
@@ -266,15 +362,15 @@ npm run test
 
 ## Screenshots
 
-![Desktop version](src/assets/img/Desktop01.png)
-![Desktop version](src/assets/img/Desktop02.png)
-![Desktop version](src/assets/img/Desktop03.png)
-![Desktop version](src/assets/img/Desktop04.png)
-![Desktop version](src/assets/img/Desktop05.png)
-![Desktop version](src/assets/img/Desktop06.png)
-![Desktop version](src/assets/img/Desktop07.png)
-![Desktop version](src/assets/img/Desktop08.png)
-![Desktop version](src/assets/img/Desktop09.png)
+![Desktop version](src/assets/img/)
+![Desktop version](src/assets/img/)
+![Desktop version](src/assets/img/)
+![Desktop version](src/assets/img/)
+![Desktop version](src/assets/img/)
+![Desktop version](src/assets/img/)
+![Desktop version](src/assets/img/)
+![Desktop version](src/assets/img/)
+![Desktop version](src/assets/img/)
 
 ---
 

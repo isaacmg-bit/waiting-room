@@ -1,6 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { Genre } from '../models/Genre';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.local';
 import { ApiServiceBack } from './apiservice-back';
 import { finalize } from 'rxjs';
 
