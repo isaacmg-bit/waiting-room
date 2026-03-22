@@ -4,7 +4,7 @@ import { City } from '../models/City';
 import { Street } from '../models/Street';
 import { NominatimResponse } from '../models/NominatimResponse';
 import { firstValueFrom } from 'rxjs';
-import { environment } from '../../environments/environment.local';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({ providedIn: 'root' })
 export class CityService {

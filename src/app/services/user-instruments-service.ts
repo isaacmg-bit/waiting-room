@@ -2,7 +2,7 @@ import { Injectable, inject, signal, computed } from '@angular/core';
 import { UserInstrument } from '../models/UserInstrument';
 import { ApiServiceBack } from './apiservice-back';
 import { InstrumentsService } from './instruments-service';
-import { environment } from '../../environments/environment.local';
+import { environment } from '../../environments/environment.prod';
 import { finalize, Observable, firstValueFrom } from 'rxjs';
 import { Instrument } from '../models/Instrument';
 import { ToastrService } from 'ngx-toastr';

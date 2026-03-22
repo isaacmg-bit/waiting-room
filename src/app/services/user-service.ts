@@ -4,7 +4,7 @@ import { finalize } from 'rxjs/operators';
 import { User } from '../models/User';
 import { ApiServiceBack } from './apiservice-back';
 import { ToastrService } from 'ngx-toastr';
-import { environment } from '../../environments/environment.local';
+import { environment } from '../../environments/environment.prod';
 import { SupabaseService } from './supabase-service';
 
 @Injectable({ providedIn: 'root' })

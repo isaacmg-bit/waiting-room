@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http'; // ✅ AÑADE ESTO
 import { finalize } from 'rxjs';
-import { environment } from '../../environments/environment.local';
+import { environment } from '../../environments/environment.prod';
 import { Band } from '../models/Band';
 import { MusicBrainzResponse } from '../models/MusicBrainzResponse';
 

@@ -3,7 +3,7 @@ import { ApiServiceBack } from './apiservice-back';
 import { MusicBrainzService } from './bands-service';
 import { UserBand } from '../models/UserBand';
 import { Band } from '../models/Band';
-import { environment } from '../../environments/environment.local';
+import { environment } from '../../environments/environment.prod';
 import { finalize, firstValueFrom, Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 

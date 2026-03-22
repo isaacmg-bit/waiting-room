@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { ApiServiceBack } from './apiservice-back';
 import { UserTheory } from '../models/UserTheory';
-import { environment } from '../../environments/environment.local';
+import { environment } from '../../environments/environment.prod';
 import { finalize, Observable, firstValueFrom } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
