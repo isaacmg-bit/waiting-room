@@ -53,7 +53,7 @@ export class RegisterComponent {
       const { error } = await this.supabase.signUp(email, password);
       if (error) throw error;
 
-      this.toast.success('Account created! Check your email to verify');
+      this.toast.success('Account created! Please, wait...');
       this.router.navigate(['/login']);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Registration failed';
