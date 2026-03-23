@@ -7,7 +7,7 @@
 
 ::ng-deep .fc {
   height: auto !important;
-  width: auto !important;
+  width: 100% !important;
   font-size: 0.75rem;
   background: transparent;
   color: #f1f5f9;
@@ -32,8 +32,13 @@
 }
 
 ::ng-deep .fc-scroller {
-  overflow: hidden !important;
+  overflow: visible !important;
   height: auto !important;
+}
+
+::ng-deep .fc-daygrid-body,
+::ng-deep .fc-scrollgrid-sync-table {
+  width: 100% !important;
 }
 
 ::ng-deep .fc-daygrid {
@@ -42,6 +47,7 @@
 
 ::ng-deep .fc-daygrid-day {
   height: auto !important;
+  min-height: 44px;
 }
 
 ::ng-deep .fc .fc-col-header-cell {
@@ -79,7 +85,7 @@
 ::ng-deep .fc-event:hover {
   transform: translateY(-1px);
   filter: brightness(1.2);
-cursor: pointer;
+  cursor: pointer;
 }
 
 ::ng-deep .fc-day-today {
