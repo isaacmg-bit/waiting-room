@@ -5,7 +5,7 @@ const targetPath = './src/environments/environment.prod.ts';
 const envConfigFile = `export const environment = {
   production: true,
   apiToken: '',
-  appUrl: 'https://tu-dominio-vercel.vercel.app',
+  appUrl: 'https://inthewaitingroom.vercel.app/',
   apiUrl: 'https://waiting-room-backend-production.up.railway.app',
   apiUserUrl: '/users',
   apiLocationUrl: '/locations',
