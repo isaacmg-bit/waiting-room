@@ -37,7 +37,7 @@
 
 Waiting Room is a musician networking and discovery platform where artists can build detailed profiles, find other musicians by instrument, genre, music theory level, and geographic proximity, and manage their schedule and events.
 
-The application is built on Angular Signals and standalone components for reactive state management, a NestJS REST API with JWT authentication via Supabase Auth, a PostgreSQL + PostGIS database for geospatial queries, and integrates FullCalendar, Leaflet, Chart.js, and MusicBrainz for a complete musician-first experience.
+The application is built on Angular Signals and standalone components for reactive state management, a NestJS REST API with JWT authentication via Supabase Auth, a PostgreSQL + PostGIS database for geospatial queries, and integrates FullCalendar, Leaflet, Chart.js, MusicBrainz and Nominatim for a complete musician-first experience.
 
 ---
 
@@ -91,23 +91,23 @@ waiting-room/                        # Frontend — Angular application
 │   │   │   ├── user-card/           # Musician summary card
 │   │   │   ├── user-gallery/        # Photo gallery
 │   │   │   ├── user-genres/         # Musical genres
-│   │   │   ├── user-instruments/    # Instruments
+│   │   │   ├── user-instruments/    # User Instruments
 │   │   │   ├── user-location/       # Geolocation (Nominatim)
-│   │   │   ├── user-presence/       # Availability
+│   │   │   ├── user-presence/       # Social links
 │   │   │   ├── user-profilepicture/ # Profile picture management
-│   │   │   ├── user-search/         # Advanced search engine
+│   │   │   ├── user-search/         # Search engine
 │   │   │   ├── user-theory/         # Music theory level
 │   │   │   └── users/               # User listing (admin)
 │   │   ├── directives/              # ClickOutsideDirective
 │   │   ├── guards/                  # authGuard, profileGuard, adminGuard, postLoginGuard
 │   │   ├── interceptors/            # AuthInterceptor (JWT injection)
 │   │   ├── models/                  # TypeScript interfaces
-│   │   └── services/                # One service per domain
+│   │   └── services/                # Services for almost every component
 │   ├── assets/
 │   │   ├── icons/
 │   │   └── img/
 │   └── environments/
-│       └── environment.ts           # ⚠️ Gitignored — create manually
+│       └── environment.ts           # Gitignored — create manually
 │
 waiting-room-backend/                # Backend — NestJS API
 └── src/
@@ -339,14 +339,14 @@ Authorization: Bearer <supabase-jwt>
 
 1. Navigate to the **Calendar** section
 2. Click on any day to create a new event
-3. Fill in the title and date
+3. Fill in the title, date, a color and a location (street search)
 4. Click on an existing event to edit or delete it
 
 ### Map
 
 1. Navigate to the **Map** section
-2. Browse musicians pinned to their saved locations
-3. Click any marker to view the musician's profile card
+2. Browse events pinned
+3. Click any of the filters to show or hide events by type
 
 ### Running Tests
 

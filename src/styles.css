@@ -33,6 +33,7 @@ select:focus {
   background-color: #0a0e27;
   color: #00d4ff;
   border: 1px solid #13193d;
+  box-shadow: none !important;
 }
 
 .custom-toast.ngx-toastr.ng-trigger-flyInOut {
