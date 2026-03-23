@@ -80,3 +80,14 @@
 ::ng-deep .fc .fc-daygrid-body-unbalanced .fc-daygrid-day-events {
   min-height: 1em !important;
 }
+
+@media (max-width: 767px) {
+  ::ng-deep .fc {
+    height: 500px !important;
+    min-height: 500px !important;
+  }
+
+  .p-8 {
+    padding: 1rem !important;
+  }
+}
