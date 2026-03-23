@@ -215,10 +215,8 @@ export const environment = {
   },
   nominatimUrl: 'http://localhost:3000/cities/search',
   supabaseUrl: 'https://otfzbljpjqojoiojfvrq.supabase.co',
-  supabaseAnonKey:
-    '<anonApiKey here>',
+  supabaseAnonKey: '<anonApiKey here>',
 };
-
 ```
 
 ### Environment — Backend
@@ -362,15 +360,19 @@ npm run test
 
 ## Screenshots
 
-![Desktop version](src/assets/img/)
-![Desktop version](src/assets/img/)
-![Desktop version](src/assets/img/)
-![Desktop version](src/assets/img/)
-![Desktop version](src/assets/img/)
-![Desktop version](src/assets/img/)
-![Desktop version](src/assets/img/)
-![Desktop version](src/assets/img/)
-![Desktop version](src/assets/img/)
+![Desktop version](src/assets/readme/Desktop01.png)
+![Desktop version](src/assets/readme/Desktop02.png)
+![Desktop version](src/assets/readme/Desktop03.png)
+![Desktop version](src/assets/readme/Desktop04.png)
+![Desktop version](src/assets/readme/Desktop05.png)
+![Desktop version](src/assets/readme/Desktop06.png)
+![Desktop version](src/assets/readme/Desktop07.png)
+![Desktop version](src/assets/readme/Desktop08.png)
+![Desktop version](src/assets/readme/Desktop09.png)
+![Desktop version](src/assets/readme/Desktop10.png)
+![Desktop version](src/assets/readme/Desktop11.png)
+![Desktop version](src/assets/readme/Desktop12.png)
+![Desktop version](src/assets/readme/Desktop13.png)
 
 ---
 
