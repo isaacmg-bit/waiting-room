@@ -6,7 +6,6 @@
 }
 
 ::ng-deep .fc {
-  height: auto !important;
   width: 100% !important;
   font-size: 0.75rem;
   background: transparent;
@@ -31,24 +30,9 @@
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
-::ng-deep .fc-scroller {
-  overflow: visible !important;
-  height: auto !important;
-}
-
-  ::ng-deep .fc-daygrid-body,
-  ::ng-deep .fc-scrollgrid-sync-table {
-    width: 100% !important;
-  }
-
-::ng-deep .fc-daygrid-day {
-    min-height: 44px;
-  }
-
-
-::ng-deep .fc-daygrid-day {
-  height: auto !important;
-  min-height: 44px;
+::ng-deep .fc-daygrid-body,
+::ng-deep .fc-scrollgrid-sync-table {
+  width: 100% !important;
 }
 
 ::ng-deep .fc .fc-col-header-cell {
