@@ -267,12 +267,14 @@
       </div>
 
       <div class="flex-1 sm:flex-none">
-        <button
-          (click)="userSearchService.search(true)"
-          class="w-full sm:w-auto rounded-xl bg-primary px-6 py-3 font-bold text-white hover:bg-primary/90 transition-colors focus:outline-visible focus:ring-2 focus:ring-primary"
-        >
-          Search
-        </button>
+        <div class="flex-1 sm:flex-none">
+          <button
+            (click)="userSearchService.search(true)"
+            class="w-full sm:w-auto rounded-xl bg-slate-900/80 backdrop-blur-sm border border-white/10 px-6 py-3 font-bold text-white hover:bg-slate-800/80 transition-colors focus:outline-visible focus:ring-2 focus:ring-primary"
+          >
+            Search
+          </button>
+        </div>
       </div>
     </nav>
 
@@ -334,51 +336,38 @@
     <section aria-labelledby="results-title" class="mb-12">
       @if (userSearchService.searchResults().length > 0) {
         <div class="border-border-dark bg-surface-dark p-6 shadow-sm rounded-xl">
-          <div class="flex items-center justify-between gap-4">
-            <div class="grid flex-1 grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              @for (user of userSearchService.paginatedResults(); track user.id) {
-                <article class="h-162.5">
-                  <app-user-card [user]="user"></app-user-card>
-                </article>
-                <div class="border-border-dark bg-surface-dark p-6 shadow-sm">
-                  <div class="flex items-center justify-between gap-4">
-                    <button
-                      type="button"
-                      (click)="userSearchService.previousPage()"
-                      [disabled]="userSearchService.currentPage() === 0"
-                      class="shrink-0 cursor-pointer rounded-lg bg-primary p-3 text-white transition-transform hover:scale-110 disabled:opacity-30 focus-visible:outline-hidden"
-                      aria-label="Previous page"
-                    >
-                      <span class="material-symbols-outlined block" aria-hidden="true"
-                        >chevron_left</span
-                      >
-                    </button>
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+            @for (user of userSearchService.paginatedResults(); track user.id) {
+              <article class="h-162.5">
+                <app-user-card [user]="user"></app-user-card>
+              </article>
+            }
+          </div>
+          <div class="flex items-center justify-center gap-4">
+            <button
+              type="button"
+              (click)="userSearchService.previousPage()"
+              [disabled]="userSearchService.currentPage() === 0"
+              class="shrink-0 cursor-pointer rounded-lg bg-primary p-3 text-white transition-transform hover:scale-110 disabled:opacity-30 focus-visible:outline-hidden"
+              aria-label="Previous page"
+            >
+              <span class="material-symbols-outlined block" aria-hidden="true">chevron_left</span>
+            </button>
 
-                    <div class="grid flex-1 grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                      @for (user of userSearchService.paginatedResults(); track user.id) {
-                        <article class="h-162.5">
-                          <app-user-card [user]="user"></app-user-card>
-                        </article>
-                      }
-                    </div>
+            <span class="text-slate-400 font-medium">
+              Page {{ userSearchService.currentPage() + 1 }} de
+              {{ userSearchService.totalPages() }}
+            </span>
 
-                    <button
-                      type="button"
-                      (click)="userSearchService.nextPage()"
-                      [disabled]="
-                        userSearchService.currentPage() === userSearchService.totalPages() - 1
-                      "
-                      class="shrink-0 cursor-pointer rounded-lg bg-primary p-3 text-white transition-transform hover:scale-110 disabled:opacity-30 focus-visible:outline-hidden"
-                      aria-label="Next page"
-                    >
-                      <span class="material-symbols-outlined block" aria-hidden="true"
-                        >chevron_right</span
-                      >
-                    </button>
-                  </div>
-                </div>
-              }
-            </div>
+            <button
+              type="button"
+              (click)="userSearchService.nextPage()"
+              [disabled]="userSearchService.currentPage() === userSearchService.totalPages() - 1"
+              class="shrink-0 cursor-pointer rounded-lg bg-primary p-3 text-white transition-transform hover:scale-110 disabled:opacity-30 focus-visible:outline-hidden"
+              aria-label="Next page"
+            >
+              <span class="material-symbols-outlined block" aria-hidden="true">chevron_right</span>
+            </button>
           </div>
         </div>
       } @else if (userSearchService.hasSearched()) {
@@ -399,8 +388,9 @@
           <div class="relative mb-6">
             <span
               class="material-symbols-outlined text-4xl text-primary absolute inset-0 flex items-center justify-center animate-pulse"
-              >search</span
             >
+              search
+            </span>
           </div>
           <h3 class="text-2xl font-bold text-white uppercase tracking-[0.2em]">
             Start finding your future bandmates
