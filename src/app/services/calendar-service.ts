@@ -205,7 +205,7 @@ export class CalendarService {
       this.toast.success('Event deleted');
     } catch (err) {
       console.error('Error deleting event:', err);
-      this.toast.error('Error deleting event');
+      this.toast.error(`Only event owner can edit or delete`);
     } finally {
       this.loadingSignal.set(false);
     }
