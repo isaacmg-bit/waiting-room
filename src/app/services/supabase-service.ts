@@ -56,7 +56,7 @@ export class SupabaseService {
     await this.loadUserRole(session.user.id);
   }
 
-  private async loadUserRole(userId: string): Promise<void> {
+  async loadUserRole(userId: string): Promise<void> {
     const { data, error } = await this.supabase
       .from('user_profile')
       .select('role')
