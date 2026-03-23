@@ -36,14 +36,17 @@
   height: auto !important;
 }
 
-::ng-deep .fc-daygrid-body,
-::ng-deep .fc-scrollgrid-sync-table {
-  width: 100% !important;
+@media (max-width: 768px) {
+  ::ng-deep .fc-daygrid-body,
+  ::ng-deep .fc-scrollgrid-sync-table {
+    width: 100% !important;
+  }
 }
 
-::ng-deep .fc-daygrid {
-  height: auto !important;
-}
+::ng-deep .fc-daygrid-day {
+    min-height: 44px;
+  }
+
 
 ::ng-deep .fc-daygrid-day {
   height: auto !important;
