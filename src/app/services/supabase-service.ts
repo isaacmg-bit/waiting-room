@@ -1,56 +1,89 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { createClient, SupabaseClient, Session } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment.prod';
-import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class SupabaseService {
-  private readonly router = inject(Router);
   private readonly supabase: SupabaseClient = createClient(
     environment.supabaseUrl,
     environment.supabaseAnonKey,
   );
 
-  userRole = signal<'user' | 'admin' | null>(null);
-  userId = signal<string | null>(null);
-  public isReady = signal(false);
-  isLoading = signal<boolean>(true);
+  readonly userId = signal<string | null>(null);
+  readonly userRole = signal<'user' | 'admin' | null>(null);
+  readonly isReady = signal<boolean>(false);
+
+  private currentSession: Session | null = null;
 
   constructor() {
-    this.initAuthListener();
+    this.init();
   }
 
-  private async initAuthListener() {
+  private async init(): Promise<void> {
     const {
       data: { session },
     } = await this.supabase.auth.getSession();
-    await this.handleAuthChange(session);
-
+    this.currentSession = session;
+    this.applySession(session);
     this.isReady.set(true);
+
     this.supabase.auth.onAuthStateChange(async (event, session) => {
-      await this.handleAuthChange(session);
+      this.currentSession = session;
+
+      if (event === 'SIGNED_OUT') {
+        this.userId.set(null);
+        this.userRole.set(null);
+        this.isReady.set(false);
+        return;
+      }
+
+      this.applySession(session);
+
+      if (event === 'SIGNED_IN') {
+        this.isReady.set(true);
+      }
     });
   }
-  private async handleAuthChange(session: Session | null) {
-    if (session?.user) {
-      this.userId.set(session.user.id);
-      await this.loadUserRole(session.user.id);
-    } else {
+
+  private async applySession(session: Session | null): Promise<void> {
+    if (!session?.user) {
       this.userId.set(null);
       this.userRole.set(null);
+      return;
     }
-    this.isLoading.set(false);
+
+    this.userId.set(session.user.id);
+    await this.loadUserRole(session.user.id);
   }
 
-  getClient() {
+  private async loadUserRole(userId: string): Promise<void> {
+    const { data, error } = await this.supabase
+      .from('user_profile')
+      .select('role')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (error) {
+      this.userRole.set('user');
+      return;
+    }
+
+    this.userRole.set(data?.role ?? 'user');
+  }
+
+  getClient(): SupabaseClient {
     return this.supabase;
+  }
+
+  getStoredSession(): Session | null {
+    return this.currentSession;
   }
 
   getSession() {
     return this.supabase.auth.getSession();
   }
 
-  async signUp(email: string, password: string) {
+  signUp(email: string, password: string) {
     return this.supabase.auth.signUp({
       email,
       password,
@@ -63,8 +96,6 @@ export class SupabaseService {
   }
 
   signOut() {
-    this.userRole.set(null);
-    this.userId.set(null);
     return this.supabase.auth.signOut();
   }
 
@@ -79,24 +110,6 @@ export class SupabaseService {
     const refresh_token = params.get('refresh_token');
     if (!access_token) return;
     this.setSession(access_token, refresh_token ?? '');
-  }
-
-  async loadUserRole(userId: string) {
-    this.userId.set(userId);
-
-    const { data, error } = await this.supabase
-      .from('user_profile')
-      .select('role')
-      .eq('id', userId)
-      .maybeSingle();
-
-    if (error) {
-      console.error('Error loading user role:', error);
-      this.userRole.set('user');
-      return;
-    }
-
-    this.userRole.set(data?.role || 'user');
   }
 
   updatePassword(password: string) {

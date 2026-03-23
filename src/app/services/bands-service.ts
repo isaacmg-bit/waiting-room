@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http'; // ✅ AÑADE ESTO
+import { HttpClient } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import { environment } from '../../environments/environment.prod';
 import { Band } from '../models/Band';
@@ -7,7 +7,7 @@ import { MusicBrainzResponse } from '../models/MusicBrainzResponse';
 
 @Injectable({ providedIn: 'root' })
 export class MusicBrainzService {
-  private readonly http = inject(HttpClient); // ✅ CAMBIA ApiServiceBack por HttpClient
+  private readonly http = inject(HttpClient);
   private readonly BASE_URL: string = environment.apiMusicBrainz;
 
   readonly bandsSignal = signal<Band[]>([]);
@@ -22,7 +22,7 @@ export class MusicBrainzService {
 
     this.loadingSignal.set(true);
 
-    this.http // ✅ Ahora es this.http, no this.api
+    this.http
       .get<MusicBrainzResponse>(this.BASE_URL, {
         params: { query: trimmedQuery },
       })
