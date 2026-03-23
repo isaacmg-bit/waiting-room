@@ -56,8 +56,7 @@ export class UserProfilePicService {
       if (error) throw error;
 
       const { data } = this.supabase.storage.from('profiles').getPublicUrl(fileName);
-      const path = fileName;
-      const url: string = this.getOptimizedUrl(path, 'profiles', 256);
+      const url: string = data.publicUrl;
 
       this.userService.editUser(user.id, { profile_photo_url: url });
       this.updateLocalUrl(url);
@@ -96,22 +95,6 @@ export class UserProfilePicService {
   }
 
   private updateLocalUrl(url: string | null | undefined): void {
-    if (!url) {
-      this.profilePhotoUrl.set(null);
-      return;
-    }
-    const match = url.match(/\/profiles\/(.+?)(\?|$)/);
-    const path = match?.[1];
-
-    if (path) {
-      const optimized = this.getOptimizedUrl(path, 'profiles', 256);
-      this.profilePhotoUrl.set(`${optimized}&t=${Date.now()}`);
-    } else {
-      this.profilePhotoUrl.set(`${url}?t=${Date.now()}`);
-    }
-  }
-  
-  private getOptimizedUrl(path: string, bucket: string, width: number): string {
-    return `${environment.supabaseUrl}/storage/v1/render/image/public/${bucket}/${path}?width=${width}&quality=80&format=webp`;
+    this.profilePhotoUrl.set(url ? `${url}?t=${Date.now()}` : null);
   }
 }

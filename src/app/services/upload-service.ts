@@ -53,9 +53,7 @@ export class UploadService {
           if (error) throw error;
 
           const { data: publicUrl } = this.supabase.storage.from('gallery').getPublicUrl(data.path);
-          const rawUrl = publicUrl.publicUrl;
-          const pathOnly = data.path;
-          const url = `${environment.supabaseUrl}/storage/v1/render/image/public/gallery/${pathOnly}?width=800&quality=80&format=webp`;
+          const url = publicUrl.publicUrl;
           const tempId = `temp-${Date.now()}-${i}`;
 
           this.pendingPhotos.update((p) => [
