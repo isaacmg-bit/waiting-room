@@ -55,6 +55,7 @@ export class Calendar implements AfterViewInit, OnInit {
     headerToolbar: false,
     displayEventTime: false,
     height: 'auto',
+aspectRatio: window.innerWidth < 768 ? 0.8 : 1.5,
     handleWindowResize: true,
     fixedWeekCount: false,
     showNonCurrentDates: false,
