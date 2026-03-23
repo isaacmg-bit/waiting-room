@@ -104,7 +104,7 @@
             (input)="userSearchService.onSearchInstrument($event)"
             (focus)="userSearchService.openInstruments()"
             placeholder="Instrument"
-            class="flex-1 bg-transparent text-sm text-slate-200 focus:outline-visible focus:ring-1 focus:ring-primary"
+            class="flex-1 bg-transparent text-sm text-slate-500 focus:outline-visible focus:ring-1 focus:ring-primary"
             aria-label="Search instrument"
           />
         </div>
@@ -196,7 +196,7 @@
             (input)="userSearchService.onSearchGenre($event)"
             (focus)="userSearchService.openGenres()"
             placeholder="Genre"
-            class="flex-1 bg-transparent text-sm text-slate-200 focus:outline-visible focus:ring-1 focus:ring-primary"
+            class="flex-1 bg-transparent text-sm text-slate-500 focus:outline-visible focus:ring-1 focus:ring-primary"
             aria-label="Search genre"
           />
         </div>
@@ -238,7 +238,7 @@
             (input)="userSearchService.onSearchBand($event)"
             (focus)="userSearchService.openBands()"
             placeholder="Band"
-            class="flex-1 bg-transparent text-sm text-slate-200 focus:outline-visible focus:ring-1 focus:ring-primary"
+            class="flex-1 bg-transparent text-sm text-slate-500 focus:outline-visible focus:ring-1 focus:ring-primary"
             aria-label="Search band"
           />
         </div>
@@ -321,6 +321,7 @@
 
         @if (userSearchService.selectedDistance()! > 5) {
           <button
+            #clearAll
             (click)="userSearchService.clearAllFilters(); userSearchService.search(true)"
             class="ml-2 text-xs text-red-400 hover:underline focus:outline-visible focus:ring-1 focus:ring-red-400"
           >
@@ -339,6 +340,43 @@
                 <article class="h-162.5">
                   <app-user-card [user]="user"></app-user-card>
                 </article>
+                <div class="border-border-dark bg-surface-dark p-6 shadow-sm">
+                  <div class="flex items-center justify-between gap-4">
+                    <button
+                      type="button"
+                      (click)="userSearchService.previousPage()"
+                      [disabled]="userSearchService.currentPage() === 0"
+                      class="shrink-0 cursor-pointer rounded-lg bg-primary p-3 text-white transition-transform hover:scale-110 disabled:opacity-30 focus-visible:outline-hidden"
+                      aria-label="Previous page"
+                    >
+                      <span class="material-symbols-outlined block" aria-hidden="true"
+                        >chevron_left</span
+                      >
+                    </button>
+
+                    <div class="grid flex-1 grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                      @for (user of userSearchService.paginatedResults(); track user.id) {
+                        <article class="h-162.5">
+                          <app-user-card [user]="user"></app-user-card>
+                        </article>
+                      }
+                    </div>
+
+                    <button
+                      type="button"
+                      (click)="userSearchService.nextPage()"
+                      [disabled]="
+                        userSearchService.currentPage() === userSearchService.totalPages() - 1
+                      "
+                      class="shrink-0 cursor-pointer rounded-lg bg-primary p-3 text-white transition-transform hover:scale-110 disabled:opacity-30 focus-visible:outline-hidden"
+                      aria-label="Next page"
+                    >
+                      <span class="material-symbols-outlined block" aria-hidden="true"
+                        >chevron_right</span
+                      >
+                    </button>
+                  </div>
+                </div>
               }
             </div>
           </div>

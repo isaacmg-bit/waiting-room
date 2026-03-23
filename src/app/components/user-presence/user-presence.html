@@ -9,20 +9,24 @@
         [formGroupName]="index"
         class="flex flex-col md:flex-row gap-2 md:gap-4 items-stretch md:items-center p-4 bg-white/5 rounded-2xl border border-white/5"
       >
-        <div class="md:w-1/4">
+        <div class="md:w-1/4 relative">
           <label class="sr-only" [for]="'platform-' + index">Select platform</label>
           <select
             [id]="'platform-' + index"
             formControlName="platform"
-            class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white outline-none focus:border-purple-500 transition-colors appearance-none"
+            class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white outline-none focus:border-purple-500 transition-colors appearance-none pr-10"
           >
             <option value="instagram">Instagram</option>
             <option value="youtube">YouTube</option>
             <option value="spotify">Spotify</option>
             <option value="soundcloud">SoundCloud</option>
           </select>
+          <span
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none material-symbols-outlined text-[20px]"
+          >
+            expand_more
+          </span>
         </div>
-
         <div class="flex-1 relative flex items-center">
           <label class="sr-only" [for]="'url-' + index">Enter username</label>
           <div

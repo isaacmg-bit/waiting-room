@@ -14,6 +14,10 @@
   border: none !important;
 }
 
+::ng-deep .fc-event-title {
+  font-weight: normal !important;
+}
+
 ::ng-deep .fc-header-toolbar {
   display: none !important;
 }
