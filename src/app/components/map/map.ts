@@ -93,7 +93,6 @@ export class Map implements AfterViewInit {
           border-radius: 50% 50% 50% 0;
           transform: rotate(-45deg);
           position: relative;
-          box-shadow: 0 0 12px ${color};
         "></div>
       `,
       iconSize: [26, 26],
@@ -107,7 +106,7 @@ export class Map implements AfterViewInit {
       <strong>${event.title}</strong><br/>
       ${this.formatEventType(event.event_type ?? '')}<br/>
       ${event.street ?? ''}<br/>
-      ${event.event_date ?? ''}
+      ${event.event_date.slice(0, 10) ?? ''}
     </div>
   `;
   }

@@ -9,7 +9,6 @@
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   border-radius: 12px !important;
   color: white !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
   padding: 8px 12px !important;
 }
 
@@ -31,7 +30,6 @@
 
 ::ng-deep .leaflet-marker-icon {
   filter: none !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
 }
 
 ::ng-deep .leaflet-marker-shadow {
