@@ -51,7 +51,7 @@
             class="absolute z-50 mt-2 rounded-xl border border-border-dark bg-slate-900 p-8 shadow-xl transition-all left-0 w-96 flex flex-col justify-between"
             role="listbox"
           >
-            <div class="space-y-3 text-sm text-slate-200">
+            <div class="space-y-30 gap-30 text-sm text-slate-200 pb-6">
               Distance:
               <span class="font-semibold text-white"
                 >{{ userSearchService.tempDistance() }} km</span
@@ -69,14 +69,13 @@
             />
 
             <button
-              #applyButton
               type="button"
               (click)="
                 userSearchService.selectedDistance.set(userSearchService.tempDistance());
                 userSearchService.closeDistance();
                 userSearchService.search(true)
               "
-              class="w-full rounded-lg bg-primary py-2 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
+              class="space-y-30 w-full rounded-lg bg-primary py-2 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
             >
               Apply
             </button>

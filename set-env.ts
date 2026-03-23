@@ -21,6 +21,7 @@ const envConfigFile = `export const environment = {
   apiUserGenresUrl: '/user-genres',
   apiUserInstrumentsUrl: '/user-instruments',
   apiSearchMusicians: '/search/musicians/advanced',
+    apiStorageUrl: '/storage/v1',
   apiSearchRandomMusicians: '/search/musicians/random',
   profilePicUrl: '/profilepicture.jpg',
   leafletTileLayer: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',

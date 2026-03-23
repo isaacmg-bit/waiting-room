@@ -40,7 +40,7 @@ export class Calendar implements AfterViewInit, OnInit {
       }
     });
   }
-  
+
   ngOnInit(): void {
     this.form.reset();
   }
@@ -55,7 +55,8 @@ export class Calendar implements AfterViewInit, OnInit {
     headerToolbar: false,
     displayEventTime: false,
     height: 'auto',
-aspectRatio: window.innerWidth < 768 ? 0.8 : 1.5,
+    aspectRatio: window.innerWidth < 768 ? 0.8 : 1.5,
+    expandRows: true,
     handleWindowResize: true,
     fixedWeekCount: false,
     showNonCurrentDates: false,
