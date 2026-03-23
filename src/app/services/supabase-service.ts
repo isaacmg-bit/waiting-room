@@ -33,7 +33,7 @@ export class SupabaseService {
       if (event === 'SIGNED_OUT') {
         this.userId.set(null);
         this.userRole.set(null);
-        this.isReady.set(false);
+
         return;
       }
 
