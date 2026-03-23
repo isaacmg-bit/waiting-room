@@ -1,4 +1,4 @@
-/* :host ::ng-deep {
+:host ::ng-deep {
   --fc-border-color: rgba(255, 255, 255, 0.05);
   --fc-daygrid-event-dot-width: 8px;
   --fc-page-bg-color: transparent;
@@ -6,8 +6,8 @@
 }
 
 ::ng-deep .fc {
-  height: 100% !important;
-  width: 100% !important;
+  height: auto !important;
+  width: auto !important;
   font-size: 0.75rem;
   background: transparent;
   color: #f1f5f9;
@@ -69,7 +69,7 @@
   border: none !important;
   padding: 2px 8px !important;
   font-size: 10px !important;
-  font-weight: 800 !important;
+  font-weight: 500 !important;
   margin: 1px 4px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   cursor: pointer;
@@ -79,6 +79,7 @@
 ::ng-deep .fc-event:hover {
   transform: translateY(-1px);
   filter: brightness(1.2);
+cursor: pointer;
 }
 
 ::ng-deep .fc-day-today {
@@ -87,4 +88,4 @@
 
 ::ng-deep .fc .fc-daygrid-body-unbalanced .fc-daygrid-day-events {
   min-height: 1em !important;
-} */
+}
