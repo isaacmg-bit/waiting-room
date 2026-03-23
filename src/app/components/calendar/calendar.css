@@ -1,4 +1,4 @@
-:host ::ng-deep {
+/* :host ::ng-deep {
   --fc-border-color: rgba(255, 255, 255, 0.05);
   --fc-daygrid-event-dot-width: 8px;
   --fc-page-bg-color: transparent;
@@ -87,4 +87,4 @@
 
 ::ng-deep .fc .fc-daygrid-body-unbalanced .fc-daygrid-day-events {
   min-height: 1em !important;
-}
+} */
