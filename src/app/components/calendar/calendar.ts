@@ -54,7 +54,6 @@ export class Calendar implements AfterViewInit, OnInit {
     plugins: [dayGridPlugin, interactionPlugin],
     headerToolbar: false,
     displayEventTime: false,
-    height: 'auto',
     aspectRatio: 2.2,
     handleWindowResize: true,
     fixedWeekCount: false,
