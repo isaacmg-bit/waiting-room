@@ -7,7 +7,7 @@
     @for (link of socialLinksArray.controls; track link; let index = $index) {
       <div
         [formGroupName]="index"
-        class="flex flex-col md:flex-row gap-2 md:gap-4 items-stretch md:items-center p-4 bg-white/5 rounded-2xl border border-white/5"
+        class="flex flex-col md:flex-row gap-2 md:gap-4 items-stretch md:items-center p-4 bg-slate-900 rounded-2xl border border-white/5"
       >
         <div class="md:w-1/4 relative">
           <label class="sr-only" [for]="'platform-' + index">Select platform</label>

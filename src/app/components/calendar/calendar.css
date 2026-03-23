@@ -7,11 +7,14 @@
 
 ::ng-deep .fc {
   height: 100% !important;
+  width: 100% !important;
   font-size: 0.75rem;
   background: transparent;
   color: #f1f5f9;
   font-family: inherit;
   border: none !important;
+  border-radius: 1.5rem !important;
+  overflow: hidden !important;
 }
 
 ::ng-deep .fc-event-title {
@@ -30,6 +33,15 @@
 
 ::ng-deep .fc-scroller {
   overflow: hidden !important;
+  height: auto !important;
+}
+
+::ng-deep .fc-daygrid {
+  height: auto !important;
+}
+
+::ng-deep .fc-daygrid-day {
+  height: auto !important;
 }
 
 ::ng-deep .fc .fc-col-header-cell {
@@ -49,7 +61,6 @@
   font-size: 11px;
   font-weight: 600;
   color: #64748b;
-
   text-decoration: none !important;
 }
 
@@ -76,11 +87,4 @@
 
 ::ng-deep .fc .fc-daygrid-body-unbalanced .fc-daygrid-day-events {
   min-height: 1em !important;
-}
-
-:host ::ng-deep .fc {
-  border-radius: 1.5rem !important;
-  overflow: hidden !important;
-  background: transparent !important;
-  border: none !important;
 }
