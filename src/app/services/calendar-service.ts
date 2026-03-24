@@ -120,7 +120,7 @@ export class CalendarService {
 
   async saveEvent(): Promise<void> {
     if (!this.selectedStreet()) {
-      this.toast.warning('Please select a location on the map');
+      this.toast.warning('Please select a location');
       return;
     }
 

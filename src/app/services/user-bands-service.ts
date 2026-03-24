@@ -50,7 +50,7 @@ export class UserBandsService {
       (ub) => ub.id === band.id,
     );
     if (exists) {
-      this.toast.warning('You are already in this band');
+      this.toast.warning('You already added this band');
       return;
     }
 

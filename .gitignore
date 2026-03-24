@@ -45,4 +45,4 @@ __screenshots__/
 Thumbs.db
 
 # Secrets
-src/environments/environment.test.ts
+src/environments/environment.testing.ts

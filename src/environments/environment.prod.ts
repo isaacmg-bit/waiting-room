@@ -1,5 +1,40 @@
 export const environment = {
-  production: true,
-  supabaseUrl: '',
-  supabaseAnonKey: '',
+  production: false,
+  apiToken: '',
+  appUrl: 'http://localhost:4200',
+  apiUrl: 'http://localhost:3000',
+  apiUserUrl: '/users',
+  apiLocationUrl: '/locations',
+  apiEventUrl: '/events',
+  apiResetPass: '/reset-pass',
+  apiMeUrl: '/me',
+  apiMusicBrainz: 'http://localhost:3000/api/musicbrainz/search',
+  apiGenresUrl: '/genres',
+  apiInstrumentsUrl: '/instruments',
+  apiUserTheoryUrl: '/user-theory',
+  apiGalleryUrl: '/gallery',
+  apiUserBandsUrl: '/user-bands',
+  apiUserGenresUrl: '/user-genres',
+  apiUserInstrumentsUrl: '/user-instruments',
+  apiSearchMusicians: '/search/musicians/advanced',
+  apiSearchRandomMusicians: '/search/musicians/random',
+  apiStorageUrl: '/storage/v1',
+  profilePicUrl: '/profilepicture.jpg',
+  leafletTileLayer: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  socialPlatforms: {
+    instagram: 'https://instagram.com/',
+    youtube: 'https://youtube.com/@',
+    spotify: 'https://open.spotify.com/user/',
+    soundcloud: 'https://soundcloud.com/',
+  },
+  nominatimUrl: 'http://localhost:3000/cities/search',
+  supabaseUrl: 'https://otfzbljpjqojoiojfvrq.supabase.co',
+  supabaseAnonKey:
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90ZnpibGpwanFvam9pb2pmdnJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzE2OTAsImV4cCI6MjA4NzQ0NzY5MH0.I-Wts4k1EJAhOadcYyJYUlKjjqLt2EwrQdToZ_FZiAI',
 };
+
+// export const environment = {
+//   production: true,
+//   supabaseUrl: '',
+//   supabaseAnonKey: '',
+// };
