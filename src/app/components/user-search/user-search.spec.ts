@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserSearch } from './user-search';
 import { UserSearchService } from '../../services/user-search-service';
 import { signal } from '@angular/core';
-import { vi } from 'vitest';
 
 describe('UserSearch', () => {
   let component: UserSearch;
