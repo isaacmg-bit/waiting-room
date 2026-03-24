@@ -1,15 +1,15 @@
-<section class="h-26 sm:h-24 lg:h-22 ">
-<div class="absolute inset-0 z-0 ">
-  <img
-    src="assets/img/publicprofile.webp"
-    class="h-full w-full object-cover opacity-60"
-    alt="Rehearsal room background"
-  />
-  <div class="absolute inset-0 bg-linear-to-t from-black via-transparent to-black/50 "></div>
-</div>
+<section class="h-26 sm:h-24 lg:h-22">
+  <div class="absolute inset-0 z-0">
+    <img
+      src="assets/img/publicprofile.webp"
+      class="h-full w-full object-cover opacity-60"
+      alt="Rehearsal room background"
+    />
+    <div class="absolute inset-0 bg-linear-to-t from-black via-transparent to-black/50"></div>
+  </div>
 </section>
 
-<main class="min-h-screen bg-black font-display text-slate-100 selection:bg-primary/30 ">
+<main class="min-h-screen bg-black font-display text-slate-100 selection:bg-primary/30">
   <div class="mx-auto max-w-5xl px-4 py-12 md:px-8">
     <div class="space-y-8">
       <header
@@ -238,49 +238,59 @@
               class="group flex flex-col items-center gap-3 transition-transform hover:-translate-y-1 focus-visible:outline-hidden"
               [aria-label]="'Visit our ' + link.platform"
             >
-              @if (link.platform === 'spotify') {
+              @if (!filteredSocialLinks()) {
                 <div
-                  class="size-14 rounded-2xl flex items-center justify-center text-slate-200 transition-all duration-300 shadow-lg bg-slate-800 group-hover:bg-[#1DB954] group-focus-visible:bg-[#1DB954]"
+                  class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm"
                 >
-                  <span class="material-symbols-outlined text-2xl" aria-hidden="true"
-                    >music_note</span
+                  <span class="material-symbols-outlined text-primary text-xl">search_off</span>
+                  <span class="text-slate-400 font-medium italic">No socials found</span>
+                </div>
+                >
+              } @else {
+                @if (link.platform === 'spotify') {
+                  <div
+                    class="size-14 rounded-2xl flex items-center justify-center text-slate-200 transition-all duration-300 shadow-lg bg-slate-800 group-hover:bg-[#1DB954] group-focus-visible:bg-[#1DB954]"
                   >
-                </div>
-              }
+                    <span class="material-symbols-outlined text-2xl" aria-hidden="true"
+                      >music_note</span
+                    >
+                  </div>
+                }
 
-              @if (link.platform === 'instagram') {
-                <div
-                  class="size-14 rounded-2xl flex items-center justify-center text-slate-200 transition-all duration-300 shadow-lg bg-slate-800 group-hover:bg-[#E1306C] group-focus-visible:bg-[#E1306C]"
-                >
-                  <span class="material-symbols-outlined text-2xl" aria-hidden="true"
-                    >photo_camera</span
+                @if (link.platform === 'instagram') {
+                  <div
+                    class="size-14 rounded-2xl flex items-center justify-center text-slate-200 transition-all duration-300 shadow-lg bg-slate-800 group-hover:bg-[#E1306C] group-focus-visible:bg-[#E1306C]"
                   >
-                </div>
-              }
+                    <span class="material-symbols-outlined text-2xl" aria-hidden="true"
+                      >photo_camera</span
+                    >
+                  </div>
+                }
 
-              @if (link.platform === 'soundcloud') {
-                <div
-                  class="size-14 rounded-2xl flex items-center justify-center text-slate-200 transition-all duration-300 shadow-lg bg-slate-800 group-hover:bg-[#FF5500] group-focus-visible:bg-[#FF5500]"
-                >
-                  <span class="material-symbols-outlined text-2xl" aria-hidden="true">cloud</span>
-                </div>
-              }
-
-              @if (link.platform === 'youtube') {
-                <div
-                  class="size-14 rounded-2xl flex items-center justify-center text-slate-200 transition-all duration-300 shadow-lg bg-slate-800 group-hover:bg-[#FF0000] group-focus-visible:bg-[#FF0000]"
-                >
-                  <span class="material-symbols-outlined text-2xl" aria-hidden="true"
-                    >play_circle</span
+                @if (link.platform === 'soundcloud') {
+                  <div
+                    class="size-14 rounded-2xl flex items-center justify-center text-slate-200 transition-all duration-300 shadow-lg bg-slate-800 group-hover:bg-[#FF5500] group-focus-visible:bg-[#FF5500]"
                   >
-                </div>
-              }
+                    <span class="material-symbols-outlined text-2xl" aria-hidden="true">cloud</span>
+                  </div>
+                }
 
-              <span
-                class="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-white transition-colors"
-              >
-                {{ link.platform }}
-              </span>
+                @if (link.platform === 'youtube') {
+                  <div
+                    class="size-14 rounded-2xl flex items-center justify-center text-slate-200 transition-all duration-300 shadow-lg bg-slate-800 group-hover:bg-[#FF0000] group-focus-visible:bg-[#FF0000]"
+                  >
+                    <span class="material-symbols-outlined text-2xl" aria-hidden="true"
+                      >play_circle</span
+                    >
+                  </div>
+                }
+
+                <span
+                  class="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-white transition-colors"
+                >
+                  {{ link.platform }}
+                </span>
+              }
             </a>
           }
         </div>
