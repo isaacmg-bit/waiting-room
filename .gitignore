@@ -45,6 +45,5 @@ __screenshots__/
 Thumbs.db
 
 # Secrets
-src/environments
-src/environments/environment.prod.ts
+
 src/environments/environment.testing.ts
