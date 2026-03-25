@@ -1,47 +1,117 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { RegisterComponent } from './register-component';
 import { SupabaseService } from '../../services/supabase-service';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { AuthInterceptor } from '../../interceptors/auth-interceptor';
-import { provideRouter } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { provideRouter, Router } from '@angular/router';
+import { provideToastr, ToastrService } from 'ngx-toastr';
 
 describe('RegisterComponent ', () => {
-  it('debería compilar correctamente con interceptor', async () => {
+  let component: RegisterComponent;
+  let fixture: ComponentFixture<RegisterComponent>;
+  let mockSupabase: any;
+  let toast: any;
+  let router: Router;
+
+  beforeEach(async () => {
+    mockSupabase = {
+      signUp: vi.fn(),
+    };
+
     await TestBed.configureTestingModule({
       imports: [RegisterComponent],
       providers: [
-        SupabaseService,
+        {
+          provide: SupabaseService,
+          useValue: mockSupabase,
+        },
         provideRouter([]),
         provideHttpClient(withInterceptors([AuthInterceptor])),
-        { provide: ToastrService, useValue: { error: vi.fn() } },
+        provideToastr(),
       ],
     }).compileComponents();
-    const fixture = TestBed.createComponent(RegisterComponent);
-    expect(fixture.componentInstance).toBeTruthy();
+
+    fixture = TestBed.createComponent(RegisterComponent);
+    component = fixture.componentInstance;
+    router = TestBed.inject(Router);
+    toast = TestBed.inject(ToastrService);
+
+    vi.spyOn(router, 'navigate');
+
+    fixture.detectChanges();
   });
-});
 
-describe('Form', () => {
-  it('should initialize form with empty fields in invalid state', () => {});
-  it('should validate email and password requirements', () => {});
-});
+  it('should create component', () => {
+    expect(component).toBeTruthy();
+  });
 
-describe('Submit - Invalid Form', () => {
-  it('should show warning and not call signUp', async () => {});
-});
+  describe('Form', () => {
+    it('should initialize form with empty fields in invalid state', () => {
+      expect(component.form.valid).toBe(false);
+      expect(component.form.get('email')?.value).toBe('');
+    });
 
-describe('Submit - Success', () => {
-  it('should call signUp and navigate to /login', async () => {});
-  it('should show success toast and set/unset loading', async () => {});
-});
+    it('should validate email and password requirements', () => {
+      const email = component.form.get('email');
+      const pass = component.form.get('password');
 
-describe('Submit - Error', () => {
-  it('should show error toast and not navigate on signUp failure', async () => {});
-  it('should extract and display error message correctly', async () => {});
-});
+      email?.setValue('email-no-valido');
+      expect(email?.valid).toBe(false);
 
-describe('Edge Cases', () => {
-  it('should handle rapid consecutive submit attempts', async () => {});
-  it('should reset form after successful registration', async () => {});
+      pass?.setValue('123');
+      expect(pass?.valid).toBe(false);
+    });
+  });
+
+  describe('Submit - Invalid Form', () => {
+    it('should show warning and not call signUp', async () => {
+      const toastSpy = vi.spyOn(toast, 'warning');
+      component.form.patchValue({ email: '', password: '' });
+
+      await component.onSubmit();
+
+      expect(toastSpy).toHaveBeenCalled();
+      expect(mockSupabase.signUp).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Submit - Success', () => {
+    it('should call signUp and navigate to /login', async () => {
+      vi.mocked(mockSupabase.signUp).mockResolvedValue({ data: {}, error: null } as any);
+      component.form.patchValue({ email: 'nuevo@test.com', password: 'password123' });
+
+      await component.onSubmit();
+
+      expect(mockSupabase.signUp).toHaveBeenCalledWith('nuevo@test.com', 'password123');
+      expect(router.navigate).toHaveBeenCalledWith(['/login']);
+    });
+  });
+
+  describe('Submit - Error', () => {
+    it('should show error toast on signUp failure', async () => {
+      const toastErrorSpy = vi.spyOn(toast, 'error');
+      vi.mocked(mockSupabase.signUp).mockResolvedValue({
+        data: null,
+        error: { message: 'Auth error' },
+      } as any);
+
+      component.form.patchValue({ email: 'test@test.com', password: 'password123' });
+      await component.onSubmit();
+
+      expect(toastErrorSpy).toHaveBeenCalledWith('Registration failed');
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('should set isLoading to true then false during submit', async () => {
+      vi.mocked(mockSupabase.signUp).mockResolvedValue({ data: {}, error: null } as any);
+      component.form.patchValue({ email: 'test@test.com', password: 'password123' });
+
+      const promise = component.onSubmit();
+      expect(component.isLoading()).toBe(true);
+
+      await promise;
+      expect(component.isLoading()).toBe(false);
+    });
+  });
 });
