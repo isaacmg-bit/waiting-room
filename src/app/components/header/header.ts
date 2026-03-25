@@ -1,10 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HeaderService } from '../../services/header-service';
+import { ClickOutsideDirective } from '../../directives/click-outside.directive';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterModule],
+  imports: [RouterModule, ClickOutsideDirective],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
